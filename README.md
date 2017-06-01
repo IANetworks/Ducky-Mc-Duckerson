@@ -5,9 +5,9 @@ All the things
 
 Feature List TODO:
 
-Greeting Message
-Event Logging
-Music
-Custom Reaction
-FAQ
-Forum Tie in
+Greeting Message  
+Event Logging  
+Music  
+Custom Reaction  
+FAQ  
+Forum Tie in  
