@@ -89,9 +89,9 @@ public class eventListener extends ListenerAdapter {
             }                                           // otherwise it will default to their username. (User#getName())
             if(bot)
             {
-            	System.out.printf("(%s)[#%s]{BOT}<%s>: %s\n", guild.getName(), textChannel.getName(), name, msg);
+            	//System.out.printf("(%s)[#%s]{BOT}<%s>: %s\n", guild.getName(), textChannel.getName(), name, msg);
             } else {
-            	System.out.printf("(%s)[#%s]<%s>: %s\n", guild.getName(), textChannel.getName(), name, msg);
+            	//System.out.printf("(%s)[#%s]<%s>: %s\n", guild.getName(), textChannel.getName(), name, msg);
             }
         }
         else if (event.isFromType(ChannelType.PRIVATE)) //If this message was sent to a PrivateChannel
@@ -100,7 +100,7 @@ public class eventListener extends ListenerAdapter {
             //In this example we don't directly use the privateChannel, however, be sure, there are uses for it!
             //PrivateChannel privateChannel = event.getPrivateChannel();
 
-            System.out.printf("[PRIV]<%s>: %s\n", author.getName(), msg);
+            //System.out.printf("[PRIV]<%s>: %s\n", author.getName(), msg);
         }
 
 
