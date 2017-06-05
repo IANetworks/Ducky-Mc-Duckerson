@@ -39,8 +39,22 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
 
-public class McDucky extends ListenerAdapter
+
+//TODO Logging (to echo certain logs that's not tracked in Aduit. Such as quit/joins.
+//TODO Permissions, set custom permissions, tie into role, so for example someone with the role "BotHandler" 
+//		can do everything while someone with indepentent role can do games only. 
+//TODO Welcome after someone select .iam for the first time
+//TODO Role assistment 
+//TODO Greeting Message - Greet someone joinning for the first time  
+//TODO Custom Reaction - !fb/!faq and so on, allow this to be defined at runtime instead of hard code
+//TODO FAQ - allow someone to request a FAQ link to Guns of Icarus Online   
+//TODO Forum Tie in - Scrape the forum of user profiles. (This is just about the only thing we can do, without hacking the game client.  <- We might do this.
+//TODO Music - The way Discord handles Bots, is that we can have different programs use the same token so we can easily have another bot running just for 
+//		Music and not worry about coding it into this program
+
+public class McDucky
 {
+	//Contains private keys, for bot Tokens, Database and other configs
 	private File configFile = new File("config.properties");
 	private Properties configProps;
 	
@@ -53,6 +67,18 @@ public class McDucky extends ListenerAdapter
 		inputStream.close();
 	}
 	
+	private void setupProperties() throws FileNotFoundException, IOException
+	{
+		//List all the config we need to successful run this bot
+		configProps.setProperty("bot_token", "");
+		configProps.setProperty("debug_level", "0"); //Set to Off
+		
+		//Save to file		
+		OutputStream outputStream = new FileOutputStream(configFile);
+		configProps.store(outputStream, "Set your configs here");
+		outputStream.close();
+	}
+	
 	//Our setup. My god, Abby is terrible at commenting
 	public McDucky() {
 
@@ -62,12 +88,8 @@ public class McDucky extends ListenerAdapter
     		loadProperties();
     	} catch (IOException ex) {
     		System.out.printf("there's no config file, creating file.");
-    		OutputStream outputStream;
 			try {
-				configProps.setProperty("bot_token", "");
-				outputStream = new FileOutputStream(configFile);
-				configProps.store(outputStream, "Info here");
-	    		outputStream.close();
+				setupProperties();
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -75,6 +97,8 @@ public class McDucky extends ListenerAdapter
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
+			//Alert the user that, hey, we need values to run. 
 			System.out.printf("Set values in config.propteries before running bot.");
 			return;
     		
@@ -82,6 +106,16 @@ public class McDucky extends ListenerAdapter
     	
     		//Load token
     		String botToken = configProps.getProperty("bot_token");
+    		int debugLevel;
+    		try {
+    			 debugLevel = Integer.parseInt(configProps.getProperty("debug_level"));
+    		} catch (NumberFormatException e)
+    		{
+    			System.out.printf("debug_level is not a valid number. switching to debug off");
+    			debugLevel = 0;
+    		}
+    		DebugLevel db = DebugLevel.getDebugLevel(debugLevel);
+    		
     		if (botToken.isEmpty())
     		{
     			//We GOT to have this value
@@ -94,9 +128,10 @@ public class McDucky extends ListenerAdapter
         try
         {
             JDA jda = new JDABuilder(AccountType.BOT)
-                    .setToken(botToken)           //The token of the account that is logging in.
-                    .addEventListener(new MessageListener())  //An instance of a class that will handle events.
-                    .buildBlocking();  //There are 2 ways to login, blocking vs async. Blocking guarantees that JDA will be completely loaded.
+                .setToken(botToken)  //The token of the account that is logging in.
+                .addEventListener(new debugListener(db)) //An instance of a class to handle verbose event logging
+                .addEventListener(new eventListener())  //An instance of a class that will handle events.
+                .buildBlocking();  //There are 2 ways to login, blocking vs async. Blocking guarantees that JDA will be completely loaded.
         }
         catch (LoginException e)
         {
