@@ -1,35 +1,13 @@
 package bot;
-/*
- *     Copyright 2015-2017 Austin Keener & Michael Ritter
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 
-import net.dv8tion.jda.client.entities.Group;
+//JDA Imports
 import net.dv8tion.jda.core.AccountType;
-import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.core.exceptions.PermissionException;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 import javax.security.auth.login.LoginException;
-import java.util.List;
-import java.util.Random;
 
+//Input/Output Imports
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -38,6 +16,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
+
+//Database Imports
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 
 //TODO Logging (to echo certain logs that's not tracked in Aduit. Such as quit/joins.
@@ -72,6 +55,7 @@ public class McDucky
 		//List all the config we need to successful run this bot
 		configProps.setProperty("bot_token", "");
 		configProps.setProperty("debug_level", "0"); //Set to Off
+		configProps.setProperty("database_name", "default");
 		
 		//Save to file		
 		OutputStream outputStream = new FileOutputStream(configFile);
@@ -104,30 +88,45 @@ public class McDucky
     		
     	}
     	
-    		//Load token
+    		//Load Config Values into program memory
     		String botToken = configProps.getProperty("bot_token");
+    		String databaseName = configProps.getProperty("database_name", "default");
+    		
     		int debugLevel;
     		try {
     			 debugLevel = Integer.parseInt(configProps.getProperty("debug_level"));
     		} catch (NumberFormatException e)
     		{
-    			System.out.printf("debug_level is not a valid number. switching to debug off");
+    			System.out.printf("debug_level is not a valid number. switching to debug off\n");
     			debugLevel = 0;
     		}
     		DebugLevel db = DebugLevel.getDebugLevel(debugLevel);
     		
+    		
+    		//Let make sure we don't have an empty value
     		if (botToken.isEmpty())
     		{
     			//We GOT to have this value
-    			System.out.printf("Bot Token Cannot be empty. Set bot token in the config.properties");
+    			System.out.printf("Bot Token Cannot be empty. Set bot token in the config.properties\n");
     			return;
     		}
+    		
+    		//Construct our Database
+    		Connection conn = null;
+    		try {
+    			String url = "jdbc:sqlite:" + databaseName + ".db";
+    			conn = DriverManager.getConnection(url);
+    			System.out.printf("Connection to SQLite database: %s has been established.\n", databaseName);
+    		} catch (SQLException e) {
+    			System.out.println(e.getMessage());
+    		} 
+    		
     		
         //We construct a builder for a BOT account. If we wanted to use a CLIENT account
         // we would use AccountType.CLIENT
         try
         {
-            JDA jda = new JDABuilder(AccountType.BOT)
+            new JDABuilder(AccountType.BOT)
                 .setToken(botToken)  //The token of the account that is logging in.
                 .addEventListener(new debugListener(db)) //An instance of a class to handle verbose event logging
                 .addEventListener(new eventListener())  //An instance of a class that will handle events.
