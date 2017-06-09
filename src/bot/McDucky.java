@@ -21,8 +21,9 @@ import java.util.Properties;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 
-
+// Use UserID to store unquie ID of each enitity
 //TODO Logging (to echo certain logs that's not tracked in Aduit. Such as quit/joins.
 //TODO Permissions, set custom permissions, tie into role, so for example someone with the role "BotHandler" 
 //		can do everything while someone with indepentent role can do games only. 
@@ -40,7 +41,8 @@ public class McDucky
 	//Contains private keys, for bot Tokens, Database and other configs
 	private File configFile = new File("config.properties");
 	private Properties configProps;
-	
+	Connection conn = null;
+		
 	private void loadProperties() throws IOException {
 		configProps = new Properties();
 		
@@ -61,6 +63,83 @@ public class McDucky
 		OutputStream outputStream = new FileOutputStream(configFile);
 		configProps.store(outputStream, "Set your configs here");
 		outputStream.close();
+	}
+	
+	//Setup Tables for the first time, to make sure we always have the correct tables upon run
+	/**
+	 * 
+	 */
+	private void setupTables()
+	{
+		//TODO Permissions
+		//TODO Custom Responds !fb, etc
+		//TODO Profiles
+		//TODO Games Stats
+		//TODO Fun stuff
+		//TODO One time stuff (Welcome Messages)
+		//TODO FAQ?
+		//TODO Self assignable roles
+		//Shouldn't happen but let make sure we have conn
+		if(conn == null)
+		{
+			//ERROR ERROR WILL ROBINSON
+			return; //<- SO BAD.. will have to switch to throwable
+			//TODO Switch to throwables
+		}
+		//V there's a better way to do this but Abby's brain farts.. stinky
+		try {
+		String sql;
+		conn.setAutoCommit(false);
+		Statement stmt = conn.createStatement();
+		
+		  sql = "CREATE TABLE IF NOT EXISTS selfassignableroles ( \n"
+		  + "id integer PRIMARY KEY, \n"
+		  + "role_id integer NOT NULL UNIQUE, \n"
+		  + "\"group\" integer NOT NULL, \n"
+		  + "exclusive boolean NOT NULL \n"
+		  + ");\n";
+		  stmt.execute(sql);
+		  sql = "CREATE TABLE IF NOT EXISTS gamestat ( \n"
+		  + "id integer PRIMARY KEY, \n"
+		  + "user_id integer UNIQUE, \n"
+		  + "currency integer NOT NULL \n"
+		  + ");\n";
+		  stmt.execute(sql);
+		  sql = "CREATE TABLE IF NOT EXISTS variables ( \n"
+		  + "id integer PRIMARY KEY, \n"
+		  + "variable_name text NOT NULL, \n"
+		  + "data \n"
+		  + ");\n";
+		  stmt.execute(sql);
+		  sql = "CREATE TABLE IF NOT EXISTS customreaction ( \n"
+		  + "id integer PRIMARY KEY, \n"
+		  + "name text NOT NULL UNIQUE, \n"
+		  + "respones text NOT NULL, \n"
+		  + "used_count integer NOT NULL \n "
+		  + ");\n";
+		  stmt.execute(sql);
+		  sql = "CREATE TABLE IF NOT EXISTS warn ( \n"
+		  + "id integer PRIMARY KEY, \n"
+		  + "user_id NOT NULL UNIQUE, \n"
+		  + "data integer NOT NULL, \n"
+		  + "level integer NOT NULL, \n"
+		  + "user_id_warned_by integer NOT NULL \n"
+		  + "); \n";
+		  stmt.execute(sql);
+		  sql = "CREATE TABLE IF NOT EXISTS permission ( \n"
+		  + "id integer PRIMARY KEY, \n"
+		  + "command_name text NOT NULL UNIQUE, \n"
+		  + "role_id integer, \n"
+		  + "user_id integer, \n"
+		  + "level integer NOT NULL \n"
+		  + "); \n";
+		  stmt.execute(sql);
+		
+			
+		  conn.commit();
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 	
 	//Our setup. My god, Abby is terrible at commenting
@@ -100,7 +179,7 @@ public class McDucky
     			System.out.printf("debug_level is not a valid number. switching to debug off\n");
     			debugLevel = 0;
     		}
-    		DebugLevel db = DebugLevel.getDebugLevel(debugLevel);
+    		DebugLevel dbug = DebugLevel.getDebugLevel(debugLevel);
     		
     		
     		//Let make sure we don't have an empty value
@@ -111,15 +190,30 @@ public class McDucky
     			return;
     		}
     		
-    		//Construct our Database
-    		Connection conn = null;
+    		String fileName = databaseName + ".db";
+    		//We'll check to see if our database exisit or not, if doesn't we need to make sure the tables are setup.
+    		final File dbFile = new File(fileName);
+    		boolean dbExists = false; 
+    		
+    		if(dbFile.exists())
+    		{
+    			dbExists = true;
+    		}
+    			
+    		//connect to our Database
+    		
     		try {
-    			String url = "jdbc:sqlite:" + databaseName + ".db";
+    			String url = "jdbc:sqlite:" + fileName;
     			conn = DriverManager.getConnection(url);
     			System.out.printf("Connection to SQLite database: %s has been established.\n", databaseName);
     		} catch (SQLException e) {
     			System.out.println(e.getMessage());
     		} 
+    		
+    		if(!dbExists)
+    		{
+    			setupTables();
+    		}
     		
     		
         //We construct a builder for a BOT account. If we wanted to use a CLIENT account
@@ -128,8 +222,8 @@ public class McDucky
         {
             new JDABuilder(AccountType.BOT)
                 .setToken(botToken)  //The token of the account that is logging in.
-                .addEventListener(new debugListener(db)) //An instance of a class to handle verbose event logging
-                .addEventListener(new eventListener())  //An instance of a class that will handle events.
+                .addEventListener(new debugListener(dbug)) //An instance of a class to handle verbose event logging
+                .addEventListener(new eventListener(conn))  //An instance of a class that will handle events.
                 .buildBlocking();  //There are 2 ways to login, blocking vs async. Blocking guarantees that JDA will be completely loaded.
         }
         catch (LoginException e)

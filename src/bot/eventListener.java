@@ -1,5 +1,6 @@
 package bot;
 
+import java.sql.Connection;
 import java.util.List;
 import java.util.Random;
 
@@ -14,6 +15,12 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 
 public class eventListener extends ListenerAdapter {
+	Connection conn;
+	
+	public eventListener(Connection conn) {
+		this.conn = conn;
+	}
+
 	/**
      * NOTE THE @Override!
      * This method is actually overriding a method in the ListenerAdapter class! We place an @Override annotation
@@ -35,15 +42,44 @@ public class eventListener extends ListenerAdapter {
 	@Override
 	public void onGuildMemberJoin(GuildMemberJoinEvent event)
 	{
-		
+		Member member = event.getMember();
+        Guild guild = event.getGuild();
+        //TODO Update this to be adjustable for now, we'll use event-log
+        
+        List<TextChannel> ltc = guild.getTextChannelsByName("event-log", true);
+        if (ltc.isEmpty())
+        {
+        	System.out.printf("Found no text channels with event-log");
+        	return;
+        }
+        
+        for(TextChannel tc : ltc)
+        {
+        	tc.sendMessage("Member " + member.getAsMention() + " has joined " + guild.getName() + ".").queue();
+   		}
 	}
 	
 	//Users leaving server
 	@Override
 	public void onGuildMemberLeave(GuildMemberLeaveEvent event)
 	{
-		
+		Member member = event.getMember();
+        Guild guild = event.getGuild();
+        //TODO Update this to be adjustable for now, we'll use event-log
+        List<TextChannel> ltc=  guild.getTextChannelsByName("event-log", true);
+
+        if (ltc.isEmpty())
+        {
+        	System.out.printf("Found no text channels with event-log");
+        	return;
+        }
+        
+        for(TextChannel tc : ltc)
+        {
+        	tc.sendMessage("Member `" + member.getEffectiveName() + "` has left " + guild.getName() + ".").queue();
+   		}
 	}
+	
 	
 	
 	//
