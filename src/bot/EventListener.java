@@ -129,61 +129,66 @@ public class EventListener extends ListenerAdapter {
 			guildPrefix = dbMan.getPrefix(guildID);
 		}
 		
-		//TODO break out to a function
-		String cmd = "setprefix";
-		Integer cmdCharCount = guildPrefix.length() + cmd.length();
-		String msgPrefix = msg.substring(0, guildPrefix.length());
-		String msgCmd = msg.substring(guildPrefix.length()).toLowerCase();
+		//Check Prefix
 		
-		String fixedMsgCmd = msgPrefix + msgCmd;
-		if(fixedMsgCmd.startsWith(guildPrefix + cmd))
-		{
-
-			//Check to see if we're either botAdminOwner or guild Owner
-			//TODO Permissions check
-			if(isBotAdminOwner(author.getUser()) || guildOwner)
+		//TODO break out to a function
+		
+		String msgPrefix = msg.substring(0, guildPrefix.length());
+		
+		String msgCmd = msg.substring(guildPrefix.length()).toLowerCase();
+		if(msgPrefix.equals(guildPrefix)) {
+			String cmd = "setprefix";
+			Integer cmdCharCount = guildPrefix.length() + cmd.length();
+			
+			if(msgCmd.startsWith(cmd))
 			{
-				//count the chars
-				String parameters = msg.substring(cmdCharCount);
-				//if we don't have any parameters, we're resetting to default
-				if(parameters.isEmpty())
+	
+				//Check to see if we're either botAdminOwner or guild Owner
+				//TODO Permissions check
+				if(isBotAdminOwner(author.getUser()) || guildOwner)
 				{
-					if(!guildPrefix.equals("!")) {
-						//check to make sure we're actually changing a default
-						Consumer<Message> callback = (response) -> {
-							try {
-								dbMan.setPrefix("!", guildID);
-							} catch (SQLException e) {
-								e.printStackTrace();
-								channel.sendMessage("I had an error, am I helpful creator?").queue();
-							}
-						};
-				    	channel.sendMessage("Resetting prefix to default").queue(callback); //Should I think about breaking this out to make localizion doable? 
-				    	//I don't really expect this bot to get popular but this might make the bot popular thing along non-english servers..
-					}
-				} else {
-					parameters = parameters.trim();
-					if(parameters.length() > 3) {
-						channel.sendMessage("I cannot set a prefix of 4 or more, I count " + String.valueOf(parameters.length())).queue();;
+					//count the chars
+					String parameters = msg.substring(cmdCharCount);
+					//if we don't have any parameters, we're resetting to default
+					if(parameters.isEmpty())
+					{
+						if(!guildPrefix.equals("!")) {
+							//check to make sure we're actually changing a default
+							Consumer<Message> callback = (response) -> {
+								try {
+									dbMan.setPrefix("!", guildID);
+								} catch (SQLException e) {
+									e.printStackTrace();
+									channel.sendMessage("I had an error, am I helpful creator?").queue();
+								}
+							};
+					    	channel.sendMessage("Resetting prefix to default").queue(callback); //Should I think about breaking this out to make localizion doable? 
+					    	//I don't really expect this bot to get popular but this might make the bot popular thing along non-english servers..
+						}
 					} else {
-						final String pm = parameters;
-						Consumer<Message> callback = (response) -> {
-							try {
-								dbMan.setPrefix(pm, guildID);
-							} catch (SQLException e) {
-								e.printStackTrace();
-								channel.sendMessage("I had an error setting Prefix, am I helpful here too creator?").queue();
-							}
-						};
-				    	channel.sendMessage("Setting prefix to " + parameters).queue(callback); //Should I think about breaking this out to make localizion doable?
+						parameters = parameters.trim();
+						if(parameters.length() > 3) {
+							channel.sendMessage("I cannot set a prefix of 4 or more, I count " + String.valueOf(parameters.length())).queue();;
+						} else {
+							final String pm = parameters;
+							Consumer<Message> callback = (response) -> {
+								try {
+									dbMan.setPrefix(pm, guildID);
+								} catch (SQLException e) {
+									e.printStackTrace();
+									channel.sendMessage("I had an error setting Prefix, am I helpful here too creator?").queue();
+								}
+							};
+					    	channel.sendMessage("Setting prefix to " + parameters).queue(callback); //Should I think about breaking this out to make localizion doable?
+						}
 					}
+					//User has the highest level of permission
+					
 				}
-				//User has the highest level of permission
+				
+			} else { // check for next command
 				
 			}
-			
-		} else { // check for next command
-			
 		}
 		
 		
