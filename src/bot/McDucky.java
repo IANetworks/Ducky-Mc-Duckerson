@@ -7,6 +7,8 @@ import net.dv8tion.jda.core.exceptions.RateLimitedException;
 
 import javax.security.auth.login.LoginException;
 
+import bot.database.manager.DatabaseManager;
+
 //Input/Output Imports
 import java.io.File;
 import java.io.FileInputStream;
@@ -93,50 +95,54 @@ public class McDucky
 		Statement stmt = conn.createStatement();
 		
 		  sql = "CREATE TABLE IF NOT EXISTS selfassignableroles ( \n"
-		  + "id integer PRIMARY KEY, \n"
-		  + "role_id integer NOT NULL UNIQUE, \n"
-		  + "\"group\" integer NOT NULL, \n"
-		  + "exclusive boolean NOT NULL \n"
-		  + ");\n";
+				  + "id integer PRIMARY KEY, \n"
+				  + "role_id integer NOT NULL UNIQUE, \n"
+				  + "\"group\" integer NOT NULL, \n"
+				  + "exclusive boolean NOT NULL \n"
+				  + ");\n";
 		  stmt.execute(sql);
 		  sql = "CREATE TABLE IF NOT EXISTS gamestat ( \n"
-		  + "id integer PRIMARY KEY, \n"
-		  + "user_id integer UNIQUE, \n"
-		  + "currency integer NOT NULL \n"
-		  + ");\n";
+				  + "id integer PRIMARY KEY, \n"
+				  + "user_id integer UNIQUE, \n"
+				  + "currency integer NOT NULL \n"
+				  + ");\n";
 		  stmt.execute(sql);
-		  sql = "CREATE TABLE IF NOT EXISTS variables ( \n"
-		  + "id integer PRIMARY KEY, \n"
-		  + "variable_name text NOT NULL, \n"
-		  + "data \n"
-		  + ");\n";
+		  sql = "CREATE TABLE variables ("
+				  + "id INTEGER PRIMARY KEY NOT NULL, \n"
+				  + "guild_id INTEGER NOT NULL UNIQUE, \n"
+				  + "greeting_msg STRING, \n"
+				  +"greeting_channel STRING, \n"
+				  + "logging_channel STRING, \n"
+				  + "prefix STRING  DEFAULT ('!') \n" 
+				  + ");";				  
 		  stmt.execute(sql);
 		  sql = "CREATE TABLE IF NOT EXISTS customreaction ( \n"
-		  + "id integer PRIMARY KEY, \n"
-		  + "name text NOT NULL UNIQUE, \n"
-		  + "respones text NOT NULL, \n"
-		  + "used_count integer NOT NULL \n "
-		  + ");\n";
+				  + "id integer PRIMARY KEY, \n"
+				  + "name text NOT NULL UNIQUE, \n"
+				  + "respones text NOT NULL, \n"
+				  + "used_count integer NOT NULL \n "
+				  + ");\n";
 		  stmt.execute(sql);
 		  sql = "CREATE TABLE IF NOT EXISTS warn ( \n"
-		  + "id integer PRIMARY KEY, \n"
-		  + "user_id NOT NULL UNIQUE, \n"
-		  + "data integer NOT NULL, \n"
-		  + "level integer NOT NULL, \n"
-		  + "user_id_warned_by integer NOT NULL \n"
-		  + "); \n";
+				  + "id integer PRIMARY KEY, \n"
+				  + "user_id NOT NULL UNIQUE, \n"
+				  + "data integer NOT NULL, \n"
+				  + "level integer NOT NULL, \n"
+				  + "user_id_warned_by integer NOT NULL \n"
+				  + "); \n";
 		  stmt.execute(sql);
 		  sql = "CREATE TABLE IF NOT EXISTS permission ( \n"
-		  + "id integer PRIMARY KEY, \n"
-		  + "command_name text NOT NULL UNIQUE, \n"
-		  + "role_id integer, \n"
-		  + "user_id integer, \n"
-		  + "level integer NOT NULL \n"
-		  + "); \n";
+				  + "id integer PRIMARY KEY, \n"
+				  + "command_name text NOT NULL UNIQUE, \n"
+				  + "role_id integer, \n"
+				  + "user_id integer, \n"
+				  + "level integer NOT NULL \n"
+				  + "); \n";
 		  stmt.execute(sql);
 		
 			
 		  conn.commit();
+		  conn.setAutoCommit(false);
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		}
@@ -167,54 +173,63 @@ public class McDucky
     		
     	}
     	
-    		//Load Config Values into program memory
-    		String botToken = configProps.getProperty("bot_token");
-    		String databaseName = configProps.getProperty("database_name", "default");
-    		
-    		int debugLevel;
-    		try {
-    			 debugLevel = Integer.parseInt(configProps.getProperty("debug_level"));
-    		} catch (NumberFormatException e)
-    		{
-    			System.out.printf("debug_level is not a valid number. switching to debug off\n");
-    			debugLevel = 0;
-    		}
-    		DebugLevel dbug = DebugLevel.getDebugLevel(debugLevel);
-    		
-    		
-    		//Let make sure we don't have an empty value
-    		if (botToken.isEmpty())
-    		{
-    			//We GOT to have this value
-    			System.out.printf("Bot Token Cannot be empty. Set bot token in the config.properties\n");
-    			return;
-    		}
-    		
-    		String fileName = databaseName + ".db";
-    		//We'll check to see if our database exisit or not, if doesn't we need to make sure the tables are setup.
-    		final File dbFile = new File(fileName);
-    		boolean dbExists = false; 
-    		
-    		if(dbFile.exists())
-    		{
-    			dbExists = true;
-    		}
-    			
-    		//connect to our Database
-    		
-    		try {
-    			String url = "jdbc:sqlite:" + fileName;
-    			conn = DriverManager.getConnection(url);
-    			System.out.printf("Connection to SQLite database: %s has been established.\n", databaseName);
-    		} catch (SQLException e) {
-    			System.out.println(e.getMessage());
-    		} 
-    		
-    		if(!dbExists)
-    		{
-    			setupTables();
-    		}
-    		
+		//Load Config Values into program memory
+		String botToken = configProps.getProperty("bot_token"); //Bot Token that is used to log into Discord
+		String databaseName = configProps.getProperty("database_name", "default"); //Database Name
+		String botAdmin = configProps.getProperty("bot_admin"); //In case Bot Owner is different from someone else is running the code, this is rare but code author situation this has happened 
+		DatabaseManager dbMan = null;
+		
+		int debugLevel;
+		try {
+			 debugLevel = Integer.parseInt(configProps.getProperty("debug_level"));
+		} catch (NumberFormatException e)
+		{
+			System.out.printf("debug_level is not a valid number. switching to debug off\n");
+			debugLevel = 0;
+		}
+		DebugLevel dbug = DebugLevel.getDebugLevel(debugLevel);
+		
+		
+		//Let make sure we don't have an empty value
+		if (botToken.isEmpty())
+		{
+			//We GOT to have this value
+			System.out.printf("Bot Token Cannot be empty. Set bot token in the config.properties\n");
+			return;
+		}
+		
+		String fileName = databaseName + ".db";
+		//We'll check to see if our database exisit or not, if doesn't we need to make sure the tables are setup.
+		final File dbFile = new File(fileName);
+		boolean dbExists = false; 
+		
+		if(dbFile.exists())
+		{
+			dbExists = true;
+		}
+			
+		//connect to our Database
+		
+		try {
+			String url = "jdbc:sqlite:" + fileName;
+			conn = DriverManager.getConnection(url);
+			System.out.printf("Connection to SQLite database: %s has been established.\n", databaseName);
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		} 
+		
+		if(!dbExists)
+		{
+			setupTables();
+		}
+		
+		//We setup a class for managing database infomation
+		try {
+			dbMan = new DatabaseManager(conn);
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
     		
         //We construct a builder for a BOT account. If we wanted to use a CLIENT account
         // we would use AccountType.CLIENT
@@ -223,7 +238,7 @@ public class McDucky
             new JDABuilder(AccountType.BOT)
                 .setToken(botToken)  //The token of the account that is logging in.
                 .addEventListener(new debugListener(dbug)) //An instance of a class to handle verbose event logging
-                .addEventListener(new eventListener(conn))  //An instance of a class that will handle events.
+                .addEventListener(new EventListener(dbMan, botAdmin))  //An instance of a class that will handle events.
                 .buildBlocking();  //There are 2 ways to login, blocking vs async. Blocking guarantees that JDA will be completely loaded.
         }
         catch (LoginException e)

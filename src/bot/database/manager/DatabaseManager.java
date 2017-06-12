@@ -1,6 +1,7 @@
 package bot.database.manager;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -24,8 +25,7 @@ public class DatabaseManager {
 		Statement stmt = this.conn.createStatement();
 		String sql = "SELECT * FROM variables";
 		ResultSet rs = stmt.executeQuery(sql);
-		if(rs.getFetchSize() > 0) //If we don't have any resultset, then nothing was set and listConfigDB is left empty, otherwise we loop
-		{
+		
 			while(rs.next()) {
 				ConfigDB configDB = new ConfigDB();
 				configDB.setGuildId(rs.getLong("guild_id"));
@@ -33,28 +33,69 @@ public class DatabaseManager {
 				configDB.setGreetingChannel(rs.getString("greeting_channel"));
 				configDB.setLoggingChannel(rs.getString("logging_channel"));
 				configDB.setPrefix(rs.getString("prefix"));
+				configDB.isStored = true;
 				
 				listConfigDB.put(configDB.getGuildId(), configDB);
 			}
-		}
 	}
 	
-	public ConfigDB getConfigDB(Long guildID) {
-		return this.listConfigDB.get(guildID);
-	}
+//	public ConfigDB getConfigDB(Long guildID) {
+//		if(listConfigDB.containsKey(guildID))
+//		{
+//			//we'll return the one we have stored
+//			return this.listConfigDB.get(guildID);
+//		} else {
+//			//We'll return a new ConfigDB so we'll never return null
+//			return new ConfigDB();
+//		}
+//	}
 	
 //	public void setConfigDB(ConfigDB configDB, Long guildID) {
 //		this.listConfigDB.put(guildID, configDB);
-//	}	
+//	}
 	
+	private ConfigDB getValues(Long guildID) {
+		
+		if(listConfigDB.containsKey(guildID))
+		{
+			//we'll return the one we have stored
+			return this.listConfigDB.get(guildID);
+		} else {
+			return new ConfigDB();
+		}
+	}
+	
+	public String getPrefix(Long guildID) {
+		return getValues(guildID).getPrefix();
+	}
+	
+	public String getGreeting(Long guildID) {
+		return getValues(guildID).getGreeting();
+	}
+	public String getGreetingChannel(Long guildID) {
+		return getValues(guildID).getGreetingChannel();
+	}
+	public String getLoggingChannel(Long guildID) {
+		return getValues(guildID).getLoggingChannel();
+	}
+	public boolean isStored(Long guildID) {
+		return getValues(guildID).isStored;
+	}
+	
+	//TODO break out repeated codes into a function
 	public void setPrefix(String prefix, Long guildID) throws SQLException {
 		//Fetch Database, if it exists, update, insert otherwise
 		Statement stmt = conn.createStatement();
-		String sql = "SELECT * FROM variables WHERE guild_id = " + guildID.toString();
+		String sql = "SELECT COUNT(*) FROM variables WHERE guild_id = " + guildID.toString();
 		ResultSet rs = stmt.executeQuery(sql);
 		String sql2;
+		Integer rowCount = 0;
 		
-		if (rs.getFetchSize() > 0)
+		while(rs.next())
+		{
+			rowCount = rs.getInt(1);	
+		}
+		if (rowCount > 0)
 		{
 			sql2 = "UPDATE variables SET prefix = '" + prefix + "' WHERE guild_id = " + guildID.toString();	
 		} else {
@@ -79,11 +120,16 @@ public class DatabaseManager {
 	public void setGreeting(String greeting, Long guildID) throws SQLException {
 		//Fetch Database, if it exists, update, insert otherwise
 		Statement stmt = conn.createStatement();
-		String sql = "SELECT * FROM variables WHERE guild_id = " + guildID.toString();
+		String sql = "SELECT COUNT(*) FROM variables WHERE guild_id = " + guildID.toString();
 		ResultSet rs = stmt.executeQuery(sql);
 		String sql2;
+		Integer rowCount = 0;
 		
-		if (rs.getFetchSize() > 0)
+		while(rs.next())
+		{
+			rowCount = rs.getInt(1);	
+		}
+		if (rowCount > 0)
 		{
 			sql2 = "UPDATE variables SET greeting_msg = '" + greeting + "' WHERE guild_id = " + guildID.toString();	
 		} else {
@@ -107,11 +153,16 @@ public class DatabaseManager {
 	public void setGreetingChannel(String greetingChannel, Long guildID) throws SQLException {
 		//Fetch Database, if it exists, update, insert otherwise
 		Statement stmt = conn.createStatement();
-		String sql = "SELECT * FROM variables WHERE guild_id = " + guildID.toString();
+		String sql = "SELECT COUNT(*) FROM variables WHERE guild_id = " + guildID.toString();
 		ResultSet rs = stmt.executeQuery(sql);
 		String sql2;
+		Integer rowCount = 0;
 		
-		if (rs.getFetchSize() > 0)
+		while(rs.next())
+		{
+			rowCount = rs.getInt(1);	
+		}
+		if (rowCount > 0)
 		{
 			sql2 = "UPDATE variables SET greeting_channel = '" + greetingChannel + "' WHERE guild_id = " + guildID.toString();	
 		} else {
@@ -135,11 +186,16 @@ public class DatabaseManager {
 	public void setLoggingChannel(String loggingChannel, Long guildID) throws SQLException {
 		//Fetch Database, if it exists, update, insert otherwise
 		Statement stmt = conn.createStatement();
-		String sql = "SELECT * FROM variables WHERE guild_id = " + guildID.toString();
+		String sql = "SELECT COUNT(*) FROM variables WHERE guild_id = " + guildID.toString();
 		ResultSet rs = stmt.executeQuery(sql);
 		String sql2;
+		Integer rowCount = 0;
 		
-		if (rs.getFetchSize() > 0)
+		while(rs.next())
+		{
+			rowCount = rs.getInt(1);	
+		}
+		if (rowCount > 0)
 		{
 			sql2 = "UPDATE variables SET logging_channel = '" + loggingChannel + "' WHERE guild_id = " + guildID.toString();	
 		} else {

@@ -6,6 +6,7 @@ public class ConfigDB {
 	private String greeting = null;
 	private String greetingChannel = null;
 	private String loggingChannel = null;
+	public boolean isStored = false;
 	
 	public String getPrefix() {
 		return prefix;
