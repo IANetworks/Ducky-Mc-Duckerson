@@ -1,8 +1,8 @@
 package bot;
 
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import bot.database.manager.DatabaseManager;
@@ -24,9 +24,9 @@ public class EventListener extends ListenerAdapter {
 	DatabaseManager dbMan;
 	String botAdmin;
 	User botOwner; //We'll hold the botOwner so we don't have to keep asking Discord for this
+	Map<String, CommandStructure> cmdList = new HashMap<String,CommandStructure>();
 	
 	//TODO STERILIZE USER INPUT! LIKE I WILL BITE FACES AND FLIP TABLES IF THIS ISN'T DONE
-	//TODO Lookup, how to defer down the constructors
 	public EventListener(DatabaseManager dbMan) {
 		selfStart(dbMan, null);
 	}
@@ -40,32 +40,22 @@ public class EventListener extends ListenerAdapter {
 		this.dbMan = dbMan;
 		this.botAdmin = botAdmin;
 		
-		//Here we fetch infomation from database as needed
+	}
+	
+	private void setupCommandList(ApplicationInfo info) 
+	{
+		botOwner = info.getOwner();
+		cmdList.put("setprefix", new SetPrefixCS(botAdmin, botOwner));	
 	}
 
-	/**
-     * NOTE THE @Override!
-     * This method is actually overriding a method in the ListenerAdapter class! We place an @Override annotation
-     *  right before any method that is overriding another to guarantee to ourselves that it is actually overriding
-     *  a method from a super class properly. You should do this every time you override a method!
-     *
-     * As stated above, this method is overriding a hook method in the
-     * {@link net.dv8tion.jda.core.hooks.ListenerAdapter ListenerAdapter} class. It has convience methods for all JDA events!
-     * Consider looking through the events it offers if you plan to use the ListenerAdapter.
-     *
-     * In this example, when a message is received it is printed to the console.
-     *
-     * @param event
-     *          An event containing information about a {@link net.dv8tion.jda.core.entities.Message Message} that was
-     *          sent in a channel.
-     */
+	
 	@Override
 	public void onReady(ReadyEvent event)
 	{
 		JDA jda = event.getJDA();
 		RestAction<ApplicationInfo> ra = jda.asBot().getApplicationInfo();
 		//fetch botOwner;
-		Consumer<ApplicationInfo> callback = (info) -> botOwner = info.getOwner();
+		Consumer<ApplicationInfo> callback = (info) -> setupCommandList(info);
 		ra.queue(callback);
 	}
 	
@@ -110,6 +100,7 @@ public class EventListener extends ListenerAdapter {
         	tc.sendMessage("Member `" + member.getEffectiveName() + "` has left " + guild.getName() + ".").queue();
    		}
 	}
+
 	
 	@Override
 	public void onGuildMessageReceived(GuildMessageReceivedEvent event)
@@ -120,7 +111,6 @@ public class EventListener extends ListenerAdapter {
 		String msg = message.getContent(); // String readable content of message
 		Guild guild = event.getGuild(); //Get info about the server this message is recieved on
 		Long guildID = guild.getIdLong(); //guild unique id
-		boolean guildOwner = author.isOwner(); // could also do guild.getOwner().isOwner();
 		
 		String guildPrefix = "!"; //Command prefix, Default to ! <- break this out?
 		
@@ -129,75 +119,53 @@ public class EventListener extends ListenerAdapter {
 			guildPrefix = dbMan.getPrefix(guildID);
 		}
 		
-		//Check Prefix
+		//Check to make sure our commands are setup (async can be a bitch)
 		
-		//TODO break out to a function
-		
+		//Check Prefix		
 		String msgPrefix = msg.substring(0, guildPrefix.length());
-		
 		String msgCmd = msg.substring(guildPrefix.length()).toLowerCase();
+
 		if(msgPrefix.equals(guildPrefix)) {
-			String cmd = "setprefix";
-			Integer cmdCharCount = guildPrefix.length() + cmd.length();
-			
-			if(msgCmd.startsWith(cmd))
+			if(cmdList.isEmpty())
 			{
-	
-				//Check to see if we're either botAdminOwner or guild Owner
-				//TODO Permissions check
-				if(isBotAdminOwner(author.getUser()) || guildOwner)
+				//Our commands list have not setup yet, we're still waiting for infomation from Discord
+				channel.sendMessage("My Command List has not been initiziated yet. Still waiting on infomation from Discord. (If this taking more than a minute, there's something wrong)").queue();
+			} else {
+				//Loop through our commands
+				for(String cmdName : cmdList.keySet())
 				{
-					//count the chars
-					String parameters = msg.substring(cmdCharCount);
-					//if we don't have any parameters, we're resetting to default
-					if(parameters.isEmpty())
-					{
-						if(!guildPrefix.equals("!")) {
-							//check to make sure we're actually changing a default
-							Consumer<Message> callback = (response) -> {
-								try {
-									dbMan.setPrefix("!", guildID);
-								} catch (SQLException e) {
-									e.printStackTrace();
-									channel.sendMessage("I had an error, am I helpful creator?").queue();
-								}
-							};
-					    	channel.sendMessage("Resetting prefix to default").queue(callback); //Should I think about breaking this out to make localizion doable? 
-					    	//I don't really expect this bot to get popular but this might make the bot popular thing along non-english servers..
-						}
-					} else {
-						parameters = parameters.trim();
-						if(parameters.length() > 3) {
-							channel.sendMessage("I cannot set a prefix of 4 or more, I count " + String.valueOf(parameters.length())).queue();;
-						} else {
-							final String pm = parameters;
-							Consumer<Message> callback = (response) -> {
-								try {
-									dbMan.setPrefix(pm, guildID);
-								} catch (SQLException e) {
-									e.printStackTrace();
-									channel.sendMessage("I had an error setting Prefix, am I helpful here too creator?").queue();
-								}
-							};
-					    	channel.sendMessage("Setting prefix to " + parameters).queue(callback); //Should I think about breaking this out to make localizion doable?
-						}
+					if(msgCmd.startsWith(cmdName)){
+						Integer cmdCharCount = guildPrefix.length() + cmdName.length();
+						String parameters = msg.substring(cmdCharCount);
+						
+						cmdList.get(cmdName).excute(dbMan, author, channel, parameters);
+						break;
 					}
-					//User has the highest level of permission
-					
 				}
-				
-			} else { // check for next command
-				
 			}
+			
 		}
 		
 		
 		
 	}
 	
-	
-	
-	//
+	/**
+     * NOTE THE @Override!
+     * This method is actually overriding a method in the ListenerAdapter class! We place an @Override annotation
+     *  right before any method that is overriding another to guarantee to ourselves that it is actually overriding
+     *  a method from a super class properly. You should do this every time you override a method!
+     *
+     * As stated above, this method is overriding a hook method in the
+     * {@link net.dv8tion.jda.core.hooks.ListenerAdapter ListenerAdapter} class. It has convience methods for all JDA events!
+     * Consider looking through the events it offers if you plan to use the ListenerAdapter.
+     *
+     * In this example, when a message is received it is printed to the console.
+     *
+     * @param event
+     *          An event containing information about a {@link net.dv8tion.jda.core.entities.Message Message} that was
+     *          sent in a channel.
+     */
 	
 	//All Messages recieved, from Private channels (DM), Public Channels(server/guild), Groups (Client only, we're using bot account so we can't do groups)
     @Override

@@ -1,0 +1,70 @@
+package bot;
+
+import java.sql.SQLException;
+import java.util.function.Consumer;
+
+import bot.database.manager.DatabaseManager;
+import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.MessageChannel;
+import net.dv8tion.jda.core.entities.User;
+
+public class SetPrefixCS extends CommandStructure {
+
+	public SetPrefixCS(String botAdmin, User botOwner) {
+		super("setprefix", botAdmin, botOwner);
+	}
+
+	@Override
+	void excute(DatabaseManager dbMan, Member author, MessageChannel channel, String parameters) {
+		//Check to see if we're either botAdminOwner or guild Owner
+		//TODO Permissions check
+		String curGuildPrefix = "!";
+		Long guildID = author.getGuild().getIdLong();
+		if(dbMan.getPrefix(guildID) != null)
+		{
+			curGuildPrefix = dbMan.getPrefix(guildID);
+		}
+		
+		if(hasPermission(author))
+		{
+			//count the chars
+			
+			//if we don't have any parameters, we're resetting to default
+			if(parameters.isEmpty())
+			{
+				if(!curGuildPrefix.equals("!")) {
+					//check to make sure we're actually changing a default
+					Consumer<Message> callback = (response) -> {
+						try {
+							dbMan.setPrefix("!", guildID);
+						} catch (SQLException e) {
+							e.printStackTrace();
+							channel.sendMessage("I had an error, am I helpful creator?").queue();
+						}
+					};
+			    	channel.sendMessage("Resetting prefix to default").queue(callback); //Should I think about breaking this out to make localizion doable? 
+			    	//I don't really expect this bot to get popular but this might make the bot popular thing along non-english servers..
+				}
+			} else {
+				parameters = parameters.trim();
+				if(parameters.length() > 3) {
+					channel.sendMessage("I cannot set a prefix of 4 or more, I count " + String.valueOf(parameters.length())).queue();;
+				} else {
+					final String pm = parameters;
+					Consumer<Message> callback = (response) -> {
+						try {
+							dbMan.setPrefix(pm, guildID);
+						} catch (SQLException e) {
+							e.printStackTrace();
+							channel.sendMessage("I had an error setting Prefix, am I helpful here too creator?").queue();
+						}
+					};
+			    	channel.sendMessage("Setting prefix to " + parameters).queue(callback); //Should I think about breaking this out to make localizion doable?
+				}
+			}
+		}
+		
+	}
+
+}

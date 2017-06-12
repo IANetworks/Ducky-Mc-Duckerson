@@ -113,6 +113,7 @@ public class McDucky
 				  + "greeting_msg STRING, \n"
 				  +"greeting_channel STRING, \n"
 				  + "logging_channel STRING, \n"
+				  + "logging_on INTEGER, \n"
 				  + "prefix STRING  DEFAULT ('!') \n" 
 				  + ");";				  
 		  stmt.execute(sql);
