@@ -45,7 +45,7 @@ public class EventListener extends ListenerAdapter {
 	private void setupCommandList(ApplicationInfo info) 
 	{
 		botOwner = info.getOwner();
-		cmdList.put("setprefix", new SetPrefixCS(botAdmin, botOwner));	
+		cmdList.put("setprefix", new SetPrefixCS(dbMan, botAdmin, botOwner));	
 	}
 
 	
@@ -138,16 +138,13 @@ public class EventListener extends ListenerAdapter {
 						Integer cmdCharCount = guildPrefix.length() + cmdName.length();
 						String parameters = msg.substring(cmdCharCount);
 						
-						cmdList.get(cmdName).excute(dbMan, author, channel, parameters);
-						break;
+						cmdList.get(cmdName).excute(author, channel, parameters);
+						break; //We found a matching command, let break out of the loop
 					}
 				}
 			}
 			
 		}
-		
-		
-		
 	}
 	
 	/**

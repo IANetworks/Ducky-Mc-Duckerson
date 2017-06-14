@@ -93,52 +93,35 @@ public class McDucky
 		String sql;
 		conn.setAutoCommit(false);
 		Statement stmt = conn.createStatement();
-		
-		  sql = "CREATE TABLE IF NOT EXISTS selfassignableroles ( \n"
-				  + "id integer PRIMARY KEY, \n"
-				  + "role_id integer NOT NULL UNIQUE, \n"
-				  + "\"group\" integer NOT NULL, \n"
-				  + "exclusive boolean NOT NULL \n"
-				  + ");\n";
-		  stmt.execute(sql);
-		  sql = "CREATE TABLE IF NOT EXISTS gamestat ( \n"
-				  + "id integer PRIMARY KEY, \n"
-				  + "user_id integer UNIQUE, \n"
-				  + "currency integer NOT NULL \n"
-				  + ");\n";
-		  stmt.execute(sql);
-		  sql = "CREATE TABLE variables ("
-				  + "id INTEGER PRIMARY KEY NOT NULL, \n"
-				  + "guild_id INTEGER NOT NULL UNIQUE, \n"
-				  + "greeting_msg STRING, \n"
-				  +"greeting_channel STRING, \n"
-				  + "logging_channel STRING, \n"
-				  + "logging_on INTEGER, \n"
-				  + "prefix STRING  DEFAULT ('!') \n" 
+		  sql = "CREATE TABLE variables ( \n"
+				  + "guild_id         INTEGER NOT NULL UNIQUE PRIMARY KEY, \n"
+				  + "logging_on       INTEGER NOT NULL DEFAULT (0), \n"
+				  + "logging_channel  STRING, \n"
+				  + "prefix           STRING  DEFAULT ('!'), \n"
+				  + "greet_on         INTEGER NOT NULL DEFAULT (0), \n"
+				  + "greeting_msg     STRING, \n"
+				  + "greeting_channel STRING \n"
 				  + ");";				  
 		  stmt.execute(sql);
-		  sql = "CREATE TABLE IF NOT EXISTS customreaction ( \n"
-				  + "id integer PRIMARY KEY, \n"
-				  + "name text NOT NULL UNIQUE, \n"
-				  + "respones text NOT NULL, \n"
-				  + "used_count integer NOT NULL \n "
-				  + ");\n";
+		  sql = "CREATE TABLE permission ( \n"
+				  + "command_id INTEGER PRIMARY KEY, \n"
+				  + "guild_id   INTEGER NOT NULL, \n"
+				  + "level_id   INTEGER NOT NULL \n"
+				  + ");";
 		  stmt.execute(sql);
-		  sql = "CREATE TABLE IF NOT EXISTS warn ( \n"
-				  + "id integer PRIMARY KEY, \n"
-				  + "user_id NOT NULL UNIQUE, \n"
-				  + "data integer NOT NULL, \n"
-				  + "level integer NOT NULL, \n"
-				  + "user_id_warned_by integer NOT NULL \n"
-				  + "); \n";
+		  sql= "CREATE TABLE permission_level ( \n"
+				  + "level_id   INTEGER PRIMARY KEY, \n"
+				  + "guild_id, \n"
+				  + "level_name STRING \n"
+				  +")";
 		  stmt.execute(sql);
-		  sql = "CREATE TABLE IF NOT EXISTS permission ( \n"
-				  + "id integer PRIMARY KEY, \n"
-				  + "command_name text NOT NULL UNIQUE, \n"
-				  + "role_id integer, \n"
-				  + "user_id integer, \n"
-				  + "level integer NOT NULL \n"
-				  + "); \n";
+		  sql= "CREATE TABLE permission_group ( \n"
+				  + "id       INTEGER PRIMARY KEY NOT NULL, \n"
+				  + "guild_id INTEGER NOT NULL, \n"
+				  + "level_id INTEGER NOT NULL, \n"
+				  + "user_id  INTEGER, \n"
+				  + "role_id  INTEGER \n"
+				  + ");";
 		  stmt.execute(sql);
 		
 			

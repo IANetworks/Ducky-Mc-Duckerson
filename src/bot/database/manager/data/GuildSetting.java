@@ -1,13 +1,27 @@
 package bot.database.manager.data;
 
-public class ConfigDB {
+public class GuildSetting {
 	private Long guildId = null;
 	private String prefix = null;
 	private String greeting = null;
 	private String greetingChannel = null;
 	private String loggingChannel = null;
+	private Boolean loggingOn = false;
+	private Boolean greetOn = false;
 	public boolean isStored = false;
 	
+	public Boolean isLoggingOn() {
+		return loggingOn;
+	}
+	public void setLoggingOn(Boolean loggingOn) {
+		this.loggingOn = loggingOn;
+	}
+	public Boolean isGreetOn() {
+		return greetOn;
+	}
+	public void setGreetOn(Boolean greetOn) {
+		this.greetOn = greetOn;
+	}
 	public String getPrefix() {
 		return prefix;
 	}

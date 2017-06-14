@@ -10,13 +10,15 @@ import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
 
 public class SetPrefixCS extends CommandStructure {
+	final static int cmdID = 1;
+	final static int cmdDefaultLevel = 1;
 
-	public SetPrefixCS(String botAdmin, User botOwner) {
-		super("setprefix", botAdmin, botOwner);
+	public SetPrefixCS(DatabaseManager dbMan, String botAdmin, User botOwner) {
+		super(dbMan, botAdmin, botOwner, "setprefix", cmdID, cmdDefaultLevel);
 	}
 
 	@Override
-	void excute(DatabaseManager dbMan, Member author, MessageChannel channel, String parameters) {
+	void excute(Member author, MessageChannel channel, String parameters) {
 		//Check to see if we're either botAdminOwner or guild Owner
 		//TODO Permissions check
 		String curGuildPrefix = "!";
