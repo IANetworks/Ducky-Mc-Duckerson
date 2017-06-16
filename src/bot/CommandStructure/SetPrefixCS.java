@@ -1,6 +1,7 @@
-package bot;
+package bot.CommandStructure;
 
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import bot.database.manager.DatabaseManager;
@@ -10,17 +11,17 @@ import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
 
 public class SetPrefixCS extends CommandStructure {
-	final static int cmdID = 1;
-	final static int cmdDefaultLevel = 1;
+	final static int commandID = 1;
+	final static int commandDefaultLevel = 1;
+	final static String commandName = "setprefix";
 
 	public SetPrefixCS(DatabaseManager dbMan, String botAdmin, User botOwner) {
-		super(dbMan, botAdmin, botOwner, "setprefix", cmdID, cmdDefaultLevel);
+		super(dbMan, botAdmin, botOwner, commandName, commandID, commandDefaultLevel);
 	}
 
 	@Override
-	void excute(Member author, MessageChannel channel, String parameters) {
+	public void excute(Member author, MessageChannel channel, Message message, String parameters, Map<String, CommandStructure> commandList) {
 		//Check to see if we're either botAdminOwner or guild Owner
-		//TODO Permissions check
 		String curGuildPrefix = "!";
 		Long guildID = author.getGuild().getIdLong();
 		if(dbMan.getPrefix(guildID) != null)
@@ -30,8 +31,6 @@ public class SetPrefixCS extends CommandStructure {
 		
 		if(hasPermission(author))
 		{
-			//count the chars
-			
 			//if we don't have any parameters, we're resetting to default
 			if(parameters.isEmpty())
 			{

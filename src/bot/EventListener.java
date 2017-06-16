@@ -5,17 +5,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import bot.CommandStructure.CommandStructure;
+import bot.CommandStructure.SetPrefixCS;
+import bot.CommandStructure.setCommandLevelCS;
+import bot.CommandStructure.setPermissionCS;
 import bot.database.manager.DatabaseManager;
 import net.dv8tion.jda.bot.entities.ApplicationInfo;
 import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
 import net.dv8tion.jda.core.events.message.*;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.exceptions.PermissionException;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.requests.RestAction;
 
@@ -45,7 +47,9 @@ public class EventListener extends ListenerAdapter {
 	private void setupCommandList(ApplicationInfo info) 
 	{
 		botOwner = info.getOwner();
-		cmdList.put("setprefix", new SetPrefixCS(dbMan, botAdmin, botOwner));	
+		cmdList.put("setprefix", new SetPrefixCS(dbMan, botAdmin, botOwner));
+		cmdList.put("setpermission", new setPermissionCS(dbMan, botAdmin, botOwner));
+		cmdList.put("setcommandlevel", new setCommandLevelCS(dbMan, botAdmin, botOwner));
 	}
 
 	
@@ -121,29 +125,31 @@ public class EventListener extends ListenerAdapter {
 		
 		//Check to make sure our commands are setup (async can be a bitch)
 		
-		//Check Prefix		
-		String msgPrefix = msg.substring(0, guildPrefix.length());
-		String msgCmd = msg.substring(guildPrefix.length()).toLowerCase();
-
-		if(msgPrefix.equals(guildPrefix)) {
-			if(cmdList.isEmpty())
-			{
-				//Our commands list have not setup yet, we're still waiting for infomation from Discord
-				channel.sendMessage("My Command List has not been initiziated yet. Still waiting on infomation from Discord. (If this taking more than a minute, there's something wrong)").queue();
-			} else {
-				//Loop through our commands
-				for(String cmdName : cmdList.keySet())
+		//Check Prefix
+		if (msg.length() > 0)
+		{
+			String msgPrefix = msg.substring(0, guildPrefix.length());
+			String msgCommand = msg.substring(guildPrefix.length()).toLowerCase();
+	
+			if(msgPrefix.equals(guildPrefix)) {
+				if(cmdList.isEmpty())
 				{
-					if(msgCmd.startsWith(cmdName)){
-						Integer cmdCharCount = guildPrefix.length() + cmdName.length();
-						String parameters = msg.substring(cmdCharCount);
-						
-						cmdList.get(cmdName).excute(author, channel, parameters);
-						break; //We found a matching command, let break out of the loop
+					//Our commands list have not setup yet, we're still waiting for infomation from Discord
+					channel.sendMessage("My Command List has not been initiziated yet. Still waiting on infomation from Discord. (If this taking more than a minute, there's something wrong)").queue();
+				} else {
+					//Loop through our commands
+					for(String commandName : cmdList.keySet())
+					{
+						if(msgCommand.startsWith(commandName)){
+							Integer cmdCharCount = guildPrefix.length() + commandName.length();
+							String parameters = msg.substring(cmdCharCount);
+							
+							cmdList.get(commandName).excute(author, channel, message, parameters, cmdList);
+							break; //We found a matching command, let break out of the loop
+						}
 					}
 				}
 			}
-			
 		}
 	}
 	

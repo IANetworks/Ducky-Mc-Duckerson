@@ -103,24 +103,24 @@ public class McDucky
 				  + "greeting_channel STRING \n"
 				  + ");";				  
 		  stmt.execute(sql);
-		  sql = "CREATE TABLE permission ( \n"
-				  + "command_id INTEGER PRIMARY KEY, \n"
+		  sql = "CREATE TABLE permission_commands ( \n"
+				  + "command_id INTEGER PRIMARY KEY NOT NULL, \n"
 				  + "guild_id   INTEGER NOT NULL, \n"
 				  + "level_id   INTEGER NOT NULL \n"
 				  + ");";
 		  stmt.execute(sql);
 		  sql= "CREATE TABLE permission_level ( \n"
-				  + "level_id   INTEGER PRIMARY KEY, \n"
-				  + "guild_id, \n"
-				  + "level_name STRING \n"
+				  + "level_id   INTEGER PRIMARY KEY NOT NULL, \n"
+				  + "guild_id NOT NULL, \n"
+				  + "level_name STRING NOT NULL\n"
 				  +")";
 		  stmt.execute(sql);
 		  sql= "CREATE TABLE permission_group ( \n"
 				  + "id       INTEGER PRIMARY KEY NOT NULL, \n"
 				  + "guild_id INTEGER NOT NULL, \n"
 				  + "level_id INTEGER NOT NULL, \n"
-				  + "user_id  INTEGER, \n"
-				  + "role_id  INTEGER \n"
+				  + "user_role_id NOT NULL INTEGER, \n"
+				  + "is_user  NOT NULL INTEGER \n"
 				  + ");";
 		  stmt.execute(sql);
 		

@@ -22,6 +22,8 @@ public class DatabaseManager {
 		this.conn = conn;
 		fetchGuildSettings(); //Fetch guild settings and store
 		fetchCmdLevels(); //Fetch list of custom permissions and store
+		fetchPermissionGroup(); //Fetch all the permissions
+		fetchPermissioLevel(); //Fetch all permission level names
 	}
 	
 	private void fetchGuildSettings() throws SQLException
@@ -48,29 +50,60 @@ public class DatabaseManager {
 	private void fetchCmdLevels() throws SQLException
 	{
 		Statement stmt = this.conn.createStatement();
-		String sql = "SELECT * FROM permission";
+		String sql = "SELECT * FROM permission_commands";
 		ResultSet rs = stmt.executeQuery(sql);
 		
 		while(rs.next()) {
-			Long guildId = rs.getLong("guild_id");
-			if(!listGuildPermissions.containsKey(guildId)) {
-				listGuildPermissions.put(guildId, new Permissions());
+			Long guildID = rs.getLong("guild_id");
+			if(!listGuildPermissions.containsKey(guildID)) {
+				listGuildPermissions.put(guildID, new Permissions());
 			}
-			listGuildPermissions.get(guildId).setLevel(rs.getInt("command_id"), rs.getInt("level_id"));
+			listGuildPermissions.get(guildID).setLevel(rs.getInt("command_id"), rs.getInt("level_id"));
 		}
 	}
 	
-	private void fetchPermissionGroup(Long guildID)
+	private void fetchPermissionGroup() throws SQLException
 	{
-		//Fetch list of permissions byUser and byLevel
+		Statement stmt = this.conn.createStatement();
+		String sql = "SELECT * FROM permission_group";
+		ResultSet rs = stmt.executeQuery(sql);
+		
+		while(rs.next())
+		{
+			Long guildID = rs.getLong("guild_id");
+			if(!listGuildPermissions.containsKey(guildID)) {
+				listGuildPermissions.put(guildID, new Permissions());
+			}
+			
+			Boolean user = rs.getBoolean("is_user");
+			if(user)
+			{
+				listGuildPermissions.get(guildID).setUserID(rs.getInt("level_id"), rs.getLong("user_role_id"));	
+			} else {
+				listGuildPermissions.get(guildID).setRoleID(rs.getInt("level_id"), rs.getLong("user_role_id"));
+			}
+		}
 	}
 	
-	private void fetchPermissioLevel(Long guildID)
+	private void fetchPermissioLevel() throws SQLException
 	{
 		//Fetch list of permission name defined by guild
+		Statement stmt = this.conn.createStatement();
+		String sql = "SELECT * FROM permission_level";
+		ResultSet rs = stmt.executeQuery(sql);
+		
+		while(rs.next())
+		{
+			Long guildID = rs.getLong("guild_id");
+			if(!listGuildPermissions.containsKey(guildID)) {
+				
+			}
+			
+			listGuildPermissions.get(guildID).setLevelNames(rs.getInt("level_id"), rs.getString("level_name"));
+		}
 	}
 	
-	private GuildSetting getValues(Long guildID) {
+	private GuildSetting getGuildValues(Long guildID) {
 		
 		if(listGuildSettings.containsKey(guildID))
 		{
@@ -80,33 +113,41 @@ public class DatabaseManager {
 			return new GuildSetting();
 		}
 	}
-	
-	public Integer getCommandLevel(Long guildID, Integer cmdID)
+	private Permissions getPermissionsValues(Long guildID)
 	{
-		return listGuildPermissions.get(guildID).getLevel(cmdID);
+		if(listGuildPermissions.containsKey(guildID))
+		{
+			return listGuildPermissions.get(guildID);
+		} else {
+			return new Permissions();
+		}
+	}
+	
+	public Integer getCommandLevel(Long guildID, Integer commandID)
+	{
+		return getPermissionsValues(guildID).getLevel(commandID);
 	}
 	
 	public String getPrefix(Long guildID) {
-		return getValues(guildID).getPrefix();
+		return getGuildValues(guildID).getPrefix();
 	}
-	
 	public String getGreeting(Long guildID) {
-		return getValues(guildID).getGreeting();
+		return getGuildValues(guildID).getGreeting();
 	}
 	public String getGreetingChannel(Long guildID) {
-		return getValues(guildID).getGreetingChannel();
+		return getGuildValues(guildID).getGreetingChannel();
 	}
 	public String getLoggingChannel(Long guildID) {
-		return getValues(guildID).getLoggingChannel();
+		return getGuildValues(guildID).getLoggingChannel();
 	}
 	public Boolean isLoggingOn(Long guildID) {
-		return getValues(guildID).isLoggingOn();
+		return getGuildValues(guildID).isLoggingOn();
 	}
 	public Boolean isGreetOn(Long guildID) {
-		return getValues(guildID).isGreetOn();
+		return getGuildValues(guildID).isGreetOn();
 	}
 	public boolean isStored(Long guildID) {
-		return getValues(guildID).isStored;
+		return getGuildValues(guildID).isStored;
 	}
 
 	//TODO I'm pretty sure this function can be improved even more
@@ -145,7 +186,7 @@ public class DatabaseManager {
 		}
 		if (rowCount > 0)
 		{
-			sql2 = "UPDATE variables SET "+ columnName + " = '" + columnValue + "' WHERE "+ searchColName + " = " + searchValue;	
+			sql2 = "UPDATE "+ tableName +" SET "+ columnName + " = '" + columnValue + "' WHERE "+ searchColName + " = " + searchValue;	
 		} else {
 			 sql2 = "INSERT INTO " + tableName + "(" + searchColName + ", " +  columnName + ") VALUES (" + searchValue + ", '" + values + "');";
 		}
@@ -153,15 +194,39 @@ public class DatabaseManager {
 		stmt.execute(sql2);
 	}
 	
-	public void setCommandLevel(Long guildID, Integer cmdID, Integer cmdLvl) throws SQLException {
-		String tableName = "permission"; 
-		String searchColName = "guild_id, command_id";  
-		String searchValue = guildID.toString() + ", " + cmdID; 
-		String columnName = "level_id"; 
-		Integer columnValue = cmdLvl;
+	public void setCommandLevel(Long guildID, Integer commandID, Integer commandLevel) throws SQLException {
+		//Set the levels of the commands
+		Statement stmt = conn.createStatement();
+		String sql = "SELECT COUNT(*) FROM permission_commands WHERE guild_id =" + guildID.toString() + " AND command_id = " + commandID.toString();
+		ResultSet rs = stmt.executeQuery(sql);
+		String sql2;
+		Integer rowCount = 0;
 		
-		setDatabaseValue(tableName, searchColName, searchValue, columnName, columnValue);
+		while(rs.next()) 
+		{
+			rowCount = rs.getInt(1);	
+		}
+		if (rowCount > 0)
+		{
+			sql2 = "UPDATE permission_commands SET level_id = " + commandLevel.toString() + " WHERE guild_id =" + guildID.toString() + " AND command_id = " + commandID.toString();	
+		} else {
+			 sql2 = "INSERT INTO permission_commands (guild_id, command_id, level_id) VALUES (" + guildID.toString() + ", " + commandID.toString() + ", " + commandLevel.toString()
+			 + ");"; 
+		}
 		
+		stmt.execute(sql2);
+		
+		//check list
+		if(listGuildPermissions.containsKey(guildID))
+		{
+			//if it does update
+			listGuildPermissions.get(guildID).setLevel(commandID, commandLevel);
+		} else {
+			//if it doesn't add new permission
+			Permissions newPermission= new Permissions();
+			newPermission.setLevel(commandID, commandLevel);
+			listGuildPermissions.put(guildID, newPermission);
+		}
 	}
 	
 	public void setLoggingOn(Boolean loggingOn, Long guildID) throws SQLException {
@@ -299,20 +364,128 @@ public class DatabaseManager {
 	}
 
 	public Integer getUserLevel(Long guildID, Long userID, List<Role> roleList) {
-		// TODO Auto-generated method stub
-		return null;
+		Permissions permissions = listGuildPermissions.get(guildID);
+		Integer userLevel = null;
+		Integer roleLevel = null;
+		//Set the levels of the commands
+		
+		if(permissions == null)
+		{
+			return null;
+		}
+		
+		userLevel = permissions.getUserLevel(userID);
+		System.out.println("User Level is: " + userLevel);
+		if(userLevel != null) return userLevel; //userLevel take prioty over roleLevel
+		
+		for(Role r : roleList)
+		{
+			Integer tempRole = permissions.getRoleLevel(r.getIdLong());
+			if(tempRole !=null );
+			{
+				if (roleLevel == null)
+				{
+					roleLevel = tempRole;
+				} else if (tempRole < roleLevel) { //See if tempRole is a higher ranked level
+					roleLevel = tempRole;
+				} 
+			}
+		}
+		
+		return roleLevel;
 	}
 	
-	public void setUserLevel(Long guildID, Integer levelID, Long userID) {
-		//Set User level in Permissions
+	public void setUserLevel(Long guildID, Integer levelID, Long userID)  throws SQLException {
+		Statement stmt = conn.createStatement();
+		String sql = "SELECT COUNT(*) FROM permission_group WHERE guild_id =" + guildID.toString() + " AND user_role_id = " + userID.toString()
+		+ " AND is_user = 1"; 
+		ResultSet rs = stmt.executeQuery(sql);
+		String sql2;
+		Integer rowCount = 0;
+		
+		while(rs.next()) 
+		{
+			rowCount = rs.getInt(1);	
+		}
+		if (rowCount > 0)
+		{
+			sql2 = "UPDATE permission_group SET level_id = " + levelID + " WHERE guild_id =" + guildID.toString() + " AND user_role_id = " + userID.toString()
+			+ " AND is_user = 1";	
+		} else {
+			 sql2 = "INSERT INTO permission_group (guild_id, level_id, user_role_id, is_user) VALUES (" + guildID.toString() + ", " + levelID.toString() + ", " + userID.toString() 
+			 + ", 1);";
+		}
+		
+		stmt.execute(sql2);
+		
+		if(listGuildPermissions.containsKey(guildID))
+		{
+			listGuildPermissions.get(guildID).setUserID(levelID, userID);
+		} else {
+			//if it doesn't add new permission
+			Permissions newPermission= new Permissions();
+			newPermission.setUserID(levelID, userID);
+			listGuildPermissions.put(guildID, newPermission);
+		}
 	}
 	
-	public void setRoleLevel(Long guildID, Integer levelID, Long roleID) {
+	public void setRoleLevel(Long guildID, Integer levelID, Long roleID)  throws SQLException {
+
+		Statement stmt = conn.createStatement();
+		String sql = "SELECT COUNT(*) FROM permission_group WHERE guild_id =" + guildID.toString() + " AND user_role_id = " + roleID.toString()
+		+ " AND is_user = 0"; 
+		ResultSet rs = stmt.executeQuery(sql);
+		String sql2;
+		Integer rowCount = 0;
+		
+		while(rs.next()) 
+		{
+			rowCount = rs.getInt(1);	
+		}
+		if (rowCount > 0)
+		{
+			sql2 = "UPDATE permission_group SET level_id = " + levelID + " WHERE guild_id =" + guildID.toString() + " AND user_role_id = " + roleID.toString()
+			+ " AND is_user = 0";	
+		} else {
+			 sql2 = "INSERT INTO permission_group (guild_id, level_id, user_role_id, is_user) VALUES (" + guildID.toString() + ", " + levelID.toString() + ", " + roleID.toString() 
+			 + ", 0);";
+		}
+		
+		stmt.execute(sql2);
+		
 		//Set Role level in permissions
+		if(listGuildPermissions.containsKey(guildID))
+		{
+			listGuildPermissions.get(guildID).setUserID(levelID, roleID);
+		} else {
+			//if it doesn't add new permission
+			Permissions newPermission= new Permissions();
+			newPermission.setUserID(levelID, roleID);
+			listGuildPermissions.put(guildID, newPermission);
+		}
 	}
 	
-	public void setLevelName(Long guildID, Integer levelID, String levelName) {
+	public void setLevelName(Long guildID, Integer levelID, String levelName)  throws SQLException {
+		//Set the levels of the commands
+		//TODO FIX THIS, USE AND IN WHERE CLAUSE
+		String tableName = "permission_commands"; 
+		String searchColName = "guild_id, level_id";  
+		String searchValue = guildID.toString() + ", " + levelID.toString(); 
+		String columnName = "level_id"; 
+		String columnValue = "'" + levelName + "'";
+		
+		setDatabaseValue(tableName, searchColName, searchValue, columnName, columnValue);
+		
 		//Set Permission Level Name
+		if(listGuildPermissions.containsKey(guildID))
+		{
+			listGuildPermissions.get(guildID).setLevelNames(levelID, levelName);
+		} else {
+			//if it doesn't add new permission
+			Permissions newPermission= new Permissions();
+			newPermission.setLevelNames(levelID, levelName);
+			listGuildPermissions.put(guildID, newPermission);
+		}
 	}
 	
 }
