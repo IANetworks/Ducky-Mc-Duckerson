@@ -71,7 +71,7 @@ public class McDucky
 	/**
 	 * 
 	 */
-	private void setupTables()
+	private void setupTables() throws SQLException
 	{
 		//TODO Permissions
 		//TODO Custom Responds !fb, etc
@@ -89,47 +89,45 @@ public class McDucky
 			//TODO Switch to throwables
 		}
 		//V there's a better way to do this but Abby's brain farts.. stinky
-		try {
-		String sql;
-		conn.setAutoCommit(false);
-		Statement stmt = conn.createStatement();
-		  sql = "CREATE TABLE variables ( \n"
-				  + "guild_id         INTEGER NOT NULL UNIQUE PRIMARY KEY, \n"
-				  + "logging_on       INTEGER NOT NULL DEFAULT (0), \n"
-				  + "logging_channel  STRING, \n"
-				  + "prefix           STRING  DEFAULT ('!'), \n"
-				  + "greet_on         INTEGER NOT NULL DEFAULT (0), \n"
-				  + "greeting_msg     STRING, \n"
-				  + "greeting_channel STRING \n"
-				  + ");";				  
-		  stmt.execute(sql);
-		  sql = "CREATE TABLE permission_commands ( \n"
-				  + "command_id INTEGER PRIMARY KEY NOT NULL, \n"
-				  + "guild_id   INTEGER NOT NULL, \n"
-				  + "level_id   INTEGER NOT NULL \n"
-				  + ");";
-		  stmt.execute(sql);
-		  sql= "CREATE TABLE permission_level ( \n"
-				  + "level_id   INTEGER PRIMARY KEY NOT NULL, \n"
-				  + "guild_id NOT NULL, \n"
-				  + "level_name STRING NOT NULL\n"
-				  +")";
-		  stmt.execute(sql);
-		  sql= "CREATE TABLE permission_group ( \n"
-				  + "id       INTEGER PRIMARY KEY NOT NULL, \n"
-				  + "guild_id INTEGER NOT NULL, \n"
-				  + "level_id INTEGER NOT NULL, \n"
-				  + "user_role_id NOT NULL INTEGER, \n"
-				  + "is_user  NOT NULL INTEGER \n"
-				  + ");";
-		  stmt.execute(sql);
 		
-			
-		  conn.commit();
-		  conn.setAutoCommit(false);
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-		}
+	String sql;
+	conn.setAutoCommit(false);
+	Statement stmt = conn.createStatement();
+	  sql = "CREATE TABLE variables ( \n"
+			  + "guild_id         INTEGER NOT NULL UNIQUE PRIMARY KEY, \n"
+			  + "logging_on       INTEGER NOT NULL DEFAULT (0), \n"
+			  + "logging_channel  STRING, \n"
+			  + "prefix           STRING  DEFAULT ('!'), \n"
+			  + "greet_on         INTEGER NOT NULL DEFAULT (0), \n"
+			  + "greeting_msg     STRING, \n"
+			  + "greeting_channel STRING \n"
+			  + ");";				  
+	  stmt.execute(sql);
+	  sql = "CREATE TABLE permission_commands ( \n"
+			  + "command_id INTEGER PRIMARY KEY NOT NULL, \n"
+			  + "guild_id   INTEGER NOT NULL, \n"
+			  + "level_id   INTEGER NOT NULL \n"
+			  + ");";
+	  stmt.execute(sql);
+	  sql= "CREATE TABLE permission_level ( \n"
+			  + "level_id   INTEGER PRIMARY KEY NOT NULL, \n"
+			  + "guild_id NOT NULL, \n"
+			  + "level_name STRING NOT NULL\n"
+			  +")";
+	  stmt.execute(sql);
+	  sql= "CREATE TABLE permission_group ( \n"
+			  + "id INTEGER PRIMARY KEY NOT NULL, \n"
+			  + "guild_id INTEGER NOT NULL, \n"
+			  + "level_id INTEGER NOT NULL, \n"
+			  + "user_role_id INTEGER NOT NULL, \n"
+			  + "is_user INTEGER NOT NULL  \n"
+			  + ");";
+	  stmt.execute(sql);
+	
+		
+	  conn.commit();
+	  conn.setAutoCommit(false);
+		
 	}
 	
 	//Our setup. My god, Abby is terrible at commenting
@@ -204,7 +202,15 @@ public class McDucky
 		
 		if(!dbExists)
 		{
-			setupTables();
+			try {
+				setupTables();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				// Destory the database so that it'll reset up the bot next time
+				dbFile.delete();
+				e.printStackTrace();
+				return;
+			}
 		}
 		
 		//We setup a class for managing database infomation
