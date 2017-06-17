@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import bot.CommandStructure.CommandStructure;
+import bot.CommandStructure.Profile;
 import bot.CommandStructure.SetPrefixCS;
 import bot.CommandStructure.setCommandLevelCS;
 import bot.CommandStructure.setPermissionCS;
@@ -50,6 +51,7 @@ public class EventListener extends ListenerAdapter {
 		cmdList.put("setprefix", new SetPrefixCS(dbMan, botAdmin, botOwner));
 		cmdList.put("setpermission", new setPermissionCS(dbMan, botAdmin, botOwner));
 		cmdList.put("setcommandlevel", new setCommandLevelCS(dbMan, botAdmin, botOwner));
+		cmdList.put("profile", new Profile(dbMan,botAdmin, botOwner));
 	}
 
 	
