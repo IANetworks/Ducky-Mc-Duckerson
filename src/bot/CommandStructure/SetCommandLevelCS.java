@@ -24,7 +24,7 @@ public class SetCommandLevelCS extends CommandStructure {
 		{
 			if(parameters.isEmpty())
 			{
-				channel.sendMessage("I need a command name to assign a new level. Syntax is: setcommandlevel [command name] [level name]").queue();
+				channel.sendMessage("I need a command name to assign a new level. Syntax is: "+ dbMan.getPrefix(guildID) + commandName + " [command name] [level name]").queue();
 			}
 			String[] paraList = parameters.split(" ");
 			String cmdID = paraList[1];
@@ -34,7 +34,7 @@ public class SetCommandLevelCS extends CommandStructure {
 				if(commandList.containsKey(cmdID))
 				{
 					try {
-						dbMan.setCommandLevel(guildID, commandList.get(cmdID).cmdID, commandLevel);
+						dbMan.setCommandLevel(guildID, commandList.get(cmdID).commandID, commandLevel);
 						channel.sendMessage("I have assigned level: "+ dbMan.getLevelName(guildID, commandLevel) + " to the command: " + cmdID).queue();
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
@@ -45,10 +45,16 @@ public class SetCommandLevelCS extends CommandStructure {
 					
 				}	
 			} else {
-				channel.sendMessage("This doesn't look quiet right. Syntax is: setcommandlevel [command name] [level name]").queue();
+				channel.sendMessage("This doesn't look quiet right. Syntax is: "+ dbMan.getPrefix(guildID) + commandName + " [command name] [level name]").queue();
 			}
 		}
 
+	}
+
+	@Override
+	public String help(Long guildID) {
+		return "Change the permission required for commands "+ dbMan.getPrefix(guildID) + commandName + " [command name] [level name]";
+		
 	}
 
 }

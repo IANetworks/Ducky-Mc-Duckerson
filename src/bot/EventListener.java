@@ -5,13 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import bot.CommandStructure.CommandStructure;
-import bot.CommandStructure.PreloadCS;
-import bot.CommandStructure.ProfileCS;
-import bot.CommandStructure.SetPrefixCS;
-import bot.CommandStructure.SetCommandLevelCS;
-import bot.CommandStructure.SetPermissionByUserCS;
-import bot.CommandStructure.SetPermissionsByRoleCS;
+import bot.CommandStructure.*;
 import bot.database.manager.DatabaseManager;
 import net.dv8tion.jda.bot.entities.ApplicationInfo;
 import net.dv8tion.jda.core.JDA;
@@ -63,6 +57,8 @@ public class EventListener extends ListenerAdapter {
 		cmdList.put(name, new PreloadCS(dbMan,botAdmin, botOwner, name, 5, 1));
 		name = "setlevelbyrole";
 		cmdList.put(name, new SetPermissionsByRoleCS(dbMan,botAdmin, botOwner, name, 6, 1));
+		name = "help";
+		cmdList.put(name, new HelpCS(dbMan,botAdmin, botOwner, name, 7, 999));
 	}
 
 	

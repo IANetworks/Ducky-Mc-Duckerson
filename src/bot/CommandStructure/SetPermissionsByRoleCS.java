@@ -106,4 +106,10 @@ public class SetPermissionsByRoleCS extends CommandStructure {
 
 	}
 
+	@Override
+	public String help(Long guildID) {
+		return "Set Permissions by Roles, you can either @ mention role names or use role names, role names are case senetive " + dbMan.getPrefix(guildID) + commandName + " [level] [role name]";
+		
+	}
+
 }

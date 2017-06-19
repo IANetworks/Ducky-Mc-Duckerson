@@ -65,4 +65,11 @@ public class SetPrefixCS extends CommandStructure {
 		
 	}
 
+	@Override
+	public String help(Long guildID) {
+		return "Change the prefix used before a command. Prefix is limited to 3 characters, not applying any prefix will reset to default !" 
+	+ dbMan.getPrefix(guildID) + commandName + " <prefix>";
+		
+	}
+
 }

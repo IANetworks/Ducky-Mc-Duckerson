@@ -73,4 +73,9 @@ public class SetPermissionByUserCS extends CommandStructure {
 
 	}
 
+	@Override
+	public String help(Long guildID) {
+		return "Set Permissions by User, use @mention to assign permission to users, " + dbMan.getPrefix(guildID) + commandName + " [level] [@mention]";
+	}
+
 }

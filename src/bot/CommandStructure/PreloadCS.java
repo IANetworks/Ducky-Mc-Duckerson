@@ -36,4 +36,10 @@ public class PreloadCS extends CommandStructure {
 
 	}
 
+	@Override
+	public String help(Long GuildID) {
+		return "Special Command for loading default values. Used when bot joins a server and the bot did not automantically assign the default values into database";
+		
+	}
+
 }

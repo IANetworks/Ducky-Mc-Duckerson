@@ -9,8 +9,8 @@ import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
 
 public abstract class CommandStructure {
-	public String cmdName; //Store the command name here.
-	public int cmdID;
+	public String commandName; //Store the command name here.
+	public int commandID;
 	public String botAdmin; //If botAdmin is set, we'll hold it here since botAdmin and Owner have highest level (0)
 	public User botOwner; //We hold the botOwner here so we don't have to fetch it
 	public int permissionLevel; //Defaut permission level
@@ -20,8 +20,8 @@ public abstract class CommandStructure {
 	{
 		this.dbMan = dbMan;
 		this.permissionLevel = commandDefaultLevel;
-		this.cmdID = commandID;
-		this.cmdName = commandName; 
+		this.commandID = commandID;
+		this.commandName = commandName; 
 		this.botAdmin = botAdmin;
 		this.botOwner = botOwner;
 	}
@@ -80,7 +80,7 @@ public abstract class CommandStructure {
 	
 	protected boolean hasPermission(Member author)
 	{
-		Integer commandLevel = dbMan.getCommandLevel(author.getGuild().getIdLong(), cmdID);
+		Integer commandLevel = dbMan.getCommandLevel(author.getGuild().getIdLong(), commandID);
 		
 		boolean hasPermission = false;
 		if(commandLevel == null) //No Custom permission was set, so we'll use the self assigned level
@@ -118,4 +118,6 @@ public abstract class CommandStructure {
 	
 	
 	public abstract void excute(Member author, MessageChannel channel, Message message, String parameters, Map<String, CommandStructure> commandList);
+
+	public abstract String help(Long GuildID);
 }

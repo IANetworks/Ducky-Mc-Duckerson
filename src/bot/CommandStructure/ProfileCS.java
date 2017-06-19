@@ -67,4 +67,10 @@ public class ProfileCS extends CommandStructure {
 		channel.sendMessage(embed.build()).queue();
 	}
 
+	@Override
+	public String help(Long guildID) {
+		return "Return users profiles. No mention, will return your profile.  @mention user will return their profile. " + dbMan.getPrefix(guildID) + commandName + " <@mention>";
+		
+	}
+
 }
