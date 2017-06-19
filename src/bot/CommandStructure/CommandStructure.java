@@ -56,17 +56,10 @@ public abstract class CommandStructure {
 		return (userwithDiscriminator.equals(botAdmin) && botAdmin != null) || (botOwner.getIdLong() == author.getIdLong());
 	}
 	
-	protected boolean hasPermission(Member author)
+	protected Integer getPermissionLevel(Member author)
 	{
-		Integer commandLevel = dbMan.getCommandLevel(author.getGuild().getIdLong(), cmdID);
 		Integer userLevel = dbMan.getUserLevel(author.getGuild().getIdLong(), author.getUser().getIdLong(), author.getRoles());
-		
-		boolean hasPermission = false;
-		if(commandLevel == null) //No Custom permission was set, so we'll use the self assigned level
-		{
-			commandLevel = this.permissionLevel;
-		}
-		
+
 		if(userLevel == null)
 		{
 			userLevel = 999; //default everyone level
@@ -81,7 +74,41 @@ public abstract class CommandStructure {
 		{
 			userLevel = 0; //bot Admin/Owner
 		}
+		
+		return userLevel;
+	}
+	
+	protected boolean hasPermission(Member author)
+	{
+		Integer commandLevel = dbMan.getCommandLevel(author.getGuild().getIdLong(), cmdID);
+		
+		boolean hasPermission = false;
+		if(commandLevel == null) //No Custom permission was set, so we'll use the self assigned level
+		{
+			commandLevel = this.permissionLevel;
+		}
+		
+		Integer userLevel =  getPermissionLevel(author);
+		
 		if(userLevel <= commandLevel) //Is User level lower than command level? (lower number = higher ranked)
+		{
+			hasPermission = true;
+		}
+		
+		return hasPermission;
+	}
+	
+	protected boolean hasPermission(Member author, Integer levelID)
+	{		
+		boolean hasPermission = false;
+		if(levelID == null) //No Custom permission was set, so we'll use the self assigned level
+		{
+			levelID = this.permissionLevel;
+		}
+		
+		Integer userLevel =  getPermissionLevel(author);
+		
+		if(userLevel <= levelID) //Is User level lower than command level? (lower number = higher ranked)
 		{
 			hasPermission = true;
 		}

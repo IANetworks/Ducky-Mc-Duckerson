@@ -15,6 +15,7 @@ public class Permissions {
 			return new ListOfPermissions();
 		}
 	}
+	
 	public String getLevelNames(Integer permissionLevelID) {
 		return getPermissionValues(permissionLevelID).getPermissionLevelName();
 	}

@@ -9,12 +9,10 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
 
-public class setCommandLevelCS extends CommandStructure {
-	final static int commandID = 3;
-	final static int commandDefaultLevel = 1;
-	final static String commandName = "setcommandlevel";
+public class SetCommandLevelCS extends CommandStructure {
 	
-	public setCommandLevelCS(DatabaseManager dbMan, String botAdmin, User botOwner) {
+	public SetCommandLevelCS(DatabaseManager dbMan, String botAdmin, User botOwner, String commandName, int commandID,
+			int commandDefaultLevel) {
 		super(dbMan, botAdmin, botOwner, commandName, commandID, commandDefaultLevel);
 	}
 
@@ -37,7 +35,7 @@ public class setCommandLevelCS extends CommandStructure {
 				{
 					try {
 						dbMan.setCommandLevel(guildID, commandList.get(cmdID).cmdID, commandLevel);
-						channel.sendMessage("I have assigned level: "+ commandLevel.toString() + " to this " + cmdID).queue();
+						channel.sendMessage("I have assigned level: "+ dbMan.getLevelName(guildID, commandLevel) + " to the command: " + cmdID).queue();
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

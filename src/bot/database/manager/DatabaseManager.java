@@ -1,6 +1,7 @@
 package bot.database.manager;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -11,7 +12,6 @@ import java.util.Map;
 import bot.database.manager.data.GuildSetting;
 import bot.database.manager.data.Permissions;
 import net.dv8tion.jda.core.entities.Role;
-
 
 public class DatabaseManager {
 	private Connection conn;
@@ -52,7 +52,6 @@ public class DatabaseManager {
 		Statement stmt = this.conn.createStatement();
 		String sql = "SELECT * FROM permission_commands";
 		ResultSet rs = stmt.executeQuery(sql);
-		
 		while(rs.next()) {
 			Long guildID = rs.getLong("guild_id");
 			if(!listGuildPermissions.containsKey(guildID)) {
@@ -96,7 +95,7 @@ public class DatabaseManager {
 		{
 			Long guildID = rs.getLong("guild_id");
 			if(!listGuildPermissions.containsKey(guildID)) {
-				
+				listGuildPermissions.put(guildID, new Permissions());
 			}
 			
 			listGuildPermissions.get(guildID).setLevelNames(rs.getInt("level_id"), rs.getString("level_name"));
@@ -122,12 +121,10 @@ public class DatabaseManager {
 			return new Permissions();
 		}
 	}
-	
 	public Integer getCommandLevel(Long guildID, Integer commandID)
 	{
 		return getPermissionsValues(guildID).getLevel(commandID);
 	}
-	
 	public String getPrefix(Long guildID) {
 		return getGuildValues(guildID).getPrefix();
 	}
@@ -149,72 +146,69 @@ public class DatabaseManager {
 	public boolean isStored(Long guildID) {
 		return getGuildValues(guildID).isStored;
 	}
-
-	//TODO I'm pretty sure this function can be improved even more
-	private void setDatabaseValue(String tableName, String searchColName,  String searchValue, String columnName, Object columnValue) throws SQLException
+	public String getLevelName(Long guildID, Integer levelID)
 	{
-		String values;
-		Statement stmt = conn.createStatement();
-		String sql = "SELECT COUNT(*) FROM "+ tableName + " WHERE " + searchColName + " = " + searchValue; 
-		ResultSet rs = stmt.executeQuery(sql);
-		String sql2;
-		Integer rowCount = 0;
-		
-		if(columnValue instanceof String)
+		String thisThing = getPermissionsValues(guildID).getLevelNames(levelID);
+		if (thisThing == null)
 		{
-			values = "'" + columnValue.toString() + "'";
-		} else if (columnValue instanceof Integer)
-		{
-			values = columnValue.toString();
-		} else if(columnValue instanceof Boolean)
-		{
-			if(((Boolean) columnValue).booleanValue())
-			{
-				values = "1";
-			} else {
-				values = "0";
-			}
-		} else {
-			values = "";
-			System.err.println("Unrecognised Type");
-			return;
+			return levelID.toString();
 		}
 		
-		while(rs.next()) 
-		{
-			rowCount = rs.getInt(1);	
-		}
-		if (rowCount > 0)
-		{
-			sql2 = "UPDATE "+ tableName +" SET "+ columnName + " = '" + columnValue + "' WHERE "+ searchColName + " = " + searchValue;	
-		} else {
-			 sql2 = "INSERT INTO " + tableName + "(" + searchColName + ", " +  columnName + ") VALUES (" + searchValue + ", '" + values + "');";
-		}
-		
-		stmt.execute(sql2);
+		return thisThing;
 	}
+	
+	public boolean setNewPermissionNames(Long guildID) throws SQLException
+	{
+		Statement stmt;
+		Integer count = null;
+		stmt = this.conn.createStatement();
+		String sql = "SELECT COUNT(*) FROM permission_level WHERE guild_id = " + guildID; //We're expecting no result returned, if there's nothing then we'll set up predefined list
+		ResultSet rs = stmt.executeQuery(sql);
+		while(rs.next())
+		{
+			count = rs.getInt(1);
+		}
+		
+		if(count == 0)
+		{
+			//LOAD 'EM UP
+			setLevelName(guildID, 0, "Bot Adminstrator");
+			setLevelName(guildID, 1, "Server Owner");
+			setLevelName(guildID, 2, "Assigned Adminstrator");
+			setLevelName(guildID, 3, "Assigned Moderator");
+			setLevelName(guildID, 4, "Assigned Operator");
+			setLevelName(guildID, 999, "User");
+			setLevelName(guildID, 9999, "Banned");
+			return true;
+		}
+		
+		return false;
+	}
+
 	
 	public void setCommandLevel(Long guildID, Integer commandID, Integer commandLevel) throws SQLException {
 		//Set the levels of the commands
-		Statement stmt = conn.createStatement();
-		String sql = "SELECT COUNT(*) FROM permission_commands WHERE guild_id =" + guildID.toString() + " AND command_id = " + commandID.toString();
-		ResultSet rs = stmt.executeQuery(sql);
-		String sql2;
+		String sql = "SELECT COUNT(*) FROM permission_commands WHERE guild_id = ? AND command_id = ?";
+		PreparedStatement pstmt = conn.prepareStatement(sql); 
+		pstmt.setLong(1, guildID);
+		pstmt.setInt(2, commandID);
+		ResultSet rs = pstmt.executeQuery();
 		Integer rowCount = 0;
 		
-		while(rs.next()) 
-		{
-			rowCount = rs.getInt(1);	
-		}
+		while(rs.next()) rowCount = rs.getInt(1);
 		if (rowCount > 0)
 		{
-			sql2 = "UPDATE permission_commands SET level_id = " + commandLevel.toString() + " WHERE guild_id =" + guildID.toString() + " AND command_id = " + commandID.toString();	
+			sql = "UPDATE permission_commands SET level_id = ? WHERE guild_id = ? AND command_id = ?";	
 		} else {
-			 sql2 = "INSERT INTO permission_commands (guild_id, command_id, level_id) VALUES (" + guildID.toString() + ", " + commandID.toString() + ", " + commandLevel.toString()
-			 + ");"; 
+			 sql = "INSERT INTO permission_commands (level_id, guild_id, command_id) VALUES (?, ?, ?)"; 
 		}
 		
-		stmt.execute(sql2);
+		pstmt = conn.prepareStatement(sql);
+		pstmt.setInt(1, commandLevel);
+		pstmt.setLong(2, guildID);
+		pstmt.setInt(3, commandID);
+		
+		pstmt.execute();
 		
 		//check list
 		if(listGuildPermissions.containsKey(guildID))
@@ -229,15 +223,26 @@ public class DatabaseManager {
 		}
 	}
 	
-	public void setLoggingOn(Boolean loggingOn, Long guildID) throws SQLException {
-		//Fetch Database, if it exists, update, insert otherwise
-		String tableName = "variables"; 
-		String searchColName = "guild_id";  
-		String searchValue = guildID.toString(); 
-		String columnName = "logging_on"; 
-		Boolean columnValue = loggingOn;
+	public void setLoggingOn(Boolean loggingOn, Long guildID) throws SQLException {		
+		String sql = "SELECT COUNT(*) FROM variables WHERE guild_id = ?";
+		PreparedStatement pstmt = conn.prepareStatement(sql); 
+		pstmt.setLong(1, guildID);
+		ResultSet rs = pstmt.executeQuery();
+		Integer rowCount = 0;
 		
-		setDatabaseValue(tableName, searchColName, searchValue, columnName, columnValue);
+		while(rs.next()) rowCount = rs.getInt(1);
+		if (rowCount > 0)
+		{
+			sql = "UPDATE variables SET logging_on = ? WHERE guild_id = ?";	
+		} else {
+			 sql = "INSERT INTO variables (logging_on, guild_id) VALUES (?, ?)"; 
+		}
+		
+		pstmt = conn.prepareStatement(sql);
+		pstmt.setLong(2, guildID);
+		pstmt.setBoolean(1, loggingOn);
+		
+		pstmt.execute();
 		
 		//Check List
 		if(listGuildSettings.containsKey(guildID))
@@ -253,14 +258,25 @@ public class DatabaseManager {
 	}
 	
 	public void setGreetOn(Boolean greetOn, Long guildID) throws SQLException {
-		//Fetch Database, if it exists, update, insert otherwise
-		String tableName = "variables"; 
-		String searchColName = "guild_id";  
-		String searchValue = guildID.toString(); 
-		String columnName = "greet_on"; 
-		Boolean columnValue = greetOn;
+		String sql = "SELECT COUNT(*) FROM variables WHERE guild_id = ?";
+		PreparedStatement pstmt = conn.prepareStatement(sql); 
+		pstmt.setLong(1, guildID);
+		ResultSet rs = pstmt.executeQuery();
+		Integer rowCount = 0;
 		
-		setDatabaseValue(tableName, searchColName, searchValue, columnName, columnValue);
+		while(rs.next()) rowCount = rs.getInt(1);
+		if (rowCount > 0)
+		{
+			sql = "UPDATE variables SET greet_on = ? WHERE guild_id = ?";	
+		} else {
+			 sql = "INSERT INTO variables (greet_on, guild_id) VALUES (?, ?)"; 
+		}
+		
+		pstmt = conn.prepareStatement(sql);
+		pstmt.setLong(2, guildID);
+		pstmt.setBoolean(1, greetOn);
+		
+		pstmt.execute();
 		
 		//Check List
 		if(listGuildSettings.containsKey(guildID))
@@ -276,14 +292,25 @@ public class DatabaseManager {
 	}
 	
 	public void setPrefix(String prefix, Long guildID) throws SQLException {
-		//Fetch Database, if it exists, update, insert otherwise
-		String tableName = "variables"; 
-		String searchColName = "guild_id";  
-		String searchValue = guildID.toString(); 
-		String columnName = "prefix"; 
-		String columnValue = prefix;
+		String sql = "SELECT COUNT(*) FROM variables WHERE guild_id = ?";
+		PreparedStatement pstmt = conn.prepareStatement(sql); 
+		pstmt.setLong(1, guildID);
+		ResultSet rs = pstmt.executeQuery();
+		Integer rowCount = 0;
 		
-		setDatabaseValue(tableName, searchColName, searchValue, columnName, columnValue);
+		while(rs.next()) rowCount = rs.getInt(1);
+		if (rowCount > 0)
+		{
+			sql = "UPDATE variables SET prefix = ? WHERE guild_id = ?";	
+		} else {
+			 sql = "INSERT INTO variables (prefix, guild_id) VALUES (?, ?)"; 
+		}
+		
+		pstmt = conn.prepareStatement(sql);
+		pstmt.setLong(2, guildID);
+		pstmt.setString(1, prefix);
+		
+		pstmt.execute();
 		
 		//Check List
 		if(listGuildSettings.containsKey(guildID))
@@ -299,13 +326,26 @@ public class DatabaseManager {
 	}
 	
 	public void setGreeting(String greeting, Long guildID) throws SQLException {
-		String tableName = "variables"; 
-		String searchColName = "guild_id";  
-		String searchValue = guildID.toString(); 
-		String columnName = "greeting"; 
-		String columnValue = greeting;
+		String sql = "SELECT COUNT(*) FROM variables WHERE guild_id = ?";
+		PreparedStatement pstmt = conn.prepareStatement(sql); 
+		pstmt.setLong(1, guildID);
+		ResultSet rs = pstmt.executeQuery();
+		Integer rowCount = 0;
 		
-		setDatabaseValue(tableName, searchColName, searchValue, columnName, columnValue);
+		while(rs.next()) rowCount = rs.getInt(1);
+		if (rowCount > 0)
+		{
+			sql = "UPDATE variables SET greeting_msg = ? WHERE guild_id = ?";	
+		} else {
+			 sql = "INSERT INTO variables (greeting_msg, guild_id) VALUES (?, ?)"; 
+		}
+		
+		pstmt = conn.prepareStatement(sql);
+		pstmt.setLong(2, guildID);
+		pstmt.setString(1, greeting);
+		
+		pstmt.execute();
+		
 		//Check List
 		if(listGuildSettings.containsKey(guildID))
 		{
@@ -320,14 +360,25 @@ public class DatabaseManager {
 	}
 	
 	public void setGreetingChannel(String greetingChannel, Long guildID) throws SQLException {
-		//Fetch Database, if it exists, update, insert otherwise
-		String tableName = "variables"; 
-		String searchColName = "guild_id";  
-		String searchValue = guildID.toString();; 
-		String columnName = "greetingChannel"; 
-		String columnValue = greetingChannel;
+		String sql = "SELECT COUNT(*) FROM variables WHERE guild_id = ?";
+		PreparedStatement pstmt = conn.prepareStatement(sql); 
+		pstmt.setLong(1, guildID);
+		ResultSet rs = pstmt.executeQuery();
+		Integer rowCount = 0;
 		
-		setDatabaseValue(tableName, searchColName, searchValue, columnName, columnValue);
+		while(rs.next()) rowCount = rs.getInt(1);
+		if (rowCount > 0)
+		{
+			sql = "UPDATE variables SET greeting_channel = ? WHERE guild_id = ?";	
+		} else {
+			 sql = "INSERT INTO variables (greeting_channel, guild_id) VALUES (?, ?)"; 
+		}
+		
+		pstmt = conn.prepareStatement(sql);
+		pstmt.setLong(2, guildID);
+		pstmt.setString(1, greetingChannel);
+		
+		pstmt.execute();
 		//Check List
 		if(listGuildSettings.containsKey(guildID))
 		{
@@ -342,14 +393,25 @@ public class DatabaseManager {
 	}
 	
 	public void setLoggingChannel(String loggingChannel, Long guildID) throws SQLException {
-		//Fetch Database, if it exists, update, insert otherwise
-		String tableName = "variables"; 
-		String searchColName = "guild_id";  
-		String searchValue = guildID.toString();; 
-		String columnName = "logging_channel"; 
-		String columnValue = loggingChannel;
+		String sql = "SELECT COUNT(*) FROM variables WHERE guild_id = ?";
+		PreparedStatement pstmt = conn.prepareStatement(sql); 
+		pstmt.setLong(1, guildID);
+		ResultSet rs = pstmt.executeQuery();
+		Integer rowCount = 0;
 		
-		setDatabaseValue(tableName, searchColName, searchValue, columnName, columnValue);
+		while(rs.next()) rowCount = rs.getInt(1);
+		if (rowCount > 0)
+		{
+			sql = "UPDATE variables SET logging_channel = ? WHERE guild_id = ?";	
+		} else {
+			 sql = "INSERT INTO variables (logging_channel, guild_id) VALUES (?, ?)"; 
+		}
+		
+		pstmt = conn.prepareStatement(sql);
+		pstmt.setString(1, loggingChannel);
+		pstmt.setLong(2, guildID);
+		
+		pstmt.execute();
 		//Check List
 		if(listGuildSettings.containsKey(guildID))
 		{
@@ -367,7 +429,6 @@ public class DatabaseManager {
 		Permissions permissions = listGuildPermissions.get(guildID);
 		Integer userLevel = null;
 		Integer roleLevel = null;
-		//Set the levels of the commands
 		
 		if(permissions == null)
 		{
@@ -375,13 +436,12 @@ public class DatabaseManager {
 		}
 		
 		userLevel = permissions.getUserLevel(userID);
-		System.out.println("User Level is: " + userLevel);
 		if(userLevel != null) return userLevel; //userLevel take prioty over roleLevel
-		
+		Integer tempRole;
 		for(Role r : roleList)
 		{
-			Integer tempRole = permissions.getRoleLevel(r.getIdLong());
-			if(tempRole !=null );
+			tempRole = permissions.getRoleLevel(r.getIdLong());
+			if(tempRole !=null )
 			{
 				if (roleLevel == null)
 				{
@@ -395,28 +455,25 @@ public class DatabaseManager {
 		return roleLevel;
 	}
 	
-	public void setUserLevel(Long guildID, Integer levelID, Long userID)  throws SQLException {
-		Statement stmt = conn.createStatement();
-		String sql = "SELECT COUNT(*) FROM permission_group WHERE guild_id =" + guildID.toString() + " AND user_role_id = " + userID.toString()
-		+ " AND is_user = 1"; 
-		ResultSet rs = stmt.executeQuery(sql);
-		String sql2;
+	public void setUserLevel(Long guildID, Integer levelID, Long userID)  throws SQLException {		
+		String sql = "SELECT COUNT(*) FROM permission_group WHERE guild_id = ? AND user_role_id = ? AND is_user = 1";
+		PreparedStatement pstmt = conn.prepareStatement(sql); 
+		pstmt.setLong(1, guildID);
+		ResultSet rs = pstmt.executeQuery();
 		Integer rowCount = 0;
 		
-		while(rs.next()) 
-		{
-			rowCount = rs.getInt(1);	
-		}
+		while(rs.next()) rowCount = rs.getInt(1);
 		if (rowCount > 0)
 		{
-			sql2 = "UPDATE permission_group SET level_id = " + levelID + " WHERE guild_id =" + guildID.toString() + " AND user_role_id = " + userID.toString()
-			+ " AND is_user = 1";	
+			sql = "UPDATE permission_group SET level_id = ? WHERE guild_id = ? AND user_role_id = ? AND is_user = 1";	
 		} else {
-			 sql2 = "INSERT INTO permission_group (guild_id, level_id, user_role_id, is_user) VALUES (" + guildID.toString() + ", " + levelID.toString() + ", " + userID.toString() 
-			 + ", 1);";
+			 sql = "INSERT INTO permission_group (level_id, guild_id, user_role_id, is_user) VALUES (?, ?, ?, 1)"; 
 		}
-		
-		stmt.execute(sql2);
+		pstmt = conn.prepareStatement(sql);
+		pstmt.setInt(1, levelID);
+		pstmt.setLong(2, guildID);
+		pstmt.setLong(3, userID);
+		pstmt.execute();
 		
 		if(listGuildPermissions.containsKey(guildID))
 		{
@@ -430,28 +487,24 @@ public class DatabaseManager {
 	}
 	
 	public void setRoleLevel(Long guildID, Integer levelID, Long roleID)  throws SQLException {
-
-		Statement stmt = conn.createStatement();
-		String sql = "SELECT COUNT(*) FROM permission_group WHERE guild_id =" + guildID.toString() + " AND user_role_id = " + roleID.toString()
-		+ " AND is_user = 0"; 
-		ResultSet rs = stmt.executeQuery(sql);
-		String sql2;
+		String sql = "SELECT COUNT(*) FROM permission_group WHERE guild_id = ? AND user_role_id = ? AND is_user = 0";
+		PreparedStatement pstmt = conn.prepareStatement(sql); 
+		pstmt.setLong(1, guildID);
+		ResultSet rs = pstmt.executeQuery();
 		Integer rowCount = 0;
 		
-		while(rs.next()) 
-		{
-			rowCount = rs.getInt(1);	
-		}
+		while(rs.next()) rowCount = rs.getInt(1);
 		if (rowCount > 0)
 		{
-			sql2 = "UPDATE permission_group SET level_id = " + levelID + " WHERE guild_id =" + guildID.toString() + " AND user_role_id = " + roleID.toString()
-			+ " AND is_user = 0";	
+			sql = "UPDATE permission_group SET level_id = ? WHERE guild_id = ? AND user_role_id = ? AND is_user = 0";	
 		} else {
-			 sql2 = "INSERT INTO permission_group (guild_id, level_id, user_role_id, is_user) VALUES (" + guildID.toString() + ", " + levelID.toString() + ", " + roleID.toString() 
-			 + ", 0);";
+			 sql = "INSERT INTO permission_group (level_id, guild_id, user_role_id, is_user) VALUES (?, ?, ?, 0)"; 
 		}
-		
-		stmt.execute(sql2);
+		pstmt = conn.prepareStatement(sql);
+		pstmt.setInt(1, levelID);
+		pstmt.setLong(2, guildID);
+		pstmt.setLong(3, roleID);
+		pstmt.execute();
 		
 		//Set Role level in permissions
 		if(listGuildPermissions.containsKey(guildID))
@@ -466,15 +519,25 @@ public class DatabaseManager {
 	}
 	
 	public void setLevelName(Long guildID, Integer levelID, String levelName)  throws SQLException {
-		//Set the levels of the commands
-		//TODO FIX THIS, USE AND IN WHERE CLAUSE
-		String tableName = "permission_commands"; 
-		String searchColName = "guild_id, level_id";  
-		String searchValue = guildID.toString() + ", " + levelID.toString(); 
-		String columnName = "level_id"; 
-		String columnValue = "'" + levelName + "'";
+		String sql = "SELECT COUNT(*) FROM permission_level WHERE guild_id = ? AND level_id = ?";
+		PreparedStatement pstmt = conn.prepareStatement(sql); 
+		pstmt.setLong(1, guildID);
+		pstmt.setInt(2, levelID);
+		ResultSet rs = pstmt.executeQuery();
+		Integer rowCount = 0;
 		
-		setDatabaseValue(tableName, searchColName, searchValue, columnName, columnValue);
+		while(rs.next()) rowCount = rs.getInt(1);
+		if (rowCount > 0)
+		{
+			sql = "UPDATE permission_level SET level_name = ? WHERE guild_id = ? AND level_id = ?";	
+		} else {
+			 sql = "INSERT INTO permission_level (level_name, guild_id, level_id) VALUES (?, ?, ?, 0)"; 
+		}
+		pstmt = conn.prepareStatement(sql);
+		pstmt.setString(1, levelName);
+		pstmt.setLong(2, guildID);
+		pstmt.setInt(3, levelID);
+		pstmt.execute();
 		
 		//Set Permission Level Name
 		if(listGuildPermissions.containsKey(guildID))

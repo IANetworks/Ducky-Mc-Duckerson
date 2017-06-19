@@ -32,7 +32,7 @@ import net.dv8tion.jda.core.events.self.*;
 import net.dv8tion.jda.core.events.user.*;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
-public class debugListener extends ListenerAdapter {
+public class DebugListener extends ListenerAdapter {
 	
 	/**
 	 * We'll put all the debug output log here. As there's a lot of event to look at, we'll tuck it all here for a tidier code.
@@ -42,7 +42,7 @@ public class debugListener extends ListenerAdapter {
 	 */
 	private DebugLevel debugLevel;
 
-	public debugListener(DebugLevel debugLevel) {
+	public DebugListener(DebugLevel debugLevel) {
 		this.setDebugLevel(debugLevel);
 	}
 	

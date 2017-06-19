@@ -6,10 +6,12 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import bot.CommandStructure.CommandStructure;
-import bot.CommandStructure.Profile;
+import bot.CommandStructure.PreloadCS;
+import bot.CommandStructure.ProfileCS;
 import bot.CommandStructure.SetPrefixCS;
-import bot.CommandStructure.setCommandLevelCS;
-import bot.CommandStructure.setPermissionCS;
+import bot.CommandStructure.SetCommandLevelCS;
+import bot.CommandStructure.SetPermissionByUserCS;
+import bot.CommandStructure.SetPermissionsByRoleCS;
 import bot.database.manager.DatabaseManager;
 import net.dv8tion.jda.bot.entities.ApplicationInfo;
 import net.dv8tion.jda.core.JDA;
@@ -47,11 +49,20 @@ public class EventListener extends ListenerAdapter {
 	
 	private void setupCommandList(ApplicationInfo info) 
 	{
+		//TODO clean this up
 		botOwner = info.getOwner();
-		cmdList.put("setprefix", new SetPrefixCS(dbMan, botAdmin, botOwner));
-		cmdList.put("setpermission", new setPermissionCS(dbMan, botAdmin, botOwner));
-		cmdList.put("setcommandlevel", new setCommandLevelCS(dbMan, botAdmin, botOwner));
-		cmdList.put("profile", new Profile(dbMan,botAdmin, botOwner));
+		String name = "setprefix";
+		cmdList.put(name, new SetPrefixCS(dbMan, botAdmin, botOwner, name, 1, 1));
+		name = "setlevelbyuser";
+		cmdList.put(name, new SetPermissionByUserCS(dbMan, botAdmin, botOwner, name, 2, 1));
+		name = "setcommandlevel";
+		cmdList.put(name, new SetCommandLevelCS(dbMan, botAdmin, botOwner, name, 3, 1));
+		name = "profile";
+		cmdList.put(name, new ProfileCS(dbMan,botAdmin, botOwner, name, 4, 999));
+		name = "preload";
+		cmdList.put(name, new PreloadCS(dbMan,botAdmin, botOwner, name, 5, 1));
+		name = "setlevelbyrole";
+		cmdList.put(name, new SetPermissionsByRoleCS(dbMan,botAdmin, botOwner, name, 6, 1));
 	}
 
 	
