@@ -61,7 +61,10 @@ public class ProfileCS extends CommandStructure {
 		embed.addField("Level:", "0", true);
 		embed.addField("Points:", "1", true);
 		embed.addField("Balance:" , "-1 " + ":moneybag:", true);
+		embed.addField("Table Flipped:", "0", true)
+		embed.addField("Table Unflipped:", "0", true);
 		embed.setFooter("To see your profile, use " + prefix + "profile", null);
+
 		embed.setThumbnail(member.getUser().getAvatarUrl());
 		embed.setDescription(userLevelName);
 		channel.sendMessage(embed.build()).queue();
