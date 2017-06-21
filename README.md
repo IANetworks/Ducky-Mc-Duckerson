@@ -10,4 +10,5 @@ Event Logging
 Music  
 Custom Reaction  
 FAQ  
-Forum Tie in  
+Forum Tie in 
+Games
