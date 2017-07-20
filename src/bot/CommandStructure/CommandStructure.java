@@ -119,5 +119,5 @@ public abstract class CommandStructure {
 	
 	public abstract void excute(Member author, MessageChannel channel, Message message, String parameters, Map<String, CommandStructure> commandList);
 
-	public abstract String help(Long GuildID);
+	public abstract String help(Long guildID);
 }

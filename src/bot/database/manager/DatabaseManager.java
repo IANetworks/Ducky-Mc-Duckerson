@@ -6,17 +6,20 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
 import bot.database.manager.data.GuildSetting;
 import bot.database.manager.data.Permissions;
+import bot.database.manager.data.SelfRoles;
 import net.dv8tion.jda.core.entities.Role;
 
 public class DatabaseManager {
 	private Connection conn;
 	private Map<Long, GuildSetting> listGuildSettings = new HashMap<Long, GuildSetting>();
 	private Map<Long, Permissions> listGuildPermissions = new HashMap<Long, Permissions>();
+	private Map<Long, SelfRoles> listOfSelfRoles = new HashMap<Long, SelfRoles>();
 
 	public DatabaseManager(Connection conn) throws SQLException {
 		this.conn = conn;
@@ -24,6 +27,7 @@ public class DatabaseManager {
 		fetchCmdLevels(); //Fetch list of custom permissions and store
 		fetchPermissionGroup(); //Fetch all the permissions
 		fetchPermissioLevel(); //Fetch all permission level names
+		fetchSelfRole(); //fetch all self assigned roles
 	}
 	
 	private void fetchGuildSettings() throws SQLException
@@ -102,6 +106,25 @@ public class DatabaseManager {
 		}
 	}
 	
+	private void fetchSelfRole() throws SQLException
+	{
+		//fetch list of self assignable roles by guild
+		Statement stmt = this.conn.createStatement();
+		String sql = "SELECT * FROM self_roles";
+		ResultSet rs = stmt.executeQuery(sql);
+		
+		while(rs.next())
+		{
+			Long guildID = rs.getLong("guild_id");
+			if(!listOfSelfRoles.containsKey(guildID))
+			{
+				listOfSelfRoles.put(guildID, new SelfRoles());
+			}
+			
+			listOfSelfRoles.get(guildID).setNewRole(rs.getLong("role_id"), rs.getInt("role_group_id"), rs.getBoolean("exclusive_on"));
+		}
+	}
+	
 	private GuildSetting getGuildValues(Long guildID) {
 		
 		if(listGuildSettings.containsKey(guildID))
@@ -112,6 +135,17 @@ public class DatabaseManager {
 			return new GuildSetting();
 		}
 	}
+	private SelfRoles getSelfRoles(Long guildID) {
+		
+		if(listOfSelfRoles.containsKey(guildID))
+		{
+			//we'll return the one we have stored
+			return this.listOfSelfRoles.get(guildID);
+		} else {
+			return new SelfRoles(); //return fresh object
+		}
+	}
+	
 	private Permissions getPermissionsValues(Long guildID)
 	{
 		if(listGuildPermissions.containsKey(guildID))
@@ -121,6 +155,7 @@ public class DatabaseManager {
 			return new Permissions();
 		}
 	}
+	
 	public Integer getCommandLevel(Long guildID, Integer commandID)
 	{
 		return getPermissionsValues(guildID).getLevel(commandID);
@@ -156,7 +191,68 @@ public class DatabaseManager {
 		
 		return thisThing;
 	}
-	
+	public boolean hasGroup(Long guildID, Integer groupID)
+	{
+		return getSelfRoles(guildID).hasGroup(groupID);
+	}
+	public Boolean isRoleExclusive(Long guildID, Long roleID)
+	{
+		return getSelfRoles(guildID).isRoleExclusive(roleID);
+	}
+	public Boolean isGroupExculsive(Long guildID, Integer groupID)
+	{
+		return getSelfRoles(guildID).isGroupExclusive(groupID);
+	}
+	public Integer getRoleGroup(Long guildID, Long roleID)
+	{
+		return getSelfRoles(guildID).getRoleGroup(roleID);
+	}
+	public Map<Long, Integer> getListOfRoles(Long guildID)
+	{
+		return getSelfRoles(guildID).getListOfRoles();
+	}
+	public HashSet<Long> getListOfRolesByGroup(Long guildID, Integer groupID)
+	{
+		return getSelfRoles(guildID).getListOfRolesByGroup(groupID);
+	}
+	public Integer getUserLevel(Long guildID, Long userID, List<Role> roleList) {
+		Permissions permissions = listGuildPermissions.get(guildID);
+		Integer userLevel = null;
+		Integer roleLevel = null;
+		
+		if(permissions == null)
+		{
+			return null;
+		}
+		
+		userLevel = permissions.getUserLevel(userID);
+		if(userLevel != null) return userLevel; //userLevel take prioty over roleLevel
+		Integer tempRole;
+		for(Role r : roleList)
+		{
+			tempRole = permissions.getRoleLevel(r.getIdLong());
+			if(tempRole !=null )
+			{
+				if (roleLevel == null)
+				{
+					roleLevel = tempRole;
+				} else if (tempRole < roleLevel) { //See if tempRole is a higher ranked level
+					roleLevel = tempRole;
+				} 
+			}
+		}
+		
+		return roleLevel;
+	}
+	public boolean isRoleSelfAssignable(Long guildID, Long roleID)
+	{
+		if(listOfSelfRoles.containsKey(guildID))
+		{
+			return listOfSelfRoles.get(guildID).isRoleSelfAssignable(roleID);
+		} else {
+			return false; //no record for guild so there's no self assignable roles
+		}
+	}
 	public boolean setNewPermissionNames(Long guildID) throws SQLException
 	{
 		Statement stmt;
@@ -185,7 +281,6 @@ public class DatabaseManager {
 		return false;
 	}
 
-	
 	public void setCommandLevel(Long guildID, Integer commandID, Integer commandLevel) throws SQLException {
 		//Set the levels of the commands
 		String sql = "SELECT COUNT(*) FROM permission_commands WHERE guild_id = ? AND command_id = ?";
@@ -314,8 +409,7 @@ public class DatabaseManager {
 		
 		//Check List
 		if(listGuildSettings.containsKey(guildID))
-		{
-			//if it does, fetch guildSetting from list, update values and store
+		{	//if it does, fetch guildSetting from list, update values and store
 			listGuildSettings.get(guildID).setPrefix(prefix);
 		} else {
 			//If it doesn't exist, create new guildSetting for guildID, set value, update
@@ -425,36 +519,6 @@ public class DatabaseManager {
 		}
 	}
 
-	public Integer getUserLevel(Long guildID, Long userID, List<Role> roleList) {
-		Permissions permissions = listGuildPermissions.get(guildID);
-		Integer userLevel = null;
-		Integer roleLevel = null;
-		
-		if(permissions == null)
-		{
-			return null;
-		}
-		
-		userLevel = permissions.getUserLevel(userID);
-		if(userLevel != null) return userLevel; //userLevel take prioty over roleLevel
-		Integer tempRole;
-		for(Role r : roleList)
-		{
-			tempRole = permissions.getRoleLevel(r.getIdLong());
-			if(tempRole !=null )
-			{
-				if (roleLevel == null)
-				{
-					roleLevel = tempRole;
-				} else if (tempRole < roleLevel) { //See if tempRole is a higher ranked level
-					roleLevel = tempRole;
-				} 
-			}
-		}
-		
-		return roleLevel;
-	}
-	
 	public void setUserLevel(Long guildID, Integer levelID, Long userID)  throws SQLException {		
 		String sql = "SELECT COUNT(*) FROM permission_group WHERE guild_id = ? AND user_role_id = ? AND is_user = 1";
 		PreparedStatement pstmt = conn.prepareStatement(sql); 
@@ -551,4 +615,168 @@ public class DatabaseManager {
 		}
 	}
 	
+	public boolean setNewSelfAssignableRole(Long guildID, Long roleID, Integer groupID) throws SQLException
+	{
+		return setNewSelfAssignableRole(guildID, roleID, groupID, null);
+	}
+	
+	public boolean setNewSelfAssignableRole(Long guildID, Long roleID, Integer groupID, Boolean isExculsive) throws SQLException
+	{
+		boolean IsRoleNew = false;
+		
+		//Check List
+		if(listOfSelfRoles.containsKey(guildID))
+		{	
+			if(isExculsive != null)
+			{
+				//We have an existing guild, so let check to make sure we don't assign an already existing role
+				IsRoleNew = listOfSelfRoles.get(guildID).setNewRole(roleID, groupID, isExculsive);
+			} else {
+				isExculsive = listOfSelfRoles.get(guildID).isGroupExclusive(groupID);
+				if(isExculsive == null) isExculsive = false; //this could happen if it's a new group default to false;
+				IsRoleNew = listOfSelfRoles.get(guildID).setNewRole(roleID, groupID, isExculsive);
+			}
+			
+		} else {
+			//If it doesn't exist, create new guildSetting for guildID, set value, update
+			isExculsive = false; //Default to false
+			SelfRoles newSelfRoles = new SelfRoles();
+			newSelfRoles.setNewRole(roleID, groupID, isExculsive);
+			listOfSelfRoles.put(guildID, newSelfRoles);
+			IsRoleNew = true;
+		}
+		
+		if(IsRoleNew)
+		{
+			String sql = "INSERT INTO self_roles (guild_id, role_id, role_group_id, exclusive_on) VALUES (?, ?, ?, ?)";
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			pstmt.setLong(1, guildID);
+			pstmt.setLong(2, roleID);
+			pstmt.setInt(3, groupID);
+			pstmt.setBoolean(4, isExculsive);
+			
+			pstmt.execute();
+		}
+		
+		return IsRoleNew;
+	}
+	
+	public Boolean setGroupExculsive(Long guildID, Integer groupID, Boolean isExculsive) throws SQLException
+	{
+		boolean exculisveChanged = false;
+		//Check List
+		if(listOfSelfRoles.containsKey(guildID))
+		{	//We have an existing guild, so let check to make sure we don't assign an already existing role
+			exculisveChanged = listOfSelfRoles.get(guildID).setGroupExculsive(groupID, isExculsive);
+		} else {
+			exculisveChanged = false; //return false because we can only update self-assignable roles, if there's none already set for guild then there's no self assignable roles
+		}
+		
+		if(exculisveChanged) {
+			setExculsiveDatabase(guildID, groupID, isExculsive);
+		}
+		
+		return exculisveChanged;
+	}
+	
+	private void setExculsiveDatabase(Long guildID, Integer groupID, Boolean isExculsive) throws SQLException
+	{
+		String sql = "UPDATE self_roles SET exclusive_on = ? WHERE guild_id = ? AND role_group_id = ?";
+		PreparedStatement pstmt = conn.prepareStatement(sql);
+		pstmt.setBoolean(1, isExculsive);
+		pstmt.setLong(2, guildID);
+		pstmt.setInt(3, groupID);
+		pstmt.execute();
+	}
+
+	public Boolean setRoleExculsive(Long guildID, Long roleID, Boolean isExculsive) throws SQLException
+	{
+		boolean exculisveChanged = false;
+		Integer groupID = null; 
+		//Check List
+		if(listOfSelfRoles.containsKey(guildID))
+		{	//We have an existing guild, so let check to make sure we don't assign an already existing role
+			exculisveChanged = listOfSelfRoles.get(guildID).setRoleExculsive(roleID, isExculsive);
+			groupID = listOfSelfRoles.get(guildID).getRoleGroup(roleID);
+		} else {
+			exculisveChanged = false; //return false because we can only update self-assignable roles, if there's none already set for guild then there's no self assignable roles
+		}
+		
+		if(exculisveChanged) {
+			setExculsiveDatabase(guildID, groupID, isExculsive);
+		}
+		
+		return exculisveChanged;
+	}
+		
+	public Boolean removeRole(Long guildID, Long roleID) throws SQLException
+	{
+		boolean hasChanged = false;
+		if(listOfSelfRoles.containsKey(guildID))
+		{	//We have an existing guild, so let check to make sure we don't assign an already existing role
+			hasChanged = listOfSelfRoles.get(guildID).removeRole(roleID);
+		} else {
+			hasChanged = false; //return false, we don't have anything to remove.
+		}
+		
+		if(hasChanged)
+		{
+			String sql = "DELETE FROM self_roles WHERE guild_id = ? AND role_id = ?";
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			pstmt.setLong(1, guildID);
+			pstmt.setLong(2, roleID);
+			pstmt.executeUpdate();
+		}
+		
+		return hasChanged;
+	}
+	
+	public HashSet<Long> removeGroup(Long guildID, Integer groupID) throws SQLException
+	{
+		HashSet<Long> removedRolesList = null;
+		if(listOfSelfRoles.containsKey(guildID))
+		{
+			removedRolesList = listOfSelfRoles.get(guildID).removeGroup(groupID);
+		} else {
+			removedRolesList = null;
+		}
+		
+		if(removedRolesList != null)
+		{
+			if(removedRolesList.size() > 0)
+			{
+				String sql = "DELETE FROM self_roles WHERE guild_id = ? AND role_group_id = ?";
+				PreparedStatement pstmt = conn.prepareStatement(sql);
+				pstmt.setLong(1, guildID);
+				pstmt.setLong(2, groupID);
+				pstmt.executeUpdate();
+			}
+		}
+		
+		return removedRolesList;
+	}
+	
+	public Boolean setRoleGroup(Long guildID, Long roleID, Integer newGroup) throws SQLException
+	{
+		
+		boolean hasChanged = false;
+		if(listOfSelfRoles.containsKey(guildID))
+		{
+			hasChanged = listOfSelfRoles.get(guildID).setRoleGroup(roleID, newGroup);
+		} else {
+			hasChanged = false;
+		}
+		
+		if(hasChanged)
+		{
+			String sql = "UPDATE self_roles SET role_group_id = ? WHERE guild_id = ? AND role_id = ?";
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, newGroup);
+			pstmt.setLong(2, guildID);
+			pstmt.setLong(3, roleID);
+			pstmt.execute();
+		}
+		
+		return null;
+	}
 }

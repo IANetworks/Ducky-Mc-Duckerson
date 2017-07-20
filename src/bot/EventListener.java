@@ -1,5 +1,6 @@
 package bot;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import net.dv8tion.jda.bot.entities.ApplicationInfo;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.ReadyEvent;
+import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
 import net.dv8tion.jda.core.events.message.*;
@@ -25,7 +27,6 @@ public class EventListener extends ListenerAdapter {
 	User botOwner; //We'll hold the botOwner so we don't have to keep asking Discord for this
 	Map<String, CommandStructure> cmdList = new HashMap<String,CommandStructure>();
 	
-	//TODO STERILIZE USER INPUT! LIKE I WILL BITE FACES AND FLIP TABLES IF THIS ISN'T DONE
 	public EventListener(DatabaseManager dbMan) {
 		selfStart(dbMan, null);
 	}
@@ -43,22 +44,50 @@ public class EventListener extends ListenerAdapter {
 	
 	private void setupCommandList(ApplicationInfo info) 
 	{
-		//TODO clean this up
+		//TODO I think this could be improved fair better. 
 		botOwner = info.getOwner();
+		
 		String name = "setprefix";
 		cmdList.put(name, new SetPrefixCS(dbMan, botAdmin, botOwner, name, 1, 1));
-		name = "setlevelbyuser";
+		
+		name = "setlevelforuser";
 		cmdList.put(name, new SetPermissionByUserCS(dbMan, botAdmin, botOwner, name, 2, 1));
+		
 		name = "setcommandlevel";
 		cmdList.put(name, new SetCommandLevelCS(dbMan, botAdmin, botOwner, name, 3, 1));
+		
 		name = "profile";
 		cmdList.put(name, new ProfileCS(dbMan,botAdmin, botOwner, name, 4, 999));
+		
 		name = "preload";
 		cmdList.put(name, new PreloadCS(dbMan,botAdmin, botOwner, name, 5, 1));
-		name = "setlevelbyrole";
+		
+		name = "setlevelforrole";
 		cmdList.put(name, new SetPermissionsByRoleCS(dbMan,botAdmin, botOwner, name, 6, 1));
+		
 		name = "help";
 		cmdList.put(name, new HelpCS(dbMan,botAdmin, botOwner, name, 7, 999));
+		
+		name = "iam";
+		cmdList.put(name, new SelfRolesCS(dbMan,botAdmin, botOwner, name, 8, 999)); 
+		
+		name = "selfassignrole";
+		cmdList.put(name, new SetSelfRoleCS(dbMan,botAdmin, botOwner, name, 9, 1));
+		
+		name = "listselfroles";
+		cmdList.put(name, new ListSelfRolesCS(dbMan,botAdmin, botOwner, name, 10, 999));
+		
+		name = "removeselfassignrole";
+		cmdList.put(name, new RemoveSelfRoleCS(dbMan,botAdmin, botOwner, name, 11, 1));
+		
+		name = "setselfassigngroup";
+		cmdList.put(name, new SetSelfRoleGroupCS(dbMan,botAdmin, botOwner, name, 12, 1));
+		
+		name = "togglegroupexculsive";
+		cmdList.put(name, new SetSelfRoleGroupExculsive(dbMan,botAdmin, botOwner, name, 13, 1));
+		
+		name = "removeselfassigngroup";
+		cmdList.put(name, new RemoveSelfRoleGroup(dbMan,botAdmin, botOwner, name, 14, 1));
 	}
 
 	
@@ -70,6 +99,19 @@ public class EventListener extends ListenerAdapter {
 		//fetch botOwner;
 		Consumer<ApplicationInfo> callback = (info) -> setupCommandList(info);
 		ra.queue(callback);
+	}
+	
+	@Override
+	public void onGuildJoin(GuildJoinEvent event)
+	{
+		
+		Long guildID = event.getGuild().getIdLong();
+		try {
+			dbMan.setNewPermissionNames(guildID);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	//We Want To See All Users Joinning the server(Called Guilds by Discord, why, I dunno)

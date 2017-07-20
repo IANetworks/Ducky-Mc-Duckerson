@@ -33,7 +33,9 @@ private void sendHelpList(PrivateChannel privChannel, Map<String, CommandStructu
 			int count = 0;
 			for(String commandName : commandList.keySet())
 			{
-				embed.addField(commandName, commandList.get(commandName).help(guildID), true);
+				String help = commandList.get(commandName).help(guildID);
+				if(help == null) help = "";
+				embed.addField(commandName, help, true);
 				count++;
 				if(count > 7)
 				{

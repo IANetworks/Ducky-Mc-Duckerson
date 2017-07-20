@@ -88,8 +88,8 @@ public class McDucky
 			return; //<- SO BAD.. will have to switch to throwable
 			//TODO Switch to throwables
 		}
-		//V there's a better way to do this but Abby's brain farts.. stinky
 		
+	//TODO Improve the function below, maybe extract into a file? Or spilt into a seperate class that will manage these setup better?
 	String sql;
 	conn.setAutoCommit(false);
 	Statement stmt = conn.createStatement();
@@ -123,6 +123,12 @@ public class McDucky
 			  + "is_user INTEGER NOT NULL  \n"
 			  + ");";
 	  stmt.execute(sql);
+	  sql="CREATE TABLE selfrole ( \n"
+			  + "guild_id      INTEGER NOT NULL, \n"
+			  + "role_id       INTEGER NOT NULL, \n"
+			  + "role_group_id INTEGER NOT NULL, \n"
+			  + "exclusive_on  BOOLEAN NOT NULL DEFAULT (0) \n" 
+    		  + ");";
 	
 		
 	  conn.commit();

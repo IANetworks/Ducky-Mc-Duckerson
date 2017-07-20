@@ -63,7 +63,7 @@ public class SetPermissionByUserCS extends CommandStructure {
 						channel.sendMessage("You cannot set permission to equal or higher than your level").queue();
 					}
 						
-				} else if (levelID < 2) {
+				} else if (levelID != null && levelID < 2) {
 					channel.sendMessage("I cannot assign the special level: "+ dbMan.getLevelName(guildID, levelID) + " to roles ").queue();
 				} else {
 					channel.sendMessage("I do not know what level to assign.").queue();

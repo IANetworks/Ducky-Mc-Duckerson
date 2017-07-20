@@ -42,7 +42,7 @@ public class ProfileCS extends CommandStructure {
 				Member userMember = author.getGuild().getMemberById(user.getIdLong());
 				
 				if (userMember == null) {
-					channel.sendMessage("I cannot find " + user.getAsMention() + " in this guild. I can only show profiles that are on this server.").queue();
+					channel.sendMessage("I cannot find " + user.getAsMention() + " on this server. I can only show profiles that are on this server.").queue();
 				} else {
 					Integer userLevel = getPermissionLevel(userMember);
 					String userLevelName = dbMan.getLevelName(guildID, userLevel);
@@ -51,7 +51,8 @@ public class ProfileCS extends CommandStructure {
 			}
 		}
 	}
-
+	
+	//WOW ABBY LOOK AT ALL THESE HARDCODED STUFF! GET OFF YO' ASS AND SORT THIS TODO
 	private void sendProfile(Member member, MessageChannel channel, String prefix, String userLevelName, Color color) {
 		EmbedBuilder embed = new EmbedBuilder();
 		
@@ -61,7 +62,7 @@ public class ProfileCS extends CommandStructure {
 		embed.addField("Level:", "0", true);
 		embed.addField("Points:", "1", true);
 		embed.addField("Balance:" , "-1 " + ":moneybag:", true);
-		embed.addField("Table Flipped:", "0", true)
+		embed.addField("Table Flipped:", "0", true);
 		embed.addField("Table Unflipped:", "0", true);
 		embed.setFooter("To see your profile, use " + prefix + "profile", null);
 
