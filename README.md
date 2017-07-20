@@ -12,3 +12,4 @@ Custom Reaction
 FAQ  
 Forum Tie in 
 Games
+Timer with Text To Speech option
