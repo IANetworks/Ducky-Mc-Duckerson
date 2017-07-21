@@ -13,6 +13,7 @@ import java.util.Map;
 import bot.database.manager.data.GuildSetting;
 import bot.database.manager.data.Permissions;
 import bot.database.manager.data.SelfRoles;
+import bot.database.manager.data.UserProfile;
 import net.dv8tion.jda.core.entities.Role;
 
 public class DatabaseManager {
@@ -155,7 +156,241 @@ public class DatabaseManager {
 			return new Permissions();
 		}
 	}
+	public UserProfile getUserProfile(Long guildID, Long userID) throws SQLException
+	{
+		UserProfile up = new UserProfile();
+		String sql = "SELECT * FROM user_profile WHERE user_id = ? AND guild_id = ?"; 
+		PreparedStatement prstmt = this.conn.prepareStatement(sql);
+		prstmt.setLong(1, userID);
+		prstmt.setLong(2, guildID);
+		ResultSet rs = prstmt.executeQuery();
+		Integer rowCount = 0;
+		while(rs.next())
+		{
+			up.setBalance(rs.getLong("balance"));
+			up.setPoints(rs.getLong("points"));
+			up.setRank(rs.getInt("rank")); //TODO fetch Rank name from database use sql query JOIN
+			up.setFlipped(rs.getLong("flipped"));
+			up.setUnflipped(rs.getLong("unflipped"));
+			up.setLevel(rs.getLong("level"));
+			rowCount++;
+		}
+		
+		if(rowCount == 0)
+		{
+			setUserProfile(guildID, userID);
+			return getUserProfile(guildID, userID);
+		}
+		
+		return up;
+	}
 	
+	private void setUserProfile(Long guildID, Long userID) throws SQLException {
+		String sql = "INSERT INTO user_profile (user_id, guild_id) VALUES (?, ?)";
+		PreparedStatement pstmt = conn.prepareStatement(sql);
+		pstmt.setLong(1, userID);
+		pstmt.setLong(2, guildID);
+		pstmt.execute();
+		
+	}
+
+	public void incUserFlipped(Long guildID, Long userID) throws SQLException
+	{
+		UserProfile up = getUserProfile(guildID, userID);
+		Long newFlipTotal = up.getFlipped();
+		newFlipTotal++;
+		
+		String sql = "UPDATE user_profile SET flipped = ? WHERE guild_id = ? AND user_id = ?"; //TODO I'm sure there's a SQL query that can inc the count for us.
+		PreparedStatement pstmt = conn.prepareStatement(sql);
+		pstmt.setLong(1, newFlipTotal);
+		pstmt.setLong(2, guildID);
+		pstmt.setLong(3, userID);
+		pstmt.execute();
+	}
+	public void incUserUnflipped(Long guildID, Long userID) throws SQLException
+	{
+		UserProfile up = getUserProfile(guildID, userID);
+		Long newUnflipTotal = up.getUnflipped();
+		newUnflipTotal++;
+		
+		String sql = "UPDATE user_profile SET unflipped = ? WHERE guild_id = ? AND user_id = ?";
+		PreparedStatement pstmt = conn.prepareStatement(sql);
+		pstmt.setLong(1, newUnflipTotal);
+		pstmt.setLong(2, guildID);
+		pstmt.setLong(3, userID);
+		pstmt.execute();
+	}
+	public void addUserRank(Long guildID, Long userID, Integer value) throws SQLException
+	{
+		UserProfile up = getUserProfile(guildID, userID);
+		Integer newTotal = up.getRank() + value;
+		
+		String sql = "UPDATE user_profile SET rank = ? WHERE guild_id = ? AND user_id = ?";
+		PreparedStatement pstmt = conn.prepareStatement(sql);
+		pstmt.setInt(1, newTotal);
+		pstmt.setLong(2, guildID);
+		pstmt.setLong(3, userID);
+		pstmt.execute();
+	}
+	public void addUserLevel(Long guildID, Long userID, Long value) throws SQLException
+	{
+		UserProfile up = getUserProfile(guildID, userID);
+		Long newTotal = up.getLevel() + value;
+		
+		String sql = "UPDATE user_profile SET level = ? WHERE guild_id = ? AND user_id = ?";
+		PreparedStatement pstmt = conn.prepareStatement(sql);
+		pstmt.setLong(1, newTotal);
+		pstmt.setLong(2, guildID);
+		pstmt.setLong(3, userID);
+		pstmt.execute();
+	}
+	public void addUserBalance(Long guildID, Long userID, Long value) throws SQLException
+	{
+		UserProfile up = getUserProfile(guildID, userID);
+		Long newTotal = up.getBalance() + value;
+		
+		String sql = "UPDATE user_profile SET balance = ? WHERE guild_id = ? AND user_id = ?";
+		PreparedStatement pstmt = conn.prepareStatement(sql);
+		pstmt.setLong(1, newTotal);
+		pstmt.setLong(2, guildID);
+		pstmt.setLong(3, userID);
+		pstmt.execute();
+	}
+	public void addUserPoints(Long guildID, Long userID, Long value) throws SQLException
+	{
+		UserProfile up = getUserProfile(guildID, userID);
+		Long newTotal = up.getPoints() + value;
+		
+		String sql = "UPDATE user_profile SET points = ? WHERE guild_id = ? AND user_id = ?";
+		PreparedStatement pstmt = conn.prepareStatement(sql);
+		pstmt.setLong(1, newTotal);
+		pstmt.setLong(2, guildID);
+		pstmt.setLong(3, userID);
+		pstmt.execute();
+	}
+	public void remUserRank(Long guildID, Long userID, Integer value) throws SQLException
+	{
+		UserProfile up = getUserProfile(guildID, userID);
+		Integer newTotal = up.getRank() - value;
+		
+		String sql = "UPDATE user_profile SET rank = ? WHERE guild_id = ? AND user_id = ?";
+		PreparedStatement pstmt = conn.prepareStatement(sql);
+		pstmt.setInt(1, newTotal);
+		pstmt.setLong(2, guildID);
+		pstmt.setLong(3, userID);
+		pstmt.execute();
+	}
+	public void remUserLevel(Long guildID, Long userID, Long value) throws SQLException
+	{
+		UserProfile up = getUserProfile(guildID, userID);
+		Long newTotal = up.getLevel() - value;
+		
+		String sql = "UPDATE user_profile SET level = ? WHERE guild_id = ? AND user_id = ?";
+		PreparedStatement pstmt = conn.prepareStatement(sql);
+		pstmt.setLong(1, newTotal);
+		pstmt.setLong(2, guildID);
+		pstmt.setLong(3, userID);
+		pstmt.execute();
+		
+	}
+	public void remUserBalance(Long guildID, Long userID, Long value) throws SQLException
+	{
+		UserProfile up = getUserProfile(guildID, userID);
+		Long newTotal = up.getBalance() - value;
+		
+		String sql = "UPDATE user_profile SET balance = ? WHERE guild_id = ? AND user_id = ?";
+		PreparedStatement pstmt = conn.prepareStatement(sql);
+		pstmt.setLong(1, newTotal);
+		pstmt.setLong(2, guildID);
+		pstmt.setLong(3, userID);
+		pstmt.execute();
+	}
+	public void remUserPoints(Long guildID, Long userID, Long value) throws SQLException
+	{
+		UserProfile up = getUserProfile(guildID, userID);
+		Long newTotal = up.getPoints() - value;
+		
+		String sql = "UPDATE user_profile SET points = ? WHERE guild_id = ? AND user_id = ?";
+		PreparedStatement pstmt = conn.prepareStatement(sql);
+		pstmt.setLong(1, newTotal);
+		pstmt.setLong(2, guildID);
+		pstmt.setLong(3, userID);
+		pstmt.execute();
+	}
+	public void setUserRank(Long guildID, Long userID, Integer value) throws SQLException
+	{
+		getUserProfile(guildID, userID); //This will make sure we have a profile setup, in case of a new users 
+		Integer newTotal = value;
+		
+		String sql = "UPDATE user_profile SET rank = ? WHERE guild_id = ? AND user_id = ?";
+		PreparedStatement pstmt = conn.prepareStatement(sql);
+		pstmt.setInt(1, newTotal);
+		pstmt.setLong(2, guildID);
+		pstmt.setLong(3, userID);
+		pstmt.execute();
+	}
+	public void setUserLevel(Long guildID, Long userID, Long value) throws SQLException
+	{
+		getUserProfile(guildID, userID);
+		Long newTotal = value;
+		
+		String sql = "UPDATE user_profile SET level = ? WHERE guild_id = ? AND user_id = ?";
+		PreparedStatement pstmt = conn.prepareStatement(sql);
+		pstmt.setLong(1, newTotal);
+		pstmt.setLong(2, guildID);
+		pstmt.setLong(3, userID);
+		pstmt.execute();
+	}
+	public void setUserBalance(Long guildID, Long userID, Long value) throws SQLException
+	{
+		getUserProfile(guildID, userID);
+		Long newTotal = value;
+		
+		String sql = "UPDATE user_profile SET balance = ? WHERE guild_id = ? AND user_id = ?";
+		PreparedStatement pstmt = conn.prepareStatement(sql);
+		pstmt.setLong(1, newTotal);
+		pstmt.setLong(2, guildID);
+		pstmt.setLong(3, userID);
+		pstmt.execute();
+	}
+	public void setUserPoints(Long guildID, Long userID, Long value) throws SQLException
+	{
+		getUserProfile(guildID, userID);
+		Long newTotal = value;
+		
+		String sql = "UPDATE user_profile SET points = ? WHERE guild_id = ? AND user_id = ?";
+		PreparedStatement pstmt = conn.prepareStatement(sql);
+		pstmt.setLong(1, newTotal);
+		pstmt.setLong(2, guildID);
+		pstmt.setLong(3, userID);
+		pstmt.execute();
+	}
+	public void setUserFlipped(Long guildID, Long userID, Long value) throws SQLException
+	{
+		getUserProfile(guildID, userID);
+		Long newTotal = value;
+		
+		String sql = "UPDATE user_profile SET flipped = ? WHERE guild_id = ? AND user_id = ?";
+		PreparedStatement pstmt = conn.prepareStatement(sql);
+		pstmt.setLong(1, newTotal);
+		pstmt.setLong(2, guildID);
+		pstmt.setLong(3, userID);
+		pstmt.execute();
+	}
+	public void setUserUnflipped(Long guildID, Long userID, Long value) throws SQLException
+	{
+		getUserProfile(guildID, userID);
+		Long newTotal = value;
+		
+		String sql = "UPDATE user_profile SET unflipped = ? WHERE guild_id = ? AND user_id = ?";
+		PreparedStatement pstmt = conn.prepareStatement(sql);
+		pstmt.setLong(1, newTotal);
+		pstmt.setLong(2, guildID);
+		pstmt.setLong(3, userID);
+		pstmt.execute();
+	}
+	
+
 	public Integer getCommandLevel(Long guildID, Integer commandID)
 	{
 		return getPermissionsValues(guildID).getLevel(commandID);
@@ -595,7 +830,7 @@ public class DatabaseManager {
 		{
 			sql = "UPDATE permission_level SET level_name = ? WHERE guild_id = ? AND level_id = ?";	
 		} else {
-			 sql = "INSERT INTO permission_level (level_name, guild_id, level_id) VALUES (?, ?, ?, 0)"; 
+			 sql = "INSERT INTO permission_level (level_name, guild_id, level_id) VALUES (?, ?, ?)"; 
 		}
 		pstmt = conn.prepareStatement(sql);
 		pstmt.setString(1, levelName);

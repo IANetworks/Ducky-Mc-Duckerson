@@ -23,7 +23,7 @@ import java.util.Properties;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
+//import java.sql.Statement;
 
 // Use UserID to store unquie ID of each enitity
 //TODO Logging (to echo certain logs that's not tracked in Aduit. Such as quit/joins.
@@ -80,7 +80,10 @@ public class McDucky
 		//TODO Fun stuff
 		//TODO One time stuff (Welcome Messages)
 		//TODO FAQ?
-		//TODO Self assignable roles
+		//TODO Timer with TTS
+		//TODO Self nickname change
+		//TODO Playing status
+		
 		//Shouldn't happen but let make sure we have conn
 		if(conn == null)
 		{
@@ -89,50 +92,8 @@ public class McDucky
 			//TODO Switch to throwables
 		}
 		
-	//TODO Improve the function below, maybe extract into a file? Or spilt into a seperate class that will manage these setup better?
-	String sql;
-	conn.setAutoCommit(false);
-	Statement stmt = conn.createStatement();
-	  sql = "CREATE TABLE variables ( \n"
-			  + "guild_id         INTEGER NOT NULL UNIQUE PRIMARY KEY, \n"
-			  + "logging_on       INTEGER NOT NULL DEFAULT (0), \n"
-			  + "logging_channel  STRING, \n"
-			  + "prefix           STRING  DEFAULT ('!'), \n"
-			  + "greet_on         INTEGER NOT NULL DEFAULT (0), \n"
-			  + "greeting_msg     STRING, \n"
-			  + "greeting_channel STRING \n"
-			  + ");";				  
-	  stmt.execute(sql);
-	  sql = "CREATE TABLE permission_commands ( \n"
-			  + "command_id INTEGER PRIMARY KEY NOT NULL, \n"
-			  + "guild_id   INTEGER NOT NULL, \n"
-			  + "level_id   INTEGER NOT NULL \n"
-			  + ");";
-	  stmt.execute(sql);
-	  sql= "CREATE TABLE permission_level ( \n"
-			  + "level_id   INTEGER PRIMARY KEY NOT NULL, \n"
-			  + "guild_id NOT NULL, \n"
-			  + "level_name STRING NOT NULL\n"
-			  +")";
-	  stmt.execute(sql);
-	  sql= "CREATE TABLE permission_group ( \n"
-			  + "id INTEGER PRIMARY KEY NOT NULL, \n"
-			  + "guild_id INTEGER NOT NULL, \n"
-			  + "level_id INTEGER NOT NULL, \n"
-			  + "user_role_id INTEGER NOT NULL, \n"
-			  + "is_user INTEGER NOT NULL  \n"
-			  + ");";
-	  stmt.execute(sql);
-	  sql="CREATE TABLE selfrole ( \n"
-			  + "guild_id      INTEGER NOT NULL, \n"
-			  + "role_id       INTEGER NOT NULL, \n"
-			  + "role_group_id INTEGER NOT NULL, \n"
-			  + "exclusive_on  BOOLEAN NOT NULL DEFAULT (0) \n" 
-    		  + ");";
+	//TODO Improve the function below, we're going to call a file and call the SQL.
 	
-		
-	  conn.commit();
-	  conn.setAutoCommit(false);
 		
 	}
 	
@@ -164,7 +125,7 @@ public class McDucky
 		//Load Config Values into program memory
 		String botToken = configProps.getProperty("bot_token"); //Bot Token that is used to log into Discord
 		String databaseName = configProps.getProperty("database_name", "default"); //Database Name
-		String botAdmin = configProps.getProperty("bot_admin"); //In case Bot Owner is different from someone else is running the code, this is rare but code author situation this has happened 
+		String botAdmin = configProps.getProperty("bot_admin"); //In case Bot Owner is different from the creator of the bot token, this is rare but in the program creator situation this has happened. 
 		DatabaseManager dbMan = null;
 		
 		int debugLevel;

@@ -4,12 +4,14 @@ import java.util.List;
 import java.util.Map;
 
 import bot.database.manager.DatabaseManager;
+import bot.database.manager.data.UserProfile;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
 import java.awt.Color;
+import java.sql.SQLException;
 
 public class ProfileCS extends CommandStructure {
 	
@@ -52,23 +54,33 @@ public class ProfileCS extends CommandStructure {
 		}
 	}
 	
-	//WOW ABBY LOOK AT ALL THESE HARDCODED STUFF! GET OFF YO' ASS AND SORT THIS TODO
 	private void sendProfile(Member member, MessageChannel channel, String prefix, String userLevelName, Color color) {
 		EmbedBuilder embed = new EmbedBuilder();
+		Long guildID = member.getGuild().getIdLong();
+		Long userID = member.getUser().getIdLong();
+		UserProfile up = new UserProfile();
 		
-		embed.setColor(color);
-		embed.setAuthor("Profile of " + member.getEffectiveName(), null, member.getUser().getAvatarUrl());
-		embed.addField("Rank:", "In Development", true);
-		embed.addField("Level:", "0", true);
-		embed.addField("Points:", "1", true);
-		embed.addField("Balance:" , "-1 " + ":moneybag:", true);
-		embed.addField("Table Flipped:", "0", true);
-		embed.addField("Table Unflipped:", "0", true);
-		embed.setFooter("To see your profile, use " + prefix + "profile", null);
-
-		embed.setThumbnail(member.getUser().getAvatarUrl());
-		embed.setDescription(userLevelName);
-		channel.sendMessage(embed.build()).queue();
+		try {
+			up = dbMan.getUserProfile(guildID, userID);
+		
+		
+			embed.setColor(color);
+			embed.setAuthor("Profile of " + member.getEffectiveName(), null, member.getUser().getAvatarUrl());
+			embed.addField("Rank:", up.getRank().toString(), true);
+			embed.addField("Level:", up.getLevel().toString(), true);
+			embed.addField("Points:", up.getPoints().toString(), true);
+			embed.addField("Gold:" , up.getBalance().toString() + " :moneybag:", true);
+			embed.addField("Table Flipped:", up.getFlipped().toString(), true);
+			embed.addField("Table Unflipped:", up.getUnflipped().toString(), true);
+			embed.setFooter("To see your profile, use " + prefix + "profile", null);
+		
+			embed.setThumbnail(member.getUser().getAvatarUrl());
+			embed.setDescription(userLevelName);
+			channel.sendMessage(embed.build()).queue();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override

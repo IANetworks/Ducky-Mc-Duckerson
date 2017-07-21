@@ -161,6 +161,7 @@ public class EventListener extends ListenerAdapter {
 	public void onGuildMessageReceived(GuildMessageReceivedEvent event)
 	{
 		Member author = event.getMember(); //User who sent message, member of guild
+		Long userID = author.getUser().getIdLong();
 		MessageChannel channel = event.getChannel();
 		Message message = event.getMessage(); //Message recieved
 		String msg = message.getContent(); // String readable content of message
@@ -182,7 +183,8 @@ public class EventListener extends ListenerAdapter {
 			String msgPrefix = msg.substring(0, guildPrefix.length());
 			String msgCommand = msg.substring(guildPrefix.length()).toLowerCase();
 	
-			if(msgPrefix.equals(guildPrefix)) {
+			if(msgPrefix.equals(guildPrefix)) 
+			{
 				if(cmdList.isEmpty())
 				{
 					//Our commands list have not setup yet, we're still waiting for infomation from Discord
@@ -198,6 +200,25 @@ public class EventListener extends ListenerAdapter {
 							cmdList.get(commandName).excute(author, channel, message, parameters, cmdList);
 							break; //We found a matching command, let break out of the loop
 						}
+					}
+				}
+			} else {
+				//No prefix found, we'll look for table flip/unflip and inc counts for that user
+				if(msg.contains("(╯°□°）╯︵ ┻━┻"))
+				{
+					try {
+						dbMan.incUserFlipped(guildID, userID);
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} else if(msg.contains("┬─┬﻿ ノ( ゜-゜ノ)"))
+				{
+					try {
+						dbMan.incUserUnflipped(guildID, userID);
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 				}
 			}
