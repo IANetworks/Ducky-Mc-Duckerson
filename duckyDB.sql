@@ -1,5 +1,5 @@
 --
--- File generated with SQLiteStudio v3.1.1 on Thu Jul 20 19:16:19 2017
+-- File generated with SQLiteStudio v3.1.1 on Thu Jul 20 21:19:06 2017
 --
 -- Text encoding used: UTF-8
 --
@@ -56,22 +56,24 @@ CREATE TABLE self_roles (
 DROP TABLE IF EXISTS user_profile;
 
 CREATE TABLE user_profile (
-    user_db_id         PRIMARY KEY
-                       NOT NULL,
-    user_id    INTEGER NOT NULL,
-    guild_id   INTEGER NOT NULL,
-    balance    INTEGER NOT NULL
-                       DEFAULT (0),
-    points     INTEGER NOT NULL
-                       DEFAULT (0),
-    rank       INTEGER NOT NULL
-                       DEFAULT (0),
-    flipped    INTEGER NOT NULL
-                       DEFAULT (0),
-    unflipped  INTEGER NOT NULL
-                       DEFAULT (0),
-    level      INTEGER NOT NULL
-                       DEFAULT (0) 
+    guild_id  INTEGER NOT NULL,
+    user_id   INTEGER NOT NULL,
+    balance   INTEGER NOT NULL
+                      DEFAULT (0),
+    points    INTEGER NOT NULL
+                      DEFAULT (0),
+    rank      INTEGER NOT NULL
+                      DEFAULT (0),
+    flipped   INTEGER NOT NULL
+                      DEFAULT (0),
+    unflipped INTEGER NOT NULL
+                      DEFAULT (0),
+    level     INTEGER NOT NULL
+                      DEFAULT (0),
+    PRIMARY KEY (
+        guild_id,
+        user_id
+    )
 );
 
 
