@@ -12,3 +12,5 @@ Custom Reaction
 FAQ  
 Forum Tie in 
 Games
+Timer with Text To Speech option, mutli timers with set name
+Nickname change and playing status
