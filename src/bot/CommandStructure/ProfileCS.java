@@ -3,6 +3,7 @@ package bot.CommandStructure;
 import java.util.List;
 import java.util.Map;
 
+import bot.SharedContainer;
 import bot.database.manager.DatabaseManager;
 import bot.database.manager.data.UserProfile;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -15,9 +16,9 @@ import java.sql.SQLException;
 
 public class ProfileCS extends CommandStructure {
 	
-	public ProfileCS(DatabaseManager dbMan, String botAdmin, User botOwner, String commandName, int commandID,
+	public ProfileCS(SharedContainer container, String commandName, int commandID,
 			int commandDefaultLevel) {
-		super(dbMan, botAdmin, botOwner, commandName, commandID, commandDefaultLevel);
+		super(container, commandName, commandID, commandDefaultLevel);
 	}
 
 	@Override

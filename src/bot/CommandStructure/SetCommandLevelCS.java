@@ -3,6 +3,7 @@ package bot.CommandStructure;
 import java.sql.SQLException;
 import java.util.Map;
 
+import bot.SharedContainer;
 import bot.database.manager.DatabaseManager;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
@@ -11,9 +12,9 @@ import net.dv8tion.jda.core.entities.User;
 
 public class SetCommandLevelCS extends CommandStructure {
 	
-	public SetCommandLevelCS(DatabaseManager dbMan, String botAdmin, User botOwner, String commandName, int commandID,
+	public SetCommandLevelCS(SharedContainer container, String commandName, int commandID,
 			int commandDefaultLevel) {
-		super(dbMan, botAdmin, botOwner, commandName, commandID, commandDefaultLevel);
+		super(container, commandName, commandID, commandDefaultLevel);
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import bot.SharedContainer;
 import bot.database.manager.DatabaseManager;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
@@ -12,11 +13,11 @@ import net.dv8tion.jda.core.entities.User;
 
 public class SetPermissionByUserCS extends CommandStructure {
 	
-	public SetPermissionByUserCS(DatabaseManager dbMan, String botAdmin, User botOwner, String commandName, int commandID,
+	public SetPermissionByUserCS(SharedContainer container, String commandName, int commandID,
 			int commandDefaultLevel) {
-		super(dbMan, botAdmin, botOwner, commandName, commandID, commandDefaultLevel);
+		super(container, commandName, commandID, commandDefaultLevel);
 	}
-	
+
 	@Override
 	public void excute(Member author, MessageChannel channel, Message message, String parameters, Map<String, CommandStructure> commandList) {
 		Long guildID = author.getGuild().getIdLong();

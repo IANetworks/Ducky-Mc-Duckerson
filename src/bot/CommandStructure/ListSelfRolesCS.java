@@ -2,6 +2,7 @@ package bot.CommandStructure;
 
 import java.util.Map;
 
+import bot.SharedContainer;
 import bot.database.manager.DatabaseManager;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
@@ -12,9 +13,9 @@ import net.dv8tion.jda.core.entities.User;
 
 public class ListSelfRolesCS extends CommandStructure {
 
-	public ListSelfRolesCS(DatabaseManager dbMan, String botAdmin, User botOwner, String commandName, int commandID,
+	public ListSelfRolesCS(SharedContainer container, String commandName, int commandID,
 			int commandDefaultLevel) {
-		super(dbMan, botAdmin, botOwner, commandName, commandID, commandDefaultLevel);
+		super(container, commandName, commandID, commandDefaultLevel);
 	}
 
 	@Override
@@ -62,7 +63,7 @@ public class ListSelfRolesCS extends CommandStructure {
 	}
 
 	@Override
-	public String help(Long GuildID) {
+	public String help(Long guildID) {
 		return "Returns list of roles that can be self assigned";
 	}
 

@@ -4,16 +4,14 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import bot.database.manager.DatabaseManager;
+import bot.SharedContainer;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
-import net.dv8tion.jda.core.entities.User;
 
 public class SetPrefixCS extends CommandStructure {
-	public SetPrefixCS(DatabaseManager dbMan, String botAdmin, User botOwner, String commandName, int commandID,
-			int commandDefaultLevel) {
-		super(dbMan, botAdmin, botOwner, commandName, commandID, commandDefaultLevel);
+	public SetPrefixCS(SharedContainer container, String commandName, int commandID, int commandDefaultLevel) {
+		super(container, commandName, commandID, commandDefaultLevel);
 	}
 	
 	@Override

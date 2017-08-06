@@ -19,6 +19,7 @@ import net.dv8tion.jda.core.events.message.*;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.requests.RestAction;
+import werewolf.Werewolf;
 
 
 public class EventListener extends ListenerAdapter {
@@ -46,48 +47,53 @@ public class EventListener extends ListenerAdapter {
 	{
 		//TODO I think this could be improved fair better. 
 		botOwner = info.getOwner();
+		SharedContainer container = new SharedContainer();
+		container.dbMan = dbMan;
+		container.botAdmin = botAdmin;
+		container.botOwner = botOwner;
+		container.ww = new Werewolf(dbMan);
 		
 		String name = "setprefix";
-		cmdList.put(name, new SetPrefixCS(dbMan, botAdmin, botOwner, name, 1, 1));
+		cmdList.put(name, new SetPrefixCS(container, name, 1, 1));
 		
 		name = "setlevelforuser";
-		cmdList.put(name, new SetPermissionByUserCS(dbMan, botAdmin, botOwner, name, 2, 1));
+		cmdList.put(name, new SetPermissionByUserCS(container, name, 2, 1));
 		
 		name = "setcommandlevel";
-		cmdList.put(name, new SetCommandLevelCS(dbMan, botAdmin, botOwner, name, 3, 1));
+		cmdList.put(name, new SetCommandLevelCS(container, name, 3, 1));
 		
 		name = "profile";
-		cmdList.put(name, new ProfileCS(dbMan,botAdmin, botOwner, name, 4, 999));
+		cmdList.put(name, new ProfileCS(container, name, 4, 999));
 		
 		name = "preload";
-		cmdList.put(name, new PreloadCS(dbMan,botAdmin, botOwner, name, 5, 1));
+		cmdList.put(name, new PreloadCS(container, name, 5, 1));
 		
 		name = "setlevelforrole";
-		cmdList.put(name, new SetPermissionsByRoleCS(dbMan,botAdmin, botOwner, name, 6, 1));
+		cmdList.put(name, new SetPermissionsByRoleCS(container, name, 6, 1));
 		
 		name = "help";
-		cmdList.put(name, new HelpCS(dbMan,botAdmin, botOwner, name, 7, 999));
+		cmdList.put(name, new HelpCS(container, name, 7, 999));
 		
 		name = "iam";
-		cmdList.put(name, new SelfRolesCS(dbMan,botAdmin, botOwner, name, 8, 999)); 
+		cmdList.put(name, new SelfRolesCS(container, name, 8, 999)); 
 		
 		name = "selfassignrole";
-		cmdList.put(name, new SetSelfRoleCS(dbMan,botAdmin, botOwner, name, 9, 1));
+		cmdList.put(name, new SetSelfRoleCS(container, name, 9, 1));
 		
 		name = "listselfroles";
-		cmdList.put(name, new ListSelfRolesCS(dbMan,botAdmin, botOwner, name, 10, 999));
+		cmdList.put(name, new ListSelfRolesCS(container, name, 10, 999));
 		
 		name = "removeselfassignrole";
-		cmdList.put(name, new RemoveSelfRoleCS(dbMan,botAdmin, botOwner, name, 11, 1));
+		cmdList.put(name, new RemoveSelfRoleCS(container, name, 11, 1));
 		
 		name = "setselfassigngroup";
-		cmdList.put(name, new SetSelfRoleGroupCS(dbMan,botAdmin, botOwner, name, 12, 1));
+		cmdList.put(name, new SetSelfRoleGroupCS(container, name, 12, 1));
 		
 		name = "togglegroupexculsive";
-		cmdList.put(name, new SetSelfRoleGroupExculsive(dbMan,botAdmin, botOwner, name, 13, 1));
+		cmdList.put(name, new SetSelfRoleGroupExculsive(container, name, 13, 1));
 		
 		name = "removeselfassigngroup";
-		cmdList.put(name, new RemoveSelfRoleGroup(dbMan,botAdmin, botOwner, name, 14, 1));
+		cmdList.put(name, new RemoveSelfRoleGroup(container, name, 14, 1));
 	}
 
 	

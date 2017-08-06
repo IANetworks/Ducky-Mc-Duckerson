@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -15,6 +16,7 @@ import bot.database.manager.data.Permissions;
 import bot.database.manager.data.SelfRoles;
 import bot.database.manager.data.UserProfile;
 import net.dv8tion.jda.core.entities.Role;
+import werewolf.data.Theme;
 
 public class DatabaseManager {
 	private Connection conn;
@@ -29,6 +31,10 @@ public class DatabaseManager {
 		fetchPermissionGroup(); //Fetch all the permissions
 		fetchPermissioLevel(); //Fetch all permission level names
 		fetchSelfRole(); //fetch all self assigned roles
+	}
+	
+	public Connection getConn() {
+		return this.conn;
 	}
 	
 	private void fetchGuildSettings() throws SQLException
@@ -46,6 +52,8 @@ public class DatabaseManager {
 				guildSetting.setLoggingOn(rs.getBoolean("logging_on"));
 				guildSetting.setLoggingChannel(rs.getString("logging_channel"));
 				guildSetting.setPrefix(rs.getString("prefix"));
+				guildSetting.setWWOn(rs.getBoolean("werewolf_on"));
+				guildSetting.setGameChannel(rs.getString("game_channel"));
 				guildSetting.isStored = true;
 				
 				listGuildSettings.put(guildSetting.getGuildId(), guildSetting);
@@ -413,6 +421,12 @@ public class DatabaseManager {
 	public Boolean isGreetOn(Long guildID) {
 		return getGuildValues(guildID).isGreetOn();
 	}
+	public Boolean isWerewolfOn(Long guildID) {
+		return getGuildValues(guildID).isWWOn();
+	}
+	public String getGameChannel(Long guildID) {
+		return getGuildValues(guildID).getgameChannel();
+	}
 	public boolean isStored(Long guildID) {
 		return getGuildValues(guildID).isStored;
 	}
@@ -516,6 +530,76 @@ public class DatabaseManager {
 		return false;
 	}
 
+	public void setGameChannel(Long guildID, String gameChannel) throws SQLException
+	{
+		String sql = "SELECT COUNT(*) FROM variables WHERE guild_id = ?";
+		PreparedStatement pstmt = conn.prepareStatement(sql); 
+		pstmt.setLong(1, guildID);
+		ResultSet rs = pstmt.executeQuery();
+		Integer rowCount = 0;
+		
+		while(rs.next()) rowCount = rs.getInt(1);
+		if (rowCount > 0)
+		{
+			sql = "UPDATE variables SET game_channel = ? WHERE guild_id = ?";	
+		} else {
+			 sql = "INSERT INTO variables (game_channel, guild_id) VALUES (?, ?)"; 
+		}
+		
+		pstmt = conn.prepareStatement(sql);
+		pstmt.setLong(2, guildID);
+		pstmt.setString(1, gameChannel);
+		
+		pstmt.execute();
+		
+		//Check List
+		if(listGuildSettings.containsKey(guildID))
+		{
+			//if it does, fetch guildSetting from list, update values and store
+			listGuildSettings.get(guildID).setGameChannel(gameChannel);
+		} else {
+			//If it doesn't exist, create new guildSetting for guildID, set value, update
+			GuildSetting guildSetting = new GuildSetting();
+			guildSetting.setGameChannel(gameChannel);
+			listGuildSettings.put(guildID, guildSetting);
+		}
+	} 
+	
+	public void setWerewolfOn(Long guildID, Boolean wwOn) throws SQLException
+	{
+		String sql = "SELECT COUNT(*) FROM variables WHERE guild_id = ?";
+		PreparedStatement pstmt = conn.prepareStatement(sql); 
+		pstmt.setLong(1, guildID);
+		ResultSet rs = pstmt.executeQuery();
+		Integer rowCount = 0;
+		
+		while(rs.next()) rowCount = rs.getInt(1);
+		if (rowCount > 0)
+		{
+			sql = "UPDATE variables SET werewolf_on = ? WHERE guild_id = ?";	
+		} else {
+			 sql = "INSERT INTO variables (werewolf_on, guild_id) VALUES (?, ?)"; 
+		}
+		
+		pstmt = conn.prepareStatement(sql);
+		pstmt.setLong(2, guildID);
+		pstmt.setBoolean(1, wwOn);
+		
+		pstmt.execute();
+		
+		//Check List
+		if(listGuildSettings.containsKey(guildID))
+		{
+			//if it does, fetch guildSetting from list, update values and store
+			listGuildSettings.get(guildID).setWWOn(wwOn);
+		} else {
+			//If it doesn't exist, create new guildSetting for guildID, set value, update
+			GuildSetting guildSetting = new GuildSetting();
+			guildSetting.setWWOn(wwOn);
+			listGuildSettings.put(guildID, guildSetting);
+		}
+	}
+	
 	public void setCommandLevel(Long guildID, Integer commandID, Integer commandLevel) throws SQLException {
 		//Set the levels of the commands
 		String sql = "SELECT COUNT(*) FROM permission_commands WHERE guild_id = ? AND command_id = ?";
@@ -857,7 +941,7 @@ public class DatabaseManager {
 	
 	public boolean setNewSelfAssignableRole(Long guildID, Long roleID, Integer groupID, Boolean isExculsive) throws SQLException
 	{
-		boolean IsRoleNew = false;
+		boolean isRoleNew = false;
 		
 		//Check List
 		if(listOfSelfRoles.containsKey(guildID))
@@ -865,11 +949,11 @@ public class DatabaseManager {
 			if(isExculsive != null)
 			{
 				//We have an existing guild, so let check to make sure we don't assign an already existing role
-				IsRoleNew = listOfSelfRoles.get(guildID).setNewRole(roleID, groupID, isExculsive);
+				isRoleNew = listOfSelfRoles.get(guildID).setNewRole(roleID, groupID, isExculsive);
 			} else {
 				isExculsive = listOfSelfRoles.get(guildID).isGroupExclusive(groupID);
 				if(isExculsive == null) isExculsive = false; //this could happen if it's a new group default to false;
-				IsRoleNew = listOfSelfRoles.get(guildID).setNewRole(roleID, groupID, isExculsive);
+				isRoleNew = listOfSelfRoles.get(guildID).setNewRole(roleID, groupID, isExculsive);
 			}
 			
 		} else {
@@ -878,10 +962,10 @@ public class DatabaseManager {
 			SelfRoles newSelfRoles = new SelfRoles();
 			newSelfRoles.setNewRole(roleID, groupID, isExculsive);
 			listOfSelfRoles.put(guildID, newSelfRoles);
-			IsRoleNew = true;
+			isRoleNew = true;
 		}
 		
-		if(IsRoleNew)
+		if(isRoleNew)
 		{
 			String sql = "INSERT INTO self_roles (guild_id, role_id, role_group_id, exclusive_on) VALUES (?, ?, ?, ?)";
 			PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -893,7 +977,7 @@ public class DatabaseManager {
 			pstmt.execute();
 		}
 		
-		return IsRoleNew;
+		return isRoleNew;
 	}
 	
 	public Boolean setGroupExculsive(Long guildID, Integer groupID, Boolean isExculsive) throws SQLException
@@ -1010,6 +1094,162 @@ public class DatabaseManager {
 			pstmt.setLong(2, guildID);
 			pstmt.setLong(3, roleID);
 			pstmt.execute();
+		}
+		
+		return null;
+	}
+	
+	public Theme sqlGetThemeDesc(int id)
+	{
+		Statement dbState = null;
+		ResultSet dbRS = null;
+		Theme themeDes = new Theme();
+				
+		try
+		{
+			//db_state = db_cn.createStatement();
+			dbRS = dbState.executeQuery("SELECT * FROM theme_detail WHERE id_key = " + id);
+			
+			themeDes.setDetails(dbRS);
+			
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		
+		return themeDes;
+	}
+	
+	/**
+	 * Get List of themes
+	 */
+	public List<String> sqlGetThemeList()
+	{
+		//TODO Switch to a list of object
+		Statement dbState = null;
+		ResultSet dbRs = null;
+		
+		List<String> themeList = new ArrayList<String>();
+		
+		int themeNameID = 0;
+		String themeName = "";
+		
+		try {
+			//db_state = db_cn.createStatement();
+	
+			dbRs = dbState.executeQuery("SELECT * FROM theme_detail WHERE loaded = 1 ORDER BY id_key");
+
+			
+			while(dbRs.next())
+			{
+				themeNameID = dbRs.getInt("id_key");
+				themeName = dbRs.getString("theme_name");
+				
+				themeList.add(themeName + "-" + themeNameID);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+				e.printStackTrace();
+		}
+		return themeList;
+	}
+	
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public boolean sqlThemeCheck(int id)
+	{
+		String sql = "SELECT count(*) AS themeCount FROM theme_detail WHERE id_key = ? AND loaded = 1";
+		boolean exists = false;
+		int themeCount = 0;
+		
+		try
+		{
+			PreparedStatement dbState = conn.prepareStatement(sql);
+			ResultSet dbRs = null;	
+
+			dbState.setInt(1, id);
+			dbRs = dbState.executeQuery();
+			
+			while(dbRs.next())
+			{
+				themeCount = dbRs.getInt(1);
+			}
+			
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		
+		if(themeCount == 0)
+		{
+			exists = false;
+		} else {
+			exists = true;
+		}
+			
+		return exists;
+	}
+	
+	/**
+	 * 
+	 * @param id
+	 */
+	public void sqlIncThemeCount(int id)
+	{
+		Statement dbState = null;
+		
+		try
+		{
+			//db_state = db_cn.createStatement();
+			dbState.executeUpdate("UPDATE theme_detail SET played_count=played_count+1 WHERE id_key = " + id);
+			
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+		} finally {
+			if (dbState != null)
+			{
+				try
+				{
+					dbState.close();
+				} catch (SQLException sqlEx)
+				{}
+				
+				dbState = null;
+			}
+		}
+	}
+
+	/**
+	 * Get Details from Theme
+	 * @param id
+	 */
+	public Theme sqlGetTheme (int id) 
+	{
+		String sqlDetail = "SELECT * FROM theme_detail WHERE id_key = ?";
+		String sqlThemes = "SELECT * FROM theme WHERE theme_id = ?";
+		Theme themeObj = new Theme();
+
+		try
+		{
+			PreparedStatement dbState = conn.prepareStatement(sqlDetail);
+			dbState.setInt(1, id);
+			ResultSet dbRs = dbState.executeQuery();
+			themeObj.setDetails(dbRs);
+			
+			dbState = conn.prepareStatement(sqlThemes);
+			dbState.setInt(1, id);
+			ResultSet dbRs2 = dbState.executeQuery();
+			themeObj.setText(dbRs2);
+			
+			return themeObj;
+			
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
 		}
 		
 		return null;

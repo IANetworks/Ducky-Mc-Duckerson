@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import bot.SharedContainer;
 import bot.database.manager.DatabaseManager;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
@@ -15,9 +16,9 @@ import net.dv8tion.jda.core.entities.User;
 
 public class SetSelfRoleGroupCS extends CommandStructure {
 
-	public SetSelfRoleGroupCS(DatabaseManager dbMan, String botAdmin, User botOwner, String commandName, int commandID,
+	public SetSelfRoleGroupCS(SharedContainer container, String commandName, int commandID,
 			int commandDefaultLevel) {
-		super(dbMan, botAdmin, botOwner, commandName, commandID, commandDefaultLevel);
+		super(container, commandName, commandID, commandDefaultLevel);
 		// TODO Auto-generated constructor stub
 	}
 

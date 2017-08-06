@@ -2,6 +2,7 @@ package bot.CommandStructure;
 
 import java.util.Map;
 
+import bot.SharedContainer;
 import bot.database.manager.DatabaseManager;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Member;
@@ -12,9 +13,9 @@ import net.dv8tion.jda.core.entities.User;
 
 public class HelpCS extends CommandStructure {
 
-	public HelpCS(DatabaseManager dbMan, String botAdmin, User botOwner, String commandName, int commandID,
+	public HelpCS(SharedContainer container, String commandName, int commandID,
 			int commandDefaultLevel) {
-		super(dbMan, botAdmin, botOwner, commandName, commandID, commandDefaultLevel);
+		super(container, commandName, commandID, commandDefaultLevel);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -28,6 +29,7 @@ public class HelpCS extends CommandStructure {
 		user.openPrivateChannel().queue((privChannel) -> sendHelpList(privChannel, commandList, guildID));
 			
 	}
+	
 private void sendHelpList(PrivateChannel privChannel, Map<String, CommandStructure> commandList, Long guildID) {
 			EmbedBuilder embed = new EmbedBuilder();
 			int count = 0;

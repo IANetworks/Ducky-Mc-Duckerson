@@ -2,11 +2,13 @@ package bot.CommandStructure;
 
 import java.util.Map;
 
+import bot.SharedContainer;
 import bot.database.manager.DatabaseManager;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
+import werewolf.Werewolf;
 
 public abstract class CommandStructure {
 	public String commandName; //Store the command name here.
@@ -15,15 +17,16 @@ public abstract class CommandStructure {
 	public User botOwner; //We hold the botOwner here so we don't have to fetch it
 	public int permissionLevel; //Defaut permission level
 	DatabaseManager dbMan;
+	Werewolf ww;
 	
-	public CommandStructure(DatabaseManager dbMan, String botAdmin, User botOwner, String commandName, int commandID, int commandDefaultLevel)
+	public CommandStructure(SharedContainer container, String commandName, int commandID, int commandDefaultLevel)
 	{
-		this.dbMan = dbMan;
+		this.dbMan = container.dbMan;
 		this.permissionLevel = commandDefaultLevel;
 		this.commandID = commandID;
 		this.commandName = commandName; 
-		this.botAdmin = botAdmin;
-		this.botOwner = botOwner;
+		this.botAdmin = container.botAdmin;
+		this.botOwner = container.botOwner;
 	}
 	
 	protected static boolean isInteger(String str) {

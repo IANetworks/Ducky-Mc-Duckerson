@@ -2,6 +2,7 @@ package bot.CommandStructure;
 
 import java.util.Map;
 
+import bot.SharedContainer;
 import bot.database.manager.DatabaseManager;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
@@ -10,9 +11,9 @@ import net.dv8tion.jda.core.entities.User;
 
 public class SetGreetMessageCS extends CommandStructure {
 
-	public SetGreetMessageCS(DatabaseManager dbMan, String botAdmin, User botOwner, String commandName, int commandID,
+	public SetGreetMessageCS(SharedContainer container, String commandName, int commandID,
 			int commandDefaultLevel) {
-		super(dbMan, botAdmin, botOwner, commandName, commandID, commandDefaultLevel);
+		super(container, commandName, commandID, commandDefaultLevel);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -24,7 +25,7 @@ public class SetGreetMessageCS extends CommandStructure {
 	}
 
 	@Override
-	public String help(Long GuildID) {
+	public String help(Long guildID) {
 		// TODO Auto-generated method stub
 		return null;
 	}

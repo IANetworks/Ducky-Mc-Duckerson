@@ -8,8 +8,22 @@ public class GuildSetting {
 	private String loggingChannel = null;
 	private Boolean loggingOn = false;
 	private Boolean greetOn = false;
+	private String gameChannel = null;
+	private Boolean wwOn = true;
 	public boolean isStored = false;
 	
+	public Boolean isWWOn(){
+		return wwOn;
+	}
+	public void setWWOn(Boolean wwOn){
+		this.wwOn = wwOn;
+	}
+	public String getgameChannel() {
+		return gameChannel;
+	}
+	public void setGameChannel(String gameChannel) {
+		this.gameChannel = gameChannel;
+	}
 	public Boolean isLoggingOn() {
 		return loggingOn;
 	}
