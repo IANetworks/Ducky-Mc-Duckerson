@@ -14,9 +14,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.util.Properties;
 
 //Database Imports
@@ -72,10 +74,11 @@ public class McDucky
 		configProps.store(outputStream, "Set your configs here");
 		outputStream.close();
 	}
-	
-	//Setup Tables for the first time, to make sure we always have the correct tables upon run
+
 	/**
-	 * 
+	 * Setup Tables for the first time, to make sure we always have the correct tables upon run
+	 *
+	 * @throws SQLException
 	 */
 	private void setupTables() throws SQLException
 	{
@@ -89,18 +92,43 @@ public class McDucky
 		//TODO Timer with TTS
 		//TODO Self nickname change
 		//TODO Playing status
-		
+
 		//Shouldn't happen but let make sure we have conn
-		if(conn == null)
-		{
-			//ERROR ERROR WILL ROBINSON
-			return; //<- SO BAD.. will have to switch to throwable
-			//TODO Switch to throwables
+		if(conn == null) //ERROR ERROR WILL ROBINSON
+			throw new SQLException("SQL connection failed.");
+
+		Reader fileReader;
+
+		// Try to open the file into a fileStream (Reader in Java).
+		try {
+			fileReader = new FileReader("duckyDB_Rev2.sql");
+		} catch (Exception ex) {
+			ex.fillInStackTrace();
+			ex.printStackTrace();
+
+			throw new SQLException("Unable to open the sql file.");
 		}
-		
-	//TODO Improve the function below, we're going to call a file and call the SQL.
-	
-		
+
+		// Try to run the script using the script runner class we created.
+		try {
+			ScriptRunner sqlScriptRunner = new ScriptRunner(conn, true);
+			sqlScriptRunner.runScript(fileReader);
+			System.out.printf("Default database tables have been created.\n");
+		} catch (SQLException ex) {
+			// Rethrow SQLExceptions for later catching.
+			throw ex;
+		} catch (Exception ex) {
+			// If any exotic exception occurred, print stack to console
+			ex.fillInStackTrace();
+			ex.printStackTrace();
+		} finally {
+			// Gotta clean up after our selves
+			try {
+				fileReader.close();
+			} catch (Exception ex) {
+				// Safe to ignore, should only throw an error if the file handle is NULL
+			}
+		}
 	}
 
     /**
