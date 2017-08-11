@@ -27,6 +27,7 @@ public abstract class CommandStructure {
 		this.commandName = commandName; 
 		this.botAdmin = container.botAdmin;
 		this.botOwner = container.botOwner;
+		this.ww = container.ww;
 	}
 	
 	protected static boolean isInteger(String str) {
@@ -118,9 +119,17 @@ public abstract class CommandStructure {
 		
 		return hasPermission;
 	}
-	
-	
-	public abstract void excute(Member author, MessageChannel channel, Message message, String parameters, Map<String, CommandStructure> commandList);
+
+
+	public void execute(Member author, MessageChannel channel, Message message, String parameters, Map<String, CommandStructure> commandList)
+	{
+		execute(author, null, channel, message, parameters, commandList);
+	}
+	public void execute(User authorUser, MessageChannel channel, Message message, String parameters, Map<String, CommandStructure> commandList)
+	{
+		execute(null, authorUser, channel, message, parameters, commandList);
+	}
+	public abstract void execute(Member author, User authorUser, MessageChannel channel, Message message, String parameters, Map<String, CommandStructure> commandList);
 
 	public abstract String help(Long guildID);
 }

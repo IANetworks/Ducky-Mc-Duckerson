@@ -17,16 +17,19 @@ import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
 import net.dv8tion.jda.core.events.message.*;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.requests.RestAction;
 import werewolf.Werewolf;
 
 
 public class EventListener extends ListenerAdapter {
+	SharedContainer container = new SharedContainer();
 	DatabaseManager dbMan;
 	String botAdmin;
 	User botOwner; //We'll hold the botOwner so we don't have to keep asking Discord for this
 	Map<String, CommandStructure> cmdList = new HashMap<String,CommandStructure>();
+	Map<String, CommandStructure> privCmdList = new HashMap<String,CommandStructure>();
 	
 	public EventListener(DatabaseManager dbMan) {
 		selfStart(dbMan, null);
@@ -47,11 +50,10 @@ public class EventListener extends ListenerAdapter {
 	{
 		//TODO I think this could be improved fair better. 
 		botOwner = info.getOwner();
-		SharedContainer container = new SharedContainer();
 		container.dbMan = dbMan;
 		container.botAdmin = botAdmin;
 		container.botOwner = botOwner;
-		container.ww = new Werewolf(dbMan);
+		container.ww = new Werewolf(dbMan, info.getJDA().getSelfUser());
 		
 		String name = "setprefix";
 		cmdList.put(name, new SetPrefixCS(container, name, 1, 1));
@@ -93,9 +95,25 @@ public class EventListener extends ListenerAdapter {
 		cmdList.put(name, new SetSelfRoleGroupExculsive(container, name, 13, 1));
 		
 		name = "removeselfassigngroup";
-		cmdList.put(name, new RemoveSelfRoleGroup(container, name, 14, 1));
-	}
+		cmdList.put(name, new RemoveSelfRoleGroup(container, name, 14, 999));
 
+		name = "join";
+		cmdList.put(name, new WerewolfJoinCS(container, name, 15, 999));
+
+		name = "start_ww";
+		cmdList.put(name, new WerewolfStartCS(container, name, 16, 999));
+
+		name = "kill";
+		cmdList.put(name, new WerewolfKillCS(container, name, 17, 999));
+
+		name = "vote";
+		cmdList.put(name, new WerewolfVoteCS(container, name, 18, 999));
+
+		//********* PrivateMessage Commands *********//
+		name = "see";
+		privCmdList.put(name, new WerewolfSeeCS(container, name, 19, 999));
+	}
+	///TODO SetGameChannel
 	
 	@Override
 	public void onReady(ReadyEvent event)
@@ -194,7 +212,7 @@ public class EventListener extends ListenerAdapter {
 				if(cmdList.isEmpty())
 				{
 					//Our commands list have not setup yet, we're still waiting for infomation from Discord
-					channel.sendMessage("My Command List has not been initiziated yet. Still waiting on infomation from Discord. (If this taking more than a minute, there's something wrong)").queue();
+					channel.sendMessage("My Command List has not been initiated yet. Still waiting on information from Discord. (If this taking more than a minute, there's something wrong)").queue();
 				} else {
 					//Loop through our commands
 					for(String commandName : cmdList.keySet())
@@ -203,7 +221,7 @@ public class EventListener extends ListenerAdapter {
 							Integer cmdCharCount = guildPrefix.length() + commandName.length();
 							String parameters = msg.substring(cmdCharCount);
 							
-							cmdList.get(commandName).excute(author, channel, message, parameters, cmdList);
+							cmdList.get(commandName).execute(author, channel, message, parameters, cmdList);
 							break; //We found a matching command, let break out of the loop
 						}
 					}
@@ -230,7 +248,34 @@ public class EventListener extends ListenerAdapter {
 			}
 		}
 	}
-	
+
+	@Override
+	public void onPrivateMessageReceived(PrivateMessageReceivedEvent event) {
+		//Member author = event.getMember(); //User who sent message, member of guild
+		User author = event.getAuthor();
+		MessageChannel channel = event.getChannel();
+		Message message = event.getMessage(); //Message recieved
+		String msg = message.getContent().trim(); // String readable content of message
+		//Guild guild = event.getGuild(); //Get info about the server this message is recieved on
+		//Long guildID = guild.getIdLong(); //guild unique id
+		if(msg.length() > 0) {
+			if (privCmdList.isEmpty()) {
+				channel.sendMessage("My Command List has not been initiated yet. Still waiting on information from Discord. (If this taking more than a minute, there's something wrong)").queue();
+			} else {
+				for (String commandName : privCmdList.keySet()) {
+					if(msg.startsWith(commandName))
+					{
+						Integer cmdCount = commandName.length();
+						String parameters =  msg.substring(cmdCount);
+
+						privCmdList.get(commandName).execute(author, channel, message, parameters, privCmdList);
+					}
+
+				}
+			}
+		}
+	}
+
 	/**
      * NOTE THE @Override!
      * This method is actually overriding a method in the ListenerAdapter class! We place an @Override annotation
@@ -270,6 +315,9 @@ public class EventListener extends ListenerAdapter {
         {
         	//Make sure we have permission
         	if(isBotAdminOwner) {
+        		if(container.ww != null)
+        			container.ww.shutDown();
+
         		author.openPrivateChannel().queue((channel) -> sendChannelMessageAndShutdown(channel, "Bye bye, I'm closing down"));
         	}
         }    
@@ -277,7 +325,7 @@ public class EventListener extends ListenerAdapter {
 
 	private boolean isBotAdminOwner(User author) {
 		String userwithDiscriminator = author.getName() + "#" + author.getDiscriminator(); //the libarey don't include a readily used readable username with descriminator
-		return (userwithDiscriminator.equals(botAdmin) && botAdmin != null) || (botOwner.getIdLong() == author.getIdLong());
+		return (botAdmin != null && userwithDiscriminator.equals(botAdmin)) || (botOwner.getIdLong() == author.getIdLong());
 	}
 	
 	    

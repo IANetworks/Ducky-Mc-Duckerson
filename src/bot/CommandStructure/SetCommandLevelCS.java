@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import java.util.Map;
 
 import bot.SharedContainer;
-import bot.database.manager.DatabaseManager;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
@@ -18,7 +17,7 @@ public class SetCommandLevelCS extends CommandStructure {
 	}
 
 	@Override
-	public void excute(Member author, MessageChannel channel, Message message, String parameters, Map<String, CommandStructure> commandList) {
+	public void execute(Member author, User authorUser, MessageChannel channel, Message message, String parameters, Map<String, CommandStructure> commandList) {
 		Long guildID = author.getGuild().getIdLong();
 		
 		if(hasPermission(author))

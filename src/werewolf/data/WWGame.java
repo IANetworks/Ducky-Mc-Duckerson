@@ -6,13 +6,13 @@ public class WWGame {
 	private GameState gameState = GameState.IDLE;
 	
 	//Curves setting for Nighttime 
-	private Integer nightTimeX = 180;
-	private Integer nightTimeY = 140;
-	private Double nightTimePow = 0.9;
+	private Integer nightTimeX = 190;
+	private Integer nightTimeY = 150;
+	private Double nightTimePow = 1.0;
 	
 	//Setting for Daytime
-	private Integer maxDayTime = 80;
-	private Integer dayTimeX = 6;
+	private Integer maxDayTime = 120;
+	private Integer dayTimeX = 10;
 	
 	//setting for vote time
 	private Integer voteTimeX = 10;
@@ -31,7 +31,8 @@ public class WWGame {
 	private boolean voteChange = false; //boolean to show if the bot should allow vote changes during voting
 
 	private boolean checkingWin = false; //boolean to make sure we're not already tallying votes when game switch GameState
-	private boolean hasBans = false; //boolean to check to see if someone been banned from the game. 
+	private boolean hasBans = false; //boolean to check to see if someone been banned from the game.
+
 	
 	/**
 	 * @return the gameState
@@ -288,7 +289,7 @@ public class WWGame {
 	/**
 	 * @return the hasBans
 	 */
-	public boolean isHasBans() {
+	public boolean hasBans() {
 		return hasBans;
 	}
 
@@ -305,4 +306,7 @@ public class WWGame {
 		// TODO Auto-generated constructor stub
 	}
 
+	public void incGameRound() {
+		this.roundNo++;
+	}
 }

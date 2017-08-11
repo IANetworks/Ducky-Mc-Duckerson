@@ -8,6 +8,7 @@ import bot.SharedContainer;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
+import net.dv8tion.jda.core.entities.User;
 
 public class SetPrefixCS extends CommandStructure {
 	public SetPrefixCS(SharedContainer container, String commandName, int commandID, int commandDefaultLevel) {
@@ -15,7 +16,7 @@ public class SetPrefixCS extends CommandStructure {
 	}
 	
 	@Override
-	public void excute(Member author, MessageChannel channel, Message message, String parameters, Map<String, CommandStructure> commandList) {
+	public void execute(Member author, User authorUser, MessageChannel channel, Message message, String parameters, Map<String, CommandStructure> commandList) {
 		//Check to see if we're either botAdminOwner or guild Owner
 		String curGuildPrefix = "!";
 		Long guildID = author.getGuild().getIdLong();
@@ -45,8 +46,8 @@ public class SetPrefixCS extends CommandStructure {
 			} else {
 				parameters = parameters.trim();
 				if(parameters.length() > 3) {
-					channel.sendMessage("I cannot set a prefix of 4 or more, I count " + String.valueOf(parameters.length())).queue();;
-				} else {
+					channel.sendMessage("I cannot set a prefix of 4 or more, I count " + String.valueOf(parameters.length())).queue();
+                } else {
 					final String pm = parameters;
 					Consumer<Message> callback = (response) -> {
 						try {

@@ -17,39 +17,38 @@ public class Player {
 	
 	Player voteFor = null;
 	Role role = Role.NOROLE; // Contain an int for Role
-	Alive alive = Alive.ALIVE; // Contain an int for alive, 1 alive, 2 dead, 3 fled
+	PlayerState playerState = PlayerState.ALIVE; // Contain an int for playerState, 1 playerState, 2 dead, 3 fled
 	
 	int nickCount = 0;
 	int nonVoteCount = 0; // Number of times a Player has not voted for someone
-	int playerID = -1; // PlayerID Number, for easier reference for players ID in Database
+	//int playerID = -1; // PlayerID Number, for easier reference for players ID in Database
 	int playerNo = 0;  //Player Number, for giving the player a number to identify with
 	int voteCount = 0;
 	
 	boolean isBanned = false;
-	
-	//Extended info, for Statistics
-//	int noSeer = 0;
-//	int noWolf = 0;
-//	int noVill = 0;
-//	int noMason = 0;
-//	int noKilled = 0;
-//	int noLynced = 0;
-//	int noWolfVote = 0;
-//	int noNonWolfVote = 0;
-//	int noVoted = 0;
-//	int noFled = 0;
+	boolean roleRecieved = false;
+
+	public boolean isRoleRecieved() {
+		return roleRecieved;
+	}
+
+	public void setRoleRecieved(boolean roleRecieved) {
+		this.roleRecieved = roleRecieved;
+	}
+
+
 	
 	/** Creates a new instance of Player */
 	/**
 	 * 
-	 * @param name
-	 * @param hostname
+	 * @param player
+	 * @param playerNo
 	 */
 	public Player(Member player, int playerNo) {
 		setPlayer(player);
 		setPlayerNo(playerNo);
 		setRole(Role.NOROLE);
-		setAlive(Alive.ALIVE);
+		setPlayerState(PlayerState.ALIVE);
 		setNonVoteCount(0);
 	}
 	
@@ -60,10 +59,17 @@ public class Player {
 	}
 	
 	public String getEffectiveName() {
-		return player.getEffectiveName();
+		if(player != null)
+			return player.getEffectiveName();
+		else
+			return "-";
 	}
 	
 	public Long getUserID() {
+		if(player == null)
+		{
+			return 0L;
+		}
 		return player.getUser().getIdLong();
 	}
 	
@@ -129,7 +135,7 @@ public class Player {
 
 	}
 	
-	public int getVoteCount()
+	public Integer getVoteCount()
 	{
 		return this.voteCount;
 	}
@@ -172,11 +178,11 @@ public class Player {
 
 	/**
 	 * 
-	 * @param alive
+	 * @param playerState
 	 */
-	public void setAlive(Alive alive) {
-		this.alive = alive;
-//		if(alive == Alive.FLED) {
+	public void setPlayerState(PlayerState playerState) {
+		this.playerState = playerState;
+//		if(playerState == PlayerState.FLED) {
 //			this.addNoFled(1);
 //		}
 	}
@@ -185,26 +191,26 @@ public class Player {
 	 * 
 	 * @return
 	 */
-	public Alive getAlive() {
-		return alive;
+	public PlayerState getPlayerState() {
+		return playerState;
 	}
 	
 	/**
 	 * 
 	 * @param playerID
 	 */
-	public void setId(int playerID) {
-		this.playerID = playerID;
-	}
+//	public void setId(int playerID) {
+//		this.playerID = playerID;
+//	}
 	
 	/**
 	 * 
 	 * @return
 	 */
-	public int getPlayerId()
-	{
-		return playerID;
-	}
+//	public int getPlayerId()
+//	{
+//		return playerID;
+//	}
 
 	/**
 	 * 

@@ -25,10 +25,15 @@ public class PlayerList
     Player dyingVoice = null; //Store Dying Voice
     Player toSee = null; //Store Seers choice
     int playerCount = 1;
-    
+
+    public PlayerList() {
+        this.playerCount = 1;
+        addNoLynch();
+    }
+
     /**
      * 
-     * @param name
+     * @param playerID
      */
     public void setSeerViewing(Long playerID)
     {
@@ -39,7 +44,7 @@ public class PlayerList
     
     /**
      * 
-     * @param name
+     * @param playerID
      */
     public void setDyingVoice(Long playerID)
     {
@@ -51,18 +56,13 @@ public class PlayerList
     
     /**
      * 
-     * @param name
+     * @param playerID
      * @return
      */
     public boolean hasDyingVoice(Long playerID)
     {
-    	
-    	if(dyingVoice != null && dyingVoice.getUserID().equals(playerID))
-    	{
-    		return true;
-    	} else {
-    		return false;
-    	}    	
+
+        return dyingVoice != null && dyingVoice.getUserID().equals(playerID);
     }
     
     /**
@@ -71,12 +71,7 @@ public class PlayerList
      */
     public boolean isSeerViewEmpty()
     {
-    	if(toSee == null)
-    	{
-    		return true;
-    	} else {
-    		return false;
-    	}     	
+        return toSee == null;
     }
     
     /**
@@ -85,34 +80,24 @@ public class PlayerList
      */
     public boolean isDyingVoiceEmpty()
     {
-    	if(dyingVoice == null)
-    	{
-    		return true;
-    	} else {
-    		return false;
-    	}    	
+        return dyingVoice == null;
     }
         
     /**
      * 
      */
-    public String getDyingVoice()
+    public Player getDyingVoice()
     {
-    	return dyingVoice.getEffectiveName();
+    	return dyingVoice;
     }
     
     /**
      * 
      * @return
      */
-    public String getSeerView()
+    public Player getSeerView()
     {
-    	if(toSee == null)
-    	{
-    		return null;
-    	} else {
-    		return toSee.getEffectiveName();
-    	}
+        return toSee;
     }
     
     /**
@@ -148,16 +133,16 @@ public class PlayerList
     	Player noLynch = new Player(null, 0);
     	
     	noLynch.setRole(Role.NOLYNCH);
-    	noLynch.setAlive(Alive.NOLYNCH);
-    	noLynch.setId(0); //Special NOLYNCH Id
+    	noLynch.setPlayerState(PlayerState.NOLYNCH);
+    	//noLynch.setId(0); //Special NOLYNCH Id
+        noLynch.setRoleRecieved(true);
     	
     	playerList.put((long) 0, noLynch);
-    	
     }
     
     /**
      * 
-     * @param name
+     * @param playerID
      * @return
      */
     public Player getPlayer(Long playerID)
@@ -173,15 +158,16 @@ public class PlayerList
     
    /**
     * 
-    * @param name
+    * @param user
     */
-    public void addPlayer(Member user)
+    public Player addPlayer(Member user)
     {
     	Player player = new Player(user, playerCount);
         //Get Player ID
         //player.setId(db.sql_getPlayerID(name, hostname));
         playerList.put(player.getUserID(), player);
         playerCount ++;
+        return player;
 
     }
 
@@ -201,20 +187,20 @@ public class PlayerList
 
     /**
      * 
-     * @param name
-     * @param alive
+     * @param playerID
+     * @param playerState
      */
-    public void setPlayerAlive(Long playerID, Alive alive)
+    public void setPlayerState(Long playerID, PlayerState playerState)
     {
     	if(playerList.containsKey(playerID)) {
     		Player player = playerList.get(playerID);
-    		player.setAlive(alive);
+    		player.setPlayerState(playerState);
     	}
     }
     
     /**
      * 
-     * @param name
+     * @param playerID
      * @param isBanned
      */
     public void setPlayerBanned(Long playerID, boolean isBanned)
@@ -227,16 +213,16 @@ public class PlayerList
     
     /**
      * 
-     * @param PlayerNo
+     * @param playerNo
      * @return
      */
-    public String getPlayerNameByPlayerName(int playerNo)
+    public Player getPlayerNameByPlayerID(int playerNo)
     {
     	for(Player player : playerList.values())
     	{
     		if (player.getPlayerNo() == playerNo)
     		{
-    			return player.getEffectiveName();
+    			return player;
     		}
     	}
     	
@@ -245,7 +231,7 @@ public class PlayerList
     
     /**
      * 
-     * @param name
+     * @param playerID
      * @return
      */
     public int getPlayerNo(Long playerID)
@@ -260,7 +246,7 @@ public class PlayerList
 
     /**
      * 
-     * @param name
+     * @param playerID
      * @param role
      */  
     public void setPlayerRole(Long playerID, Role role)
@@ -273,8 +259,8 @@ public class PlayerList
     
     /**
      * 
-     * @param name
-     * @param vote
+     * @param playerID
+     * @param voteForID
      */
     public void setPlayerVote(Long playerID, Long voteForID)
     {
@@ -290,21 +276,21 @@ public class PlayerList
     
     /**
      * 
-     * @param name
+     * @param playerID
      * @return
      */
-    public int getPlayerID(Long playerID)
-    {
-        if(playerList.containsKey(playerID)) {
-        	return playerList.get(playerID).getPlayerId();
-        }
-        
-        return -1;
-    }
+//    public int getPlayerID(Long playerID)
+//    {
+//        if(playerList.containsKey(playerID)) {
+//        	return playerList.get(playerID).getPlayerId();
+//        }
+//
+//        return -1;
+//    }
     
     /**
      * 
-     * @param name
+     * @param playerID
      * @return
      */
     public Member getPlayerMember(Long playerID)
@@ -327,21 +313,21 @@ public class PlayerList
     
     /**
      * 
-     * @param name
+     * @param playerID
      * @param id
      */
-    public void setPlayerID(Long playerID, int id)
-    {
-    	if(playerList.containsKey(playerID)) {
-    		Player player = playerList.get(playerID);
-    		player.setId(id);
-    	}
-    }
+//    public void setPlayerID(Long playerID, int id)
+//    {
+//    	if(playerList.containsKey(playerID)) {
+//    		Player player = playerList.get(playerID);
+//    		player.setId(id);
+//    	}
+//    }
     
 
     /**
      * 
-     * @param name
+     * @param playerID
      * @param nonVoteCount
      */
     public void setPlayerNonVoteCount(Long playerID, int nonVoteCount)
@@ -389,7 +375,7 @@ public class PlayerList
      * @return
      */
     // getPlayerList -> 
-    public List<Player> getPlayerMemberList()
+    public List<Player> getPlayerList()
     {
     	Map<Long, Player> removeNoLynch = new HashMap<Long, Player>(playerList);
     	removeNoLynch.remove((long) 0);
@@ -400,13 +386,13 @@ public class PlayerList
 
     /**
      * 
-     * @param name
+     * @param playerID
      * @return
      */
-    public Role getPlayerRole(String name)
+    public Role getPlayerRole(Long playerID)
     {
-        if(playerList.containsKey(name)) {
-        	return playerList.get(name).getRole();
+        if(playerList.containsKey(playerID)) {
+        	return playerList.get(playerID).getRole();
         }
         
         return Role.ERR; // Return ERR for Error
@@ -429,35 +415,35 @@ public class PlayerList
     
     /**
      * 
-     * @param name
+     * @param playerID
      * @return
      */
-    public String getPlayerVotee(Long playerID)
+    public Player getPlayerVotee(Long playerID)
     {
         if(playerList.containsKey(playerID)) {
         	if(playerList.get(playerID).getVoteFor() == null)
         	{
         		return null;
         	} else {
-        		return playerList.get(playerID).getVoteFor().getEffectiveName();
+        		return playerList.get(playerID).getVoteFor();
         	}
         }
         
-        return null; // Return -1 for Error
+        return null;
     }
     
     /**
      * 
-     * @param name
+     * @param playerID
      * @return
      */
-    public Alive getPlayerAlive(Long playerID)
+    public PlayerState getPlayerState(Long playerID)
     {
         if(playerList.containsKey(playerID)) {
-        	return playerList.get(playerID).getAlive();
+        	return playerList.get(playerID).getPlayerState();
         }
         
-        return Alive.ERR; // Return -1 for Error
+        return PlayerState.ERR;
     }
 
    /**
@@ -505,7 +491,7 @@ public class PlayerList
     	List<Player> byNonVoteCount = new ArrayList<Player>();
     	
         for(Player player : playerList.values()) {
-        	if(player.getNonVoteCount() == nonVoteCount && player.getAlive() == Alive.ALIVE) {
+        	if(player.getNonVoteCount() == nonVoteCount && player.getPlayerState() == PlayerState.ALIVE) {
         		byNonVoteCount.add(player);
         	}
         }
@@ -513,25 +499,25 @@ public class PlayerList
         return byNonVoteCount;
     }
 
-    public List<Player> getPlayerListByAlive(Alive alive)
+    public List<Player> getPlayerListByState(PlayerState playerState)
     {
-    	return getPlayerListByAlive(alive, alive);
+    	return getPlayerListByState(playerState, playerState);
     }
     
    /**
     * 
-    * @param alive
-    * @param alive2
+    * @param playerState
+    * @param playerState2
     * @return
     */
-    public List<Player> getPlayerListByAlive(Alive alive, Alive alive2)
+    public List<Player> getPlayerListByState(PlayerState playerState, PlayerState playerState2)
     {
     	List<Player> byAlive = new ArrayList<Player>();
     	List<Player> ourPlayerList = new ArrayList<Player>(this.playerList.values());
     	Collections.sort(ourPlayerList, new PlayerNoComparator());
     	
         for(Player player : ourPlayerList) {
-        	if(player.getAlive() == alive || player.getAlive() == alive2) {
+        	if(player.getPlayerState() == playerState || player.getPlayerState() == playerState2) {
         		byAlive.add(player);
         	}
         }
@@ -541,12 +527,12 @@ public class PlayerList
     
    /**
     * 
-    * @param alive
+    * @param playerState
     * @return
     */
-    public int getNumberOfPlayerByAlive(Alive alive)
+    public int getNumberOfPlayerByState(PlayerState playerState)
     {
-    	return getPlayerListByAlive(alive).size();
+    	return getPlayerListByState(playerState).size();
     }
 
     /**
@@ -575,7 +561,7 @@ public class PlayerList
     */
     public List<Player> randomOrder()
     {
-    	List<Player> shuffleMe = getPlayerMemberList();
+    	List<Player> shuffleMe = getPlayerList();
         Collections.shuffle(shuffleMe);
         Collections.shuffle(shuffleMe);// Double Shuffle - FOR THE WIN!!!
         return shuffleMe;
@@ -584,15 +570,15 @@ public class PlayerList
     /**
      * 
      * @param role
-     * @param alive
+     * @param playerState
      * @return
      */
-    public int getNumberOfPlayerByRoleAlive(Role role, Alive alive)
+    public int getNumberOfPlayerByRolePlayerState(Role role, PlayerState playerState)
     {
     	int count = 0;
     	
         for(Player player : playerList.values()) {
-        	if(player.getRole() == role && player.getAlive() == Alive.ALIVE) {
+        	if(player.getRole() == role && player.getPlayerState() == playerState) {
         		count ++;
         	}
         }
@@ -603,16 +589,16 @@ public class PlayerList
     /**
      * 
      * @param role
-     * @param alive
+     * @param playerState
      * @return
      */
-    public List<Player> getPlayerListByRoleAlive(Role role, Alive alive)
+    public List<Player> getPlayerListByRolePlayerState(Role role, PlayerState playerState)
     {
     	
     	List<Player> byRoleAlive = new ArrayList<Player>();
     	
         for(Player player : playerList.values()) {
-        	if(player.getRole() == role && player.getAlive() == Alive.ALIVE) {
+        	if(player.getRole() == role && player.getPlayerState() == playerState) {
         		byRoleAlive.add(player);
         	}
         }
@@ -623,14 +609,14 @@ public class PlayerList
     
     /**
      * 
-     * @param name
+     * @param playerID
      */
     public void playerFled(Long playerID)
     {
-    	this.setPlayerAlive(playerID, Alive.FLED);
+    	this.setPlayerState(playerID, PlayerState.FLED);
     	//Check and removes player from all votes
     	
-    	for(Player player : this.getPlayerListByAlive(Alive.ALIVE))
+    	for(Player player : this.getPlayerListByState(PlayerState.ALIVE))
     	{
     		if(playerList.get(player.getUserID()).getVoteFor() != null && playerList.get(player.getUserID()).getVoteFor().getUserID() == playerID )
     		{
@@ -644,7 +630,7 @@ public class PlayerList
      */
 //    public void playerVoteCount()
 //    {
-//    	for(Player name : this.getPlayerListByAlive(Alive.ALIVE))
+//    	for(Player name : this.getPlayerListByState(PlayerState.ALIVE))
 //    	{
 //    		playerList.get(name).addNoVoted(playerList.get(name).getVoteCount());
 //    	}
@@ -666,36 +652,27 @@ public class PlayerList
      * @param tally
      * @return
      */
-    public List<Long> voteCount(boolean tally, int voteTheadhold)
+    public List<Player> voteCount(boolean tally, int voteTheadhold)
     {	
     	//Reset VoteCount
     	this.resetVoteCount();
     	
-    	for (Player player : this.getPlayerListByAlive(Alive.ALIVE, Alive.NOLYNCH))
+    	for (Player player : this.getPlayerListByState(PlayerState.ALIVE, PlayerState.NOLYNCH))
     	{
-    		if(this.playerList.get(player).getVoteFor() != null)
+    		if(player.getVoteFor() != null)
     		{
-    			this.playerList.get(player).getVoteFor().addVoteCount();
+    			player.getVoteFor().addVoteCount();
     			if(tally)
     			{
     				//reset NonVoteCount
     				this.setPlayerNonVoteCount(player.getUserID(), 0);
-    				
+
     				//Add Vote record
-    				PlayerVote playerVote = new PlayerVote(playerList.get(player).getPlayerId(), playerList.get(player).getVoteFor().getPlayerId());
+    				PlayerVote playerVote = new PlayerVote(player.getPlayerNo(), player.getVoteFor().getPlayerNo());
     				playerVoteList.add(playerVote);
-    				
-    				//Check to see if they voted correct or not
-//    				if(playerList.get(player).getVoteFor().getRole() == Role.WOLF)
-//    				{
-//    					playerList.get(player).addNoWolfVote(1);
-//    				} else if(playerList.get(player).getVoteFor().getRole() != Role.NOLYNCH) {
-//    					//If they voted for something other then NoLynch, it's counts against them
-//    					playerList.get(player).addNoNonWolfVote(1);
-//    				}
-    				
+
     			}
-    		} else if(tally && playerList.get(player).getAlive() != Alive.NOLYNCH) {
+    		} else if(tally && player.getPlayerState() != PlayerState.NOLYNCH) {
     			int nonVoteCountAdd = this.getPlayerNonVoteCount(player.getUserID());
     			nonVoteCountAdd ++;
     			this.setPlayerNonVoteCount(player.getUserID(), nonVoteCountAdd);
@@ -709,13 +686,13 @@ public class PlayerList
 		
     	List<Player> ourPlayerList = new ArrayList<Player>(this.playerList.values());
     	Collections.sort(ourPlayerList, new VoteComparator());
-    	List<Long> strPlayerList = new ArrayList<Long>();
+    	List<Player> strPlayerList = new ArrayList<Player>();
     	
     	for(Player player : ourPlayerList)
     	{
-    		if((player.getAlive() == Alive.ALIVE || player.getAlive() == Alive.NOLYNCH) && player.getVoteCount() >= voteTheadhold)
+    		if((player.getPlayerState() == PlayerState.ALIVE || player.getPlayerState() == PlayerState.NOLYNCH) && player.getVoteCount() >= voteTheadhold)
     		{
-    			strPlayerList.add(player.getUserID());
+    			strPlayerList.add(player);
     		}
     	}
     	
@@ -764,12 +741,7 @@ public class PlayerList
     {
     	if(playerList.containsKey(playerID))
     	{
-    		if (playerList.get(playerID).getVoteFor() != null)
-    		{
-    			return true;
-    		} else {
-    			return false;
-    		}
+            return playerList.get(playerID).getVoteFor() != null;
     	}
     	
     	return false;
@@ -808,5 +780,15 @@ public class PlayerList
     	playerCount = 1;
     	addNoLynch();
     }
-    
+
+    public boolean hasAllPlayerReceivedRoles() {
+        for(Player player : playerList.values())
+        {
+            if(!player.isRoleRecieved())
+            {
+                return false;
+            }
+        }
+        return true;
+    }
 }

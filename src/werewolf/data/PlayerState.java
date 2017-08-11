@@ -1,5 +1,5 @@
 package werewolf.data;
 
-public enum Alive{
+public enum PlayerState {
 	ERR, ALIVE, DEAD, FLED, NOLYNCH
 }

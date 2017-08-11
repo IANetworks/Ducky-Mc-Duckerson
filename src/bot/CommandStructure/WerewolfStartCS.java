@@ -6,6 +6,7 @@ import bot.SharedContainer;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
+import net.dv8tion.jda.core.entities.User;
 import werewolf.GameState;
 
 public class WerewolfStartCS extends CommandStructure {
@@ -16,8 +17,8 @@ public class WerewolfStartCS extends CommandStructure {
 	}
 
 	@Override
-	public void excute(Member author, MessageChannel channel, Message message, String parameters,
-			Map<String, CommandStructure> commandList) {
+	public void execute(Member author, User authorUser, MessageChannel channel, Message message, String parameters,
+						Map<String, CommandStructure> commandList) {
 		Long guildID = author.getGuild().getIdLong();
 		
 		if(hasPermission(author))
@@ -37,19 +38,19 @@ public class WerewolfStartCS extends CommandStructure {
 					}
 					
 					if(ww.startTheme(guildID, themeID)) {
-						//TODO start game - we have theme setup
 						ww.startGame(author.getGuild(), author, channel);
 					} else {
 						//TODO Alert players to invalid theme ID;
-						
+						channel.sendMessage("Invalid theme ID, I don't know any theme by " + themeID + " Syntax: " + dbMan.getPrefix(guildID) + commandName + " [themeID]").queue();
 					}
 					
 				} else {
 					//We need an id to select a theme
+					channel.sendMessage("Start a game of werewolf, Syntax: " + dbMan.getPrefix(guildID) + commandName + " [themeID]").queue();
 				}
 			} else {
 				//A Game is currently running, user will need to wait until the game is finished
-				//TODO alert player
+				channel.sendMessage("There's a game already running, please wait for that game to finish").queue();
 			}
 		}
 

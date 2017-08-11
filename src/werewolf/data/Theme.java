@@ -210,8 +210,9 @@ public class Theme {
 				themeName = rs.getString("theme_name");
 				themeDesc = rs.getString("theme_disc");
 				themeAuthor = rs.getString("theme_author");
-				themeCreated = rs.getDate("theme_created");
-				themeModified = rs.getDate("theme_modifed");
+				//themeCreated = rs.getDate("theme_created");
+				//themeModified = rs.getDate("theme_modifed");
+				//TODO fix Datetime function
 				themePlayedCount = rs.getInt("played_count"); 
 			}
 		}
