@@ -6,11 +6,15 @@ package werewolf.data;
 import java.util.Comparator;
 
 /**
- * @author AdTheRat
+ * The type Vote comparator.
  *
+ * @author AdTheRat
  */
 public class VoteComparator implements Comparator<Player> {
-	public VoteComparator()
+    /**
+     * Instantiates a new Vote comparator.
+     */
+    public VoteComparator()
 	{
 	}
 	

@@ -7,8 +7,19 @@ import werewolf.GameState;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The type Werewolf see cs.
+ */
 public class WerewolfSeeCS extends CommandStructure {
 
+    /**
+     * Instantiates a new Werewolf see cs.
+     *
+     * @param container           the container
+     * @param commandName         the command name
+     * @param commandID           the command id
+     * @param commandDefaultLevel the command default level
+     */
     public WerewolfSeeCS(SharedContainer container, String commandName, int commandID, int commandDefaultLevel) {
         super(container, commandName, commandID, commandDefaultLevel);
     }

@@ -4,43 +4,84 @@
 package werewolf.data;
 
 /**
- * @author AdTheRat
+ * The type Player vote.
  *
+ * @author AdTheRat
  */
 public class PlayerVote {
-	
-	int playerId = 0;
-	Integer votedFor = 0;
-	int voteCount = 0;
 
-	public PlayerVote(int playerId)
+    /**
+     * The Player id.
+     */
+    int playerId = 0;
+    /**
+     * The Voted for.
+     */
+    Integer votedFor = 0;
+    /**
+     * The Vote count.
+     */
+    int voteCount = 0;
+
+    /**
+     * Instantiates a new Player vote.
+     *
+     * @param playerId the player id
+     */
+    public PlayerVote(int playerId)
 	{
 		this.playerId = playerId;
 		this.votedFor = null;
 	}
-	
-	public PlayerVote(int playerId, int votedFor)
+
+    /**
+     * Instantiates a new Player vote.
+     *
+     * @param playerId the player id
+     * @param votedFor the voted for
+     */
+    public PlayerVote(int playerId, int votedFor)
 	{
 		this.playerId = playerId;
 		this.votedFor = votedFor;
 	}
-	
-	public void setVoteCount(int intVoteCount)
+
+    /**
+     * Sets vote count.
+     *
+     * @param intVoteCount the int vote count
+     */
+    public void setVoteCount(int intVoteCount)
 	{
 		this.voteCount = intVoteCount;
 	}
-	
-	public int getVoteCount()
+
+    /**
+     * Gets vote count.
+     *
+     * @return the vote count
+     */
+    public int getVoteCount()
 	{
 		return voteCount;
 	}
-	
-	public int getPlayerId()
+
+    /**
+     * Gets player id.
+     *
+     * @return the player id
+     */
+    public int getPlayerId()
 	{
 		return playerId;
 	}
-	
-	public int getVotedFor()
+
+    /**
+     * Gets voted for.
+     *
+     * @return the voted for
+     */
+    public int getVotedFor()
 	{
 		return votedFor;
 	}

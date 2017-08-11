@@ -2,8 +2,14 @@ package werewolf.data;
 
 import java.util.Comparator;
 
+/**
+ * The type Player no comparator.
+ */
 public class PlayerNoComparator implements Comparator<Player> {
-	public PlayerNoComparator()
+    /**
+     * Instantiates a new Player no comparator.
+     */
+    public PlayerNoComparator()
 	{
 	}
 	

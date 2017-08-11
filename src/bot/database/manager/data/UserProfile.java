@@ -1,72 +1,166 @@
 package bot.database.manager.data;
 
+/**
+ * The type User profile.
+ */
 public class UserProfile {
-	
-	Long balance;
-	Long points;
-	Long flipped;
-	Long unflipped;
-	Long level;
-	Integer rank;
-	String rankName;
-	
-	public String getRankName() {
+
+    /**
+     * The Balance.
+     */
+    Long balance;
+    /**
+     * The Points.
+     */
+    Long points;
+    /**
+     * The Flipped.
+     */
+    Long flipped;
+    /**
+     * The Unflipped.
+     */
+    Long unflipped;
+    /**
+     * The Level.
+     */
+    Long level;
+    /**
+     * The Rank.
+     */
+    Integer rank;
+    /**
+     * The Rank name.
+     */
+    String rankName;
+
+    /**
+     * Gets rank name.
+     *
+     * @return the rank name
+     */
+    public String getRankName() {
 		return rankName;
 	}
 
-	public Long getBalance() {
+    /**
+     * Gets balance.
+     *
+     * @return the balance
+     */
+    public Long getBalance() {
 		return balance;
 	}
 
-	public Long getPoints() {
+    /**
+     * Gets points.
+     *
+     * @return the points
+     */
+    public Long getPoints() {
 		return points;
 	}
 
-	public Long getFlipped() {
+    /**
+     * Gets flipped.
+     *
+     * @return the flipped
+     */
+    public Long getFlipped() {
 		return flipped;
 	}
 
-	public Long getUnflipped() {
+    /**
+     * Gets unflipped.
+     *
+     * @return the unflipped
+     */
+    public Long getUnflipped() {
 		return unflipped;
 	}
 
-	public Long getLevel() {
+    /**
+     * Gets level.
+     *
+     * @return the level
+     */
+    public Long getLevel() {
 		return level;
 	}
 
-	public Integer getRank() {
+    /**
+     * Gets rank.
+     *
+     * @return the rank
+     */
+    public Integer getRank() {
 		return rank;
 	}
 
-	public void setRankName(String rankName) {
+    /**
+     * Sets rank name.
+     *
+     * @param rankName the rank name
+     */
+    public void setRankName(String rankName) {
 		this.rankName = rankName;
-	}	
+	}
 
-	public void setBalance(long balance) {
+    /**
+     * Sets balance.
+     *
+     * @param balance the balance
+     */
+    public void setBalance(long balance) {
 		this.balance = balance;
 		
 	}
 
-	public void setPoints(Long points) {
+    /**
+     * Sets points.
+     *
+     * @param points the points
+     */
+    public void setPoints(Long points) {
 		this.points = points;
 		
 	}
 
-	public void setFlipped(long flipped) {
+    /**
+     * Sets flipped.
+     *
+     * @param flipped the flipped
+     */
+    public void setFlipped(long flipped) {
 		this.flipped = flipped;
 		
 	}
 
-	public void setUnflipped(long unflipped) {
+    /**
+     * Sets unflipped.
+     *
+     * @param unflipped the unflipped
+     */
+    public void setUnflipped(long unflipped) {
 		this.unflipped = unflipped;
 		
 	}
 
-	public void setLevel(long level) {
+    /**
+     * Sets level.
+     *
+     * @param level the level
+     */
+    public void setLevel(long level) {
 		this.level = level;
 	}
 
-	public void setRank(int rank) {
+    /**
+     * Sets rank.
+     *
+     * @param rank the rank
+     */
+    public void setRank(int rank) {
 		this.rank = rank;
 	}
 

@@ -7,7 +7,18 @@ import werewolf.GameState;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The type Werewolf vote cs.
+ */
 public class WerewolfVoteCS extends CommandStructure {
+    /**
+     * Instantiates a new Werewolf vote cs.
+     *
+     * @param container           the container
+     * @param commandName         the command name
+     * @param commandID           the command id
+     * @param commandDefaultLevel the command default level
+     */
     public WerewolfVoteCS(SharedContainer container, String commandName, int commandID, int commandDefaultLevel) {
         super(container, commandName, commandID, commandDefaultLevel);
     }

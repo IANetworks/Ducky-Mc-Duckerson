@@ -9,9 +9,20 @@ import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
 import werewolf.GameState;
 
+/**
+ * The type Werewolf start cs.
+ */
 public class WerewolfStartCS extends CommandStructure {
 
-	public WerewolfStartCS(SharedContainer container, String commandName, int commandID, int commandDefaultLevel) {
+    /**
+     * Instantiates a new Werewolf start cs.
+     *
+     * @param container           the container
+     * @param commandName         the command name
+     * @param commandID           the command id
+     * @param commandDefaultLevel the command default level
+     */
+    public WerewolfStartCS(SharedContainer container, String commandName, int commandID, int commandDefaultLevel) {
 		super(container, commandName, commandID, commandDefaultLevel);
 		
 	}

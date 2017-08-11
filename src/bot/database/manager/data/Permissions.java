@@ -3,6 +3,9 @@ package bot.database.manager.data;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The type Permissions.
+ */
 public class Permissions {
 	private Map<Integer, Integer> listOfCommandsLevel = new HashMap<Integer, Integer>(); //Command ID - Command Level
 	private Map<Integer, ListOfPermissions> listOfPermissions = new HashMap<Integer, ListOfPermissions>(); //permission level ID - Level Name, list of usersID, list of roleID
@@ -15,17 +18,36 @@ public class Permissions {
 			return new ListOfPermissions();
 		}
 	}
-	
-	public String getLevelNames(Integer permissionLevelID) {
+
+    /**
+     * Gets level names.
+     *
+     * @param permissionLevelID the permission level id
+     * @return the level names
+     */
+    public String getLevelNames(Integer permissionLevelID) {
 		return getPermissionValues(permissionLevelID).getPermissionLevelName();
 	}
-	
-	public boolean hasUserID(Integer permissionLevelID, Long userID)
+
+    /**
+     * Has user id boolean.
+     *
+     * @param permissionLevelID the permission level id
+     * @param userID            the user id
+     * @return the boolean
+     */
+    public boolean hasUserID(Integer permissionLevelID, Long userID)
 	{
 		return getPermissionValues(permissionLevelID).hasUserID(userID);
 	}
-	
-	public Integer getUserLevel(Long userID)
+
+    /**
+     * Gets user level.
+     *
+     * @param userID the user id
+     * @return the user level
+     */
+    public Integer getUserLevel(Long userID)
 	{
 		Integer pLevel = null;
 		//System.out.println("Permsission Size: " + listOfPermissions.size());
@@ -42,8 +64,14 @@ public class Permissions {
 		//System.out.println("Permission is: " + pLevel);
 		return pLevel;
 	}
-	
-	public Integer getRoleLevel(Long roleID)
+
+    /**
+     * Gets role level.
+     *
+     * @param roleID the role id
+     * @return the role level
+     */
+    public Integer getRoleLevel(Long roleID)
 	{
 		Integer pLevel = null;
 		for(Integer permissionLevel : listOfPermissions.keySet())
@@ -56,12 +84,25 @@ public class Permissions {
 		
 		return pLevel;
 	}
-	public void removeUserID(Integer permissionLevelID, Long userID)
+
+    /**
+     * Remove user id.
+     *
+     * @param permissionLevelID the permission level id
+     * @param userID            the user id
+     */
+    public void removeUserID(Integer permissionLevelID, Long userID)
 	{
 		getPermissionValues(permissionLevelID).removeUserID(userID);
 	}
-	
-	public void setUserID(Integer permissionLevelID, Long userID)
+
+    /**
+     * Sets user id.
+     *
+     * @param permissionLevelID the permission level id
+     * @param userID            the user id
+     */
+    public void setUserID(Integer permissionLevelID, Long userID)
 	{
 				
 		for(Integer permissionLevel : listOfPermissions.keySet()) //remove old user
@@ -78,8 +119,14 @@ public class Permissions {
 		lop.setUserID(userID);
 		listOfPermissions.put(permissionLevelID, lop);
 	}
-	
-	public void setRoleID(Integer permissionLevelID, Long roleID)
+
+    /**
+     * Sets role id.
+     *
+     * @param permissionLevelID the permission level id
+     * @param roleID            the role id
+     */
+    public void setRoleID(Integer permissionLevelID, Long roleID)
 	{
 		for(Integer permissionLevel : listOfPermissions.keySet()) //remove old role
 		{
@@ -95,29 +142,60 @@ public class Permissions {
 		lop.setRoleID(roleID);
 		listOfPermissions.put(permissionLevelID, lop);
 	}
-	
-	public boolean hasRoleID(Integer permissionLevelID, Long roleID)
+
+    /**
+     * Has role id boolean.
+     *
+     * @param permissionLevelID the permission level id
+     * @param roleID            the role id
+     * @return the boolean
+     */
+    public boolean hasRoleID(Integer permissionLevelID, Long roleID)
 	{
 		return getPermissionValues(permissionLevelID).hasRoleID(roleID);
 	}
-	
-	public void removeRoleID(Integer permissionLevelID, Long roleID)
+
+    /**
+     * Remove role id.
+     *
+     * @param permissionLevelID the permission level id
+     * @param roleID            the role id
+     */
+    public void removeRoleID(Integer permissionLevelID, Long roleID)
 	{
 		getPermissionValues(permissionLevelID).removeRoleID(roleID);
 	}
 
-	public void setLevelNames(Integer permissionLevel, String permissionLevelNames) {
+    /**
+     * Sets level names.
+     *
+     * @param permissionLevel      the permission level
+     * @param permissionLevelNames the permission level names
+     */
+    public void setLevelNames(Integer permissionLevel, String permissionLevelNames) {
 		ListOfPermissions lop = getPermissionValues(permissionLevel);
 		lop.setPermissionLevelName(permissionLevelNames);
 		listOfPermissions.put(permissionLevel, lop);
 	}
 
-	public void setLevel(Integer commandID, Integer commandLevel)
+    /**
+     * Sets level.
+     *
+     * @param commandID    the command id
+     * @param commandLevel the command level
+     */
+    public void setLevel(Integer commandID, Integer commandLevel)
 	{
 		listOfCommandsLevel.put(commandID, commandLevel);
 	}
-	
-	public Integer getLevel(Integer commandID)
+
+    /**
+     * Gets level.
+     *
+     * @param commandID the command id
+     * @return the level
+     */
+    public Integer getLevel(Integer commandID)
 	{
 		return listOfCommandsLevel.get(commandID);
 	}

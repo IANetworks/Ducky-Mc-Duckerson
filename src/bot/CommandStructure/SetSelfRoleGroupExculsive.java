@@ -11,9 +11,20 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
 
+/**
+ * The type Set self role group exculsive.
+ */
 public class SetSelfRoleGroupExculsive extends CommandStructure {
 
-	public SetSelfRoleGroupExculsive(SharedContainer container, String commandName,
+    /**
+     * Instantiates a new Set self role group exculsive.
+     *
+     * @param container           the container
+     * @param commandName         the command name
+     * @param commandID           the command id
+     * @param commandDefaultLevel the command default level
+     */
+    public SetSelfRoleGroupExculsive(SharedContainer container, String commandName,
 			int commandID, int commandDefaultLevel) {
 		super(container, commandName, commandID, commandDefaultLevel);
 		// TODO Auto-generated constructor stub

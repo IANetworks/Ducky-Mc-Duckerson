@@ -13,8 +13,19 @@ import net.dv8tion.jda.core.entities.User;
 import java.awt.Color;
 import java.sql.SQLException;
 
+/**
+ * The type Profile cs.
+ */
 public class ProfileCS extends CommandStructure {
-	
+
+	/**
+	 * Instantiates a new Profile cs.
+	 *
+	 * @param container           the container
+	 * @param commandName         the command name
+	 * @param commandID           the command id
+	 * @param commandDefaultLevel the command default level
+	 */
 	public ProfileCS(SharedContainer container, String commandName, int commandID,
 			int commandDefaultLevel) {
 		super(container, commandName, commandID, commandDefaultLevel);

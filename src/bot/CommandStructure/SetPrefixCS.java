@@ -10,8 +10,19 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
 
+/**
+ * The type Set prefix cs.
+ */
 public class SetPrefixCS extends CommandStructure {
-	public SetPrefixCS(SharedContainer container, String commandName, int commandID, int commandDefaultLevel) {
+    /**
+     * Instantiates a new Set prefix cs.
+     *
+     * @param container           the container
+     * @param commandName         the command name
+     * @param commandID           the command id
+     * @param commandDefaultLevel the command default level
+     */
+    public SetPrefixCS(SharedContainer container, String commandName, int commandID, int commandDefaultLevel) {
 		super(container, commandName, commandID, commandDefaultLevel);
 	}
 	

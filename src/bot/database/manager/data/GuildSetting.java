@@ -1,5 +1,8 @@
 package bot.database.manager.data;
 
+/**
+ * The type Guild setting.
+ */
 public class GuildSetting {
 	private Long guildId = null;
 	private String prefix = null;
@@ -10,60 +13,170 @@ public class GuildSetting {
 	private Boolean greetOn = false;
 	private String gameChannel = null;
 	private Boolean wwOn = true;
-	public boolean isStored = false;
-	
-	public Boolean isWWOn(){
+    /**
+     * The Is stored.
+     */
+    public boolean isStored = false;
+
+    /**
+     * Is ww on boolean.
+     *
+     * @return the boolean
+     */
+    public Boolean isWWOn(){
 		return wwOn;
 	}
-	public void setWWOn(Boolean wwOn){
+
+    /**
+     * Set ww on.
+     *
+     * @param wwOn the ww on
+     */
+    public void setWWOn(Boolean wwOn){
 		this.wwOn = wwOn;
 	}
-	public String getgameChannel() {
+
+    /**
+     * Gets channel.
+     *
+     * @return the channel
+     */
+    public String getgameChannel() {
 		return gameChannel;
 	}
-	public void setGameChannel(String gameChannel) {
+
+    /**
+     * Sets game channel.
+     *
+     * @param gameChannel the game channel
+     */
+    public void setGameChannel(String gameChannel) {
 		this.gameChannel = gameChannel;
 	}
-	public Boolean isLoggingOn() {
+
+    /**
+     * Is logging on boolean.
+     *
+     * @return the boolean
+     */
+    public Boolean isLoggingOn() {
 		return loggingOn;
 	}
-	public void setLoggingOn(Boolean loggingOn) {
+
+    /**
+     * Sets logging on.
+     *
+     * @param loggingOn the logging on
+     */
+    public void setLoggingOn(Boolean loggingOn) {
 		this.loggingOn = loggingOn;
 	}
-	public Boolean isGreetOn() {
+
+    /**
+     * Is greet on boolean.
+     *
+     * @return the boolean
+     */
+    public Boolean isGreetOn() {
 		return greetOn;
 	}
-	public void setGreetOn(Boolean greetOn) {
+
+    /**
+     * Sets greet on.
+     *
+     * @param greetOn the greet on
+     */
+    public void setGreetOn(Boolean greetOn) {
 		this.greetOn = greetOn;
 	}
-	public String getPrefix() {
+
+    /**
+     * Gets prefix.
+     *
+     * @return the prefix
+     */
+    public String getPrefix() {
 		return prefix;
 	}
-	public void setPrefix(String prefix) {
+
+    /**
+     * Sets prefix.
+     *
+     * @param prefix the prefix
+     */
+    public void setPrefix(String prefix) {
 		this.prefix = prefix;
 	}
-	public String getGreeting() {
+
+    /**
+     * Gets greeting.
+     *
+     * @return the greeting
+     */
+    public String getGreeting() {
 		return greeting;
 	}
-	public void setGreeting(String greeting) {
+
+    /**
+     * Sets greeting.
+     *
+     * @param greeting the greeting
+     */
+    public void setGreeting(String greeting) {
 		this.greeting = greeting;
 	}
-	public String getGreetingChannel() {
+
+    /**
+     * Gets greeting channel.
+     *
+     * @return the greeting channel
+     */
+    public String getGreetingChannel() {
 		return greetingChannel;
 	}
-	public void setGreetingChannel(String greetingChannel) {
+
+    /**
+     * Sets greeting channel.
+     *
+     * @param greetingChannel the greeting channel
+     */
+    public void setGreetingChannel(String greetingChannel) {
 		this.greetingChannel = greetingChannel;
 	}
-	public String getLoggingChannel() {
+
+    /**
+     * Gets logging channel.
+     *
+     * @return the logging channel
+     */
+    public String getLoggingChannel() {
 		return loggingChannel;
 	}
-	public void setLoggingChannel(String loggingChannel) {
+
+    /**
+     * Sets logging channel.
+     *
+     * @param loggingChannel the logging channel
+     */
+    public void setLoggingChannel(String loggingChannel) {
 		this.loggingChannel = loggingChannel;
 	}
-	public Long getGuildId() {
+
+    /**
+     * Gets guild id.
+     *
+     * @return the guild id
+     */
+    public Long getGuildId() {
 		return guildId;
 	}
-	public void setGuildId(Long guildId) {
+
+    /**
+     * Sets guild id.
+     *
+     * @param guildId the guild id
+     */
+    public void setGuildId(Long guildId) {
 		this.guildId = guildId;
 	}
 	

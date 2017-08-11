@@ -23,18 +23,50 @@ import net.dv8tion.jda.core.requests.RestAction;
 import werewolf.Werewolf;
 
 
+/**
+ * The type Event listener.
+ */
 public class EventListener extends ListenerAdapter {
+	/**
+	 * The Container.
+	 */
 	SharedContainer container = new SharedContainer();
+	/**
+	 * The Db man.
+	 */
 	DatabaseManager dbMan;
+	/**
+	 * The Bot admin.
+	 */
 	String botAdmin;
+	/**
+	 * The Bot owner.
+	 */
 	User botOwner; //We'll hold the botOwner so we don't have to keep asking Discord for this
+	/**
+	 * The Cmd list.
+	 */
 	Map<String, CommandStructure> cmdList = new HashMap<String,CommandStructure>();
+	/**
+	 * The Priv cmd list.
+	 */
 	Map<String, CommandStructure> privCmdList = new HashMap<String,CommandStructure>();
-	
+
+	/**
+	 * Instantiates a new Event listener.
+	 *
+	 * @param dbMan the db man
+	 */
 	public EventListener(DatabaseManager dbMan) {
 		selfStart(dbMan, null);
 	}
-	
+
+	/**
+	 * Instantiates a new Event listener.
+	 *
+	 * @param dbMan    the db man
+	 * @param botAdmin the bot admin
+	 */
 	public EventListener(DatabaseManager dbMan, String botAdmin) {
 		selfStart(dbMan, botAdmin);
 	}
@@ -327,9 +359,15 @@ public class EventListener extends ListenerAdapter {
 		String userwithDiscriminator = author.getName() + "#" + author.getDiscriminator(); //the libarey don't include a readily used readable username with descriminator
 		return (botAdmin != null && userwithDiscriminator.equals(botAdmin)) || (botOwner.getIdLong() == author.getIdLong());
 	}
-	
-	    
-    public void sendChannelMessageAndShutdown(MessageChannel channel, String message)
+
+
+	/**
+	 * Send channel message and shutdown.
+	 *
+	 * @param channel the channel
+	 * @param message the message
+	 */
+	public void sendChannelMessageAndShutdown(MessageChannel channel, String message)
     {
     	Consumer<Message> callback = (response) -> response.getJDA().shutdown();
     	channel.sendMessage(message).queue(callback);

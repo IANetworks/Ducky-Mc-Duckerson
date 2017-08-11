@@ -13,9 +13,20 @@ import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.User;
 
+/**
+ * The type Set self role cs.
+ */
 public class SetSelfRoleCS extends CommandStructure {
 
-	public SetSelfRoleCS(SharedContainer container, String commandName, int commandID,
+    /**
+     * Instantiates a new Set self role cs.
+     *
+     * @param container           the container
+     * @param commandName         the command name
+     * @param commandID           the command id
+     * @param commandDefaultLevel the command default level
+     */
+    public SetSelfRoleCS(SharedContainer container, String commandName, int commandID,
 			int commandDefaultLevel) {
 		super(container, commandName, commandID, commandDefaultLevel);
 	}

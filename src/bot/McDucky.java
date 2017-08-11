@@ -38,12 +38,18 @@ import java.sql.SQLException;
 //TODO Music - The way Discord handles Bots, is that we can have different programs use the same token so we can easily have another bot running just for 
 //		Music and not worry about coding it into this program
 
+/**
+ * The type Mc ducky.
+ */
 public class McDucky
 {
 	//Contains private keys, for bot Tokens, Database and other configs
 	private File configFile = new File("config.properties");
 	private Properties configProps;
-	Connection conn = null;
+    /**
+     * The Conn.
+     */
+    Connection conn = null;
 		
 	private void loadProperties() throws IOException {
 		configProps = new Properties();
@@ -54,7 +60,7 @@ public class McDucky
 		inputStream.close();
 	}
 	
-	private void setupProperties() throws FileNotFoundException, IOException
+	private void setupProperties() throws IOException
 	{
 		//List all the config we need to successful run this bot
 		configProps.setProperty("bot_token", "");
@@ -96,8 +102,11 @@ public class McDucky
 	
 		
 	}
-	
-	//Our setup. My god, Abby is terrible at commenting
+
+    /**
+     * Instantiates a new Mc ducky.
+     */
+//Our setup. My god, Abby is terrible at commenting
 	public McDucky() {
 
     	//Load properties from file
@@ -219,9 +228,11 @@ public class McDucky
             e.printStackTrace();
         }
 	}
-	
+
     /**
      * This is the method where the program starts.
+     *
+     * @param args the input arguments
      */
     public static void main(String[] args)
     {

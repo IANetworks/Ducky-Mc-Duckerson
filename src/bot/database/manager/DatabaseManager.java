@@ -18,13 +18,22 @@ import bot.database.manager.data.UserProfile;
 import net.dv8tion.jda.core.entities.Role;
 import werewolf.data.Theme;
 
+/**
+ * The type Database manager.
+ */
 public class DatabaseManager {
 	private Connection conn;
 	private Map<Long, GuildSetting> listGuildSettings = new HashMap<Long, GuildSetting>();
 	private Map<Long, Permissions> listGuildPermissions = new HashMap<Long, Permissions>();
 	private Map<Long, SelfRoles> listOfSelfRoles = new HashMap<Long, SelfRoles>();
 
-	public DatabaseManager(Connection conn) throws SQLException {
+    /**
+     * Instantiates a new Database manager.
+     *
+     * @param conn the conn
+     * @throws SQLException the sql exception
+     */
+    public DatabaseManager(Connection conn) throws SQLException {
 		this.conn = conn;
 		fetchGuildSettings(); //Fetch guild settings and store
 		fetchCmdLevels(); //Fetch list of custom permissions and store
@@ -32,8 +41,13 @@ public class DatabaseManager {
 		fetchPermissioLevel(); //Fetch all permission level names
 		fetchSelfRole(); //fetch all self assigned roles
 	}
-	
-	public Connection getConn() {
+
+    /**
+     * Gets conn.
+     *
+     * @return the conn
+     */
+    public Connection getConn() {
 		return this.conn;
 	}
 	
@@ -164,7 +178,16 @@ public class DatabaseManager {
 			return new Permissions();
 		}
 	}
-	public UserProfile getUserProfile(Long guildID, Long userID) throws SQLException
+
+    /**
+     * Gets user profile.
+     *
+     * @param guildID the guild id
+     * @param userID  the user id
+     * @return the user profile
+     * @throws SQLException the sql exception
+     */
+    public UserProfile getUserProfile(Long guildID, Long userID) throws SQLException
 	{
 		UserProfile up = new UserProfile();
 		String sql = "SELECT * FROM user_profile WHERE user_id = ? AND guild_id = ?"; 
@@ -202,7 +225,14 @@ public class DatabaseManager {
 		
 	}
 
-	public void incUserFlipped(Long guildID, Long userID) throws SQLException
+    /**
+     * Inc user flipped.
+     *
+     * @param guildID the guild id
+     * @param userID  the user id
+     * @throws SQLException the sql exception
+     */
+    public void incUserFlipped(Long guildID, Long userID) throws SQLException
 	{
 		UserProfile up = getUserProfile(guildID, userID);
 		Long newFlipTotal = up.getFlipped();
@@ -215,7 +245,15 @@ public class DatabaseManager {
 		pstmt.setLong(3, userID);
 		pstmt.execute();
 	}
-	public void incUserUnflipped(Long guildID, Long userID) throws SQLException
+
+    /**
+     * Inc user unflipped.
+     *
+     * @param guildID the guild id
+     * @param userID  the user id
+     * @throws SQLException the sql exception
+     */
+    public void incUserUnflipped(Long guildID, Long userID) throws SQLException
 	{
 		UserProfile up = getUserProfile(guildID, userID);
 		Long newUnflipTotal = up.getUnflipped();
@@ -228,7 +266,16 @@ public class DatabaseManager {
 		pstmt.setLong(3, userID);
 		pstmt.execute();
 	}
-	public void addUserRank(Long guildID, Long userID, Integer value) throws SQLException
+
+    /**
+     * Add user rank.
+     *
+     * @param guildID the guild id
+     * @param userID  the user id
+     * @param value   the value
+     * @throws SQLException the sql exception
+     */
+    public void addUserRank(Long guildID, Long userID, Integer value) throws SQLException
 	{
 		UserProfile up = getUserProfile(guildID, userID);
 		Integer newTotal = up.getRank() + value;
@@ -240,7 +287,16 @@ public class DatabaseManager {
 		pstmt.setLong(3, userID);
 		pstmt.execute();
 	}
-	public void addUserLevel(Long guildID, Long userID, Long value) throws SQLException
+
+    /**
+     * Add user level.
+     *
+     * @param guildID the guild id
+     * @param userID  the user id
+     * @param value   the value
+     * @throws SQLException the sql exception
+     */
+    public void addUserLevel(Long guildID, Long userID, Long value) throws SQLException
 	{
 		UserProfile up = getUserProfile(guildID, userID);
 		Long newTotal = up.getLevel() + value;
@@ -252,7 +308,16 @@ public class DatabaseManager {
 		pstmt.setLong(3, userID);
 		pstmt.execute();
 	}
-	public void addUserBalance(Long guildID, Long userID, Long value) throws SQLException
+
+    /**
+     * Add user balance.
+     *
+     * @param guildID the guild id
+     * @param userID  the user id
+     * @param value   the value
+     * @throws SQLException the sql exception
+     */
+    public void addUserBalance(Long guildID, Long userID, Long value) throws SQLException
 	{
 		UserProfile up = getUserProfile(guildID, userID);
 		Long newTotal = up.getBalance() + value;
@@ -264,7 +329,16 @@ public class DatabaseManager {
 		pstmt.setLong(3, userID);
 		pstmt.execute();
 	}
-	public void addUserPoints(Long guildID, Long userID, Long value) throws SQLException
+
+    /**
+     * Add user points.
+     *
+     * @param guildID the guild id
+     * @param userID  the user id
+     * @param value   the value
+     * @throws SQLException the sql exception
+     */
+    public void addUserPoints(Long guildID, Long userID, Long value) throws SQLException
 	{
 		UserProfile up = getUserProfile(guildID, userID);
 		Long newTotal = up.getPoints() + value;
@@ -276,7 +350,16 @@ public class DatabaseManager {
 		pstmt.setLong(3, userID);
 		pstmt.execute();
 	}
-	public void remUserRank(Long guildID, Long userID, Integer value) throws SQLException
+
+    /**
+     * Rem user rank.
+     *
+     * @param guildID the guild id
+     * @param userID  the user id
+     * @param value   the value
+     * @throws SQLException the sql exception
+     */
+    public void remUserRank(Long guildID, Long userID, Integer value) throws SQLException
 	{
 		UserProfile up = getUserProfile(guildID, userID);
 		Integer newTotal = up.getRank() - value;
@@ -288,7 +371,16 @@ public class DatabaseManager {
 		pstmt.setLong(3, userID);
 		pstmt.execute();
 	}
-	public void remUserLevel(Long guildID, Long userID, Long value) throws SQLException
+
+    /**
+     * Rem user level.
+     *
+     * @param guildID the guild id
+     * @param userID  the user id
+     * @param value   the value
+     * @throws SQLException the sql exception
+     */
+    public void remUserLevel(Long guildID, Long userID, Long value) throws SQLException
 	{
 		UserProfile up = getUserProfile(guildID, userID);
 		Long newTotal = up.getLevel() - value;
@@ -301,7 +393,16 @@ public class DatabaseManager {
 		pstmt.execute();
 		
 	}
-	public void remUserBalance(Long guildID, Long userID, Long value) throws SQLException
+
+    /**
+     * Rem user balance.
+     *
+     * @param guildID the guild id
+     * @param userID  the user id
+     * @param value   the value
+     * @throws SQLException the sql exception
+     */
+    public void remUserBalance(Long guildID, Long userID, Long value) throws SQLException
 	{
 		UserProfile up = getUserProfile(guildID, userID);
 		Long newTotal = up.getBalance() - value;
@@ -313,7 +414,16 @@ public class DatabaseManager {
 		pstmt.setLong(3, userID);
 		pstmt.execute();
 	}
-	public void remUserPoints(Long guildID, Long userID, Long value) throws SQLException
+
+    /**
+     * Rem user points.
+     *
+     * @param guildID the guild id
+     * @param userID  the user id
+     * @param value   the value
+     * @throws SQLException the sql exception
+     */
+    public void remUserPoints(Long guildID, Long userID, Long value) throws SQLException
 	{
 		UserProfile up = getUserProfile(guildID, userID);
 		Long newTotal = up.getPoints() - value;
@@ -325,7 +435,16 @@ public class DatabaseManager {
 		pstmt.setLong(3, userID);
 		pstmt.execute();
 	}
-	public void setUserRank(Long guildID, Long userID, Integer value) throws SQLException
+
+    /**
+     * Sets user rank.
+     *
+     * @param guildID the guild id
+     * @param userID  the user id
+     * @param value   the value
+     * @throws SQLException the sql exception
+     */
+    public void setUserRank(Long guildID, Long userID, Integer value) throws SQLException
 	{
 		getUserProfile(guildID, userID); //This will make sure we have a profile setup, in case of a new users 
 		Integer newTotal = value;
@@ -337,7 +456,16 @@ public class DatabaseManager {
 		pstmt.setLong(3, userID);
 		pstmt.execute();
 	}
-	public void setUserLevel(Long guildID, Long userID, Long value) throws SQLException
+
+    /**
+     * Sets user level.
+     *
+     * @param guildID the guild id
+     * @param userID  the user id
+     * @param value   the value
+     * @throws SQLException the sql exception
+     */
+    public void setUserLevel(Long guildID, Long userID, Long value) throws SQLException
 	{
 		getUserProfile(guildID, userID);
 		Long newTotal = value;
@@ -349,7 +477,16 @@ public class DatabaseManager {
 		pstmt.setLong(3, userID);
 		pstmt.execute();
 	}
-	public void setUserBalance(Long guildID, Long userID, Long value) throws SQLException
+
+    /**
+     * Sets user balance.
+     *
+     * @param guildID the guild id
+     * @param userID  the user id
+     * @param value   the value
+     * @throws SQLException the sql exception
+     */
+    public void setUserBalance(Long guildID, Long userID, Long value) throws SQLException
 	{
 		getUserProfile(guildID, userID);
 		Long newTotal = value;
@@ -361,7 +498,16 @@ public class DatabaseManager {
 		pstmt.setLong(3, userID);
 		pstmt.execute();
 	}
-	public void setUserPoints(Long guildID, Long userID, Long value) throws SQLException
+
+    /**
+     * Sets user points.
+     *
+     * @param guildID the guild id
+     * @param userID  the user id
+     * @param value   the value
+     * @throws SQLException the sql exception
+     */
+    public void setUserPoints(Long guildID, Long userID, Long value) throws SQLException
 	{
 		getUserProfile(guildID, userID);
 		Long newTotal = value;
@@ -373,7 +519,16 @@ public class DatabaseManager {
 		pstmt.setLong(3, userID);
 		pstmt.execute();
 	}
-	public void setUserFlipped(Long guildID, Long userID, Long value) throws SQLException
+
+    /**
+     * Sets user flipped.
+     *
+     * @param guildID the guild id
+     * @param userID  the user id
+     * @param value   the value
+     * @throws SQLException the sql exception
+     */
+    public void setUserFlipped(Long guildID, Long userID, Long value) throws SQLException
 	{
 		getUserProfile(guildID, userID);
 		Long newTotal = value;
@@ -385,7 +540,16 @@ public class DatabaseManager {
 		pstmt.setLong(3, userID);
 		pstmt.execute();
 	}
-	public void setUserUnflipped(Long guildID, Long userID, Long value) throws SQLException
+
+    /**
+     * Sets user unflipped.
+     *
+     * @param guildID the guild id
+     * @param userID  the user id
+     * @param value   the value
+     * @throws SQLException the sql exception
+     */
+    public void setUserUnflipped(Long guildID, Long userID, Long value) throws SQLException
 	{
 		getUserProfile(guildID, userID);
 		Long newTotal = value;
@@ -397,40 +561,118 @@ public class DatabaseManager {
 		pstmt.setLong(3, userID);
 		pstmt.execute();
 	}
-	
 
-	public Integer getCommandLevel(Long guildID, Integer commandID)
+
+    /**
+     * Gets command level.
+     *
+     * @param guildID   the guild id
+     * @param commandID the command id
+     * @return the command level
+     */
+    public Integer getCommandLevel(Long guildID, Integer commandID)
 	{
 		return getPermissionsValues(guildID).getLevel(commandID);
 	}
-	public String getPrefix(Long guildID) {
+
+    /**
+     * Gets prefix.
+     *
+     * @param guildID the guild id
+     * @return the prefix
+     */
+    public String getPrefix(Long guildID) {
 		return getGuildValues(guildID).getPrefix();
 	}
-	public String getGreeting(Long guildID) {
+
+    /**
+     * Gets greeting.
+     *
+     * @param guildID the guild id
+     * @return the greeting
+     */
+    public String getGreeting(Long guildID) {
 		return getGuildValues(guildID).getGreeting();
 	}
-	public String getGreetingChannel(Long guildID) {
+
+    /**
+     * Gets greeting channel.
+     *
+     * @param guildID the guild id
+     * @return the greeting channel
+     */
+    public String getGreetingChannel(Long guildID) {
 		return getGuildValues(guildID).getGreetingChannel();
 	}
-	public String getLoggingChannel(Long guildID) {
+
+    /**
+     * Gets logging channel.
+     *
+     * @param guildID the guild id
+     * @return the logging channel
+     */
+    public String getLoggingChannel(Long guildID) {
 		return getGuildValues(guildID).getLoggingChannel();
 	}
-	public Boolean isLoggingOn(Long guildID) {
+
+    /**
+     * Is logging on boolean.
+     *
+     * @param guildID the guild id
+     * @return the boolean
+     */
+    public Boolean isLoggingOn(Long guildID) {
 		return getGuildValues(guildID).isLoggingOn();
 	}
-	public Boolean isGreetOn(Long guildID) {
+
+    /**
+     * Is greet on boolean.
+     *
+     * @param guildID the guild id
+     * @return the boolean
+     */
+    public Boolean isGreetOn(Long guildID) {
 		return getGuildValues(guildID).isGreetOn();
 	}
-	public Boolean isWerewolfOn(Long guildID) {
+
+    /**
+     * Is werewolf on boolean.
+     *
+     * @param guildID the guild id
+     * @return the boolean
+     */
+    public Boolean isWerewolfOn(Long guildID) {
 		return getGuildValues(guildID).isWWOn();
 	}
-	public String getGameChannel(Long guildID) {
+
+    /**
+     * Gets game channel.
+     *
+     * @param guildID the guild id
+     * @return the game channel
+     */
+    public String getGameChannel(Long guildID) {
 		return getGuildValues(guildID).getgameChannel();
 	}
-	public boolean isStored(Long guildID) {
+
+    /**
+     * Is stored boolean.
+     *
+     * @param guildID the guild id
+     * @return the boolean
+     */
+    public boolean isStored(Long guildID) {
 		return getGuildValues(guildID).isStored;
 	}
-	public String getLevelName(Long guildID, Integer levelID)
+
+    /**
+     * Gets level name.
+     *
+     * @param guildID the guild id
+     * @param levelID the level id
+     * @return the level name
+     */
+    public String getLevelName(Long guildID, Integer levelID)
 	{
 		String thisThing = getPermissionsValues(guildID).getLevelNames(levelID);
 		if (thisThing == null)
@@ -440,31 +682,87 @@ public class DatabaseManager {
 		
 		return thisThing;
 	}
-	public boolean hasGroup(Long guildID, Integer groupID)
+
+    /**
+     * Has group boolean.
+     *
+     * @param guildID the guild id
+     * @param groupID the group id
+     * @return the boolean
+     */
+    public boolean hasGroup(Long guildID, Integer groupID)
 	{
 		return getSelfRoles(guildID).hasGroup(groupID);
 	}
-	public Boolean isRoleExclusive(Long guildID, Long roleID)
+
+    /**
+     * Is role exclusive boolean.
+     *
+     * @param guildID the guild id
+     * @param roleID  the role id
+     * @return the boolean
+     */
+    public Boolean isRoleExclusive(Long guildID, Long roleID)
 	{
 		return getSelfRoles(guildID).isRoleExclusive(roleID);
 	}
-	public Boolean isGroupExculsive(Long guildID, Integer groupID)
+
+    /**
+     * Is group exculsive boolean.
+     *
+     * @param guildID the guild id
+     * @param groupID the group id
+     * @return the boolean
+     */
+    public Boolean isGroupExculsive(Long guildID, Integer groupID)
 	{
 		return getSelfRoles(guildID).isGroupExclusive(groupID);
 	}
-	public Integer getRoleGroup(Long guildID, Long roleID)
+
+    /**
+     * Gets role group.
+     *
+     * @param guildID the guild id
+     * @param roleID  the role id
+     * @return the role group
+     */
+    public Integer getRoleGroup(Long guildID, Long roleID)
 	{
 		return getSelfRoles(guildID).getRoleGroup(roleID);
 	}
-	public Map<Long, Integer> getListOfRoles(Long guildID)
+
+    /**
+     * Gets list of roles.
+     *
+     * @param guildID the guild id
+     * @return the list of roles
+     */
+    public Map<Long, Integer> getListOfRoles(Long guildID)
 	{
 		return getSelfRoles(guildID).getListOfRoles();
 	}
-	public HashSet<Long> getListOfRolesByGroup(Long guildID, Integer groupID)
+
+    /**
+     * Gets list of roles by group.
+     *
+     * @param guildID the guild id
+     * @param groupID the group id
+     * @return the list of roles by group
+     */
+    public HashSet<Long> getListOfRolesByGroup(Long guildID, Integer groupID)
 	{
 		return getSelfRoles(guildID).getListOfRolesByGroup(groupID);
 	}
-	public Integer getUserLevel(Long guildID, Long userID, List<Role> roleList) {
+
+    /**
+     * Gets user level.
+     *
+     * @param guildID  the guild id
+     * @param userID   the user id
+     * @param roleList the role list
+     * @return the user level
+     */
+    public Integer getUserLevel(Long guildID, Long userID, List<Role> roleList) {
 		Permissions permissions = listGuildPermissions.get(guildID);
 		Integer userLevel = null;
 		Integer roleLevel = null;
@@ -493,7 +791,15 @@ public class DatabaseManager {
 		
 		return roleLevel;
 	}
-	public boolean isRoleSelfAssignable(Long guildID, Long roleID)
+
+    /**
+     * Is role self assignable boolean.
+     *
+     * @param guildID the guild id
+     * @param roleID  the role id
+     * @return the boolean
+     */
+    public boolean isRoleSelfAssignable(Long guildID, Long roleID)
 	{
 		if(listOfSelfRoles.containsKey(guildID))
 		{
@@ -502,7 +808,15 @@ public class DatabaseManager {
 			return false; //no record for guild so there's no self assignable roles
 		}
 	}
-	public boolean setNewPermissionNames(Long guildID) throws SQLException
+
+    /**
+     * Sets new permission names.
+     *
+     * @param guildID the guild id
+     * @return the new permission names
+     * @throws SQLException the sql exception
+     */
+    public boolean setNewPermissionNames(Long guildID) throws SQLException
 	{
 		Statement stmt;
 		Integer count = null;
@@ -530,7 +844,14 @@ public class DatabaseManager {
 		return false;
 	}
 
-	public void setGameChannel(Long guildID, String gameChannel) throws SQLException
+    /**
+     * Sets game channel.
+     *
+     * @param guildID     the guild id
+     * @param gameChannel the game channel
+     * @throws SQLException the sql exception
+     */
+    public void setGameChannel(Long guildID, String gameChannel) throws SQLException
 	{
 		String sql = "SELECT COUNT(*) FROM variables WHERE guild_id = ?";
 		PreparedStatement pstmt = conn.prepareStatement(sql); 
@@ -563,9 +884,16 @@ public class DatabaseManager {
 			guildSetting.setGameChannel(gameChannel);
 			listGuildSettings.put(guildID, guildSetting);
 		}
-	} 
-	
-	public void setWerewolfOn(Long guildID, Boolean wwOn) throws SQLException
+	}
+
+    /**
+     * Sets werewolf on.
+     *
+     * @param guildID the guild id
+     * @param wwOn    the ww on
+     * @throws SQLException the sql exception
+     */
+    public void setWerewolfOn(Long guildID, Boolean wwOn) throws SQLException
 	{
 		String sql = "SELECT COUNT(*) FROM variables WHERE guild_id = ?";
 		PreparedStatement pstmt = conn.prepareStatement(sql); 
@@ -599,8 +927,16 @@ public class DatabaseManager {
 			listGuildSettings.put(guildID, guildSetting);
 		}
 	}
-	
-	public void setCommandLevel(Long guildID, Integer commandID, Integer commandLevel) throws SQLException {
+
+    /**
+     * Sets command level.
+     *
+     * @param guildID      the guild id
+     * @param commandID    the command id
+     * @param commandLevel the command level
+     * @throws SQLException the sql exception
+     */
+    public void setCommandLevel(Long guildID, Integer commandID, Integer commandLevel) throws SQLException {
 		//Set the levels of the commands
 		String sql = "SELECT COUNT(*) FROM permission_commands WHERE guild_id = ? AND command_id = ?";
 		PreparedStatement pstmt = conn.prepareStatement(sql); 
@@ -636,8 +972,15 @@ public class DatabaseManager {
 			listGuildPermissions.put(guildID, newPermission);
 		}
 	}
-	
-	public void setLoggingOn(Boolean loggingOn, Long guildID) throws SQLException {		
+
+    /**
+     * Sets logging on.
+     *
+     * @param loggingOn the logging on
+     * @param guildID   the guild id
+     * @throws SQLException the sql exception
+     */
+    public void setLoggingOn(Boolean loggingOn, Long guildID) throws SQLException {
 		String sql = "SELECT COUNT(*) FROM variables WHERE guild_id = ?";
 		PreparedStatement pstmt = conn.prepareStatement(sql); 
 		pstmt.setLong(1, guildID);
@@ -670,8 +1013,15 @@ public class DatabaseManager {
 			listGuildSettings.put(guildID, guildSetting);
 		}
 	}
-	
-	public void setGreetOn(Boolean greetOn, Long guildID) throws SQLException {
+
+    /**
+     * Sets greet on.
+     *
+     * @param greetOn the greet on
+     * @param guildID the guild id
+     * @throws SQLException the sql exception
+     */
+    public void setGreetOn(Boolean greetOn, Long guildID) throws SQLException {
 		String sql = "SELECT COUNT(*) FROM variables WHERE guild_id = ?";
 		PreparedStatement pstmt = conn.prepareStatement(sql); 
 		pstmt.setLong(1, guildID);
@@ -704,8 +1054,15 @@ public class DatabaseManager {
 			listGuildSettings.put(guildID, guildSetting);
 		}
 	}
-	
-	public void setPrefix(String prefix, Long guildID) throws SQLException {
+
+    /**
+     * Sets prefix.
+     *
+     * @param prefix  the prefix
+     * @param guildID the guild id
+     * @throws SQLException the sql exception
+     */
+    public void setPrefix(String prefix, Long guildID) throws SQLException {
 		String sql = "SELECT COUNT(*) FROM variables WHERE guild_id = ?";
 		PreparedStatement pstmt = conn.prepareStatement(sql); 
 		pstmt.setLong(1, guildID);
@@ -737,8 +1094,15 @@ public class DatabaseManager {
 			listGuildSettings.put(guildID, guildSetting);
 		}
 	}
-	
-	public void setGreeting(String greeting, Long guildID) throws SQLException {
+
+    /**
+     * Sets greeting.
+     *
+     * @param greeting the greeting
+     * @param guildID  the guild id
+     * @throws SQLException the sql exception
+     */
+    public void setGreeting(String greeting, Long guildID) throws SQLException {
 		String sql = "SELECT COUNT(*) FROM variables WHERE guild_id = ?";
 		PreparedStatement pstmt = conn.prepareStatement(sql); 
 		pstmt.setLong(1, guildID);
@@ -771,8 +1135,15 @@ public class DatabaseManager {
 			listGuildSettings.put(guildID, guildSetting);
 		}
 	}
-	
-	public void setGreetingChannel(String greetingChannel, Long guildID) throws SQLException {
+
+    /**
+     * Sets greeting channel.
+     *
+     * @param greetingChannel the greeting channel
+     * @param guildID         the guild id
+     * @throws SQLException the sql exception
+     */
+    public void setGreetingChannel(String greetingChannel, Long guildID) throws SQLException {
 		String sql = "SELECT COUNT(*) FROM variables WHERE guild_id = ?";
 		PreparedStatement pstmt = conn.prepareStatement(sql); 
 		pstmt.setLong(1, guildID);
@@ -804,8 +1175,15 @@ public class DatabaseManager {
 			listGuildSettings.put(guildID, guildSetting);
 		}
 	}
-	
-	public void setLoggingChannel(String loggingChannel, Long guildID) throws SQLException {
+
+    /**
+     * Sets logging channel.
+     *
+     * @param loggingChannel the logging channel
+     * @param guildID        the guild id
+     * @throws SQLException the sql exception
+     */
+    public void setLoggingChannel(String loggingChannel, Long guildID) throws SQLException {
 		String sql = "SELECT COUNT(*) FROM variables WHERE guild_id = ?";
 		PreparedStatement pstmt = conn.prepareStatement(sql); 
 		pstmt.setLong(1, guildID);
@@ -838,7 +1216,15 @@ public class DatabaseManager {
 		}
 	}
 
-	public void setUserLevel(Long guildID, Integer levelID, Long userID)  throws SQLException {		
+    /**
+     * Sets user level.
+     *
+     * @param guildID the guild id
+     * @param levelID the level id
+     * @param userID  the user id
+     * @throws SQLException the sql exception
+     */
+    public void setUserLevel(Long guildID, Integer levelID, Long userID)  throws SQLException {
 		String sql = "SELECT COUNT(*) FROM permission_group WHERE guild_id = ? AND user_role_id = ? AND is_user = 1";
 		PreparedStatement pstmt = conn.prepareStatement(sql); 
 		pstmt.setLong(1, guildID);
@@ -868,8 +1254,16 @@ public class DatabaseManager {
 			listGuildPermissions.put(guildID, newPermission);
 		}
 	}
-	
-	public void setRoleLevel(Long guildID, Integer levelID, Long roleID)  throws SQLException {
+
+    /**
+     * Sets role level.
+     *
+     * @param guildID the guild id
+     * @param levelID the level id
+     * @param roleID  the role id
+     * @throws SQLException the sql exception
+     */
+    public void setRoleLevel(Long guildID, Integer levelID, Long roleID)  throws SQLException {
 		String sql = "SELECT COUNT(*) FROM permission_group WHERE guild_id = ? AND user_role_id = ? AND is_user = 0";
 		PreparedStatement pstmt = conn.prepareStatement(sql); 
 		pstmt.setLong(1, guildID);
@@ -900,8 +1294,16 @@ public class DatabaseManager {
 			listGuildPermissions.put(guildID, newPermission);
 		}
 	}
-	
-	public void setLevelName(Long guildID, Integer levelID, String levelName)  throws SQLException {
+
+    /**
+     * Sets level name.
+     *
+     * @param guildID   the guild id
+     * @param levelID   the level id
+     * @param levelName the level name
+     * @throws SQLException the sql exception
+     */
+    public void setLevelName(Long guildID, Integer levelID, String levelName)  throws SQLException {
 		String sql = "SELECT COUNT(*) FROM permission_level WHERE guild_id = ? AND level_id = ?";
 		PreparedStatement pstmt = conn.prepareStatement(sql); 
 		pstmt.setLong(1, guildID);
@@ -933,13 +1335,32 @@ public class DatabaseManager {
 			listGuildPermissions.put(guildID, newPermission);
 		}
 	}
-	
-	public boolean setNewSelfAssignableRole(Long guildID, Long roleID, Integer groupID) throws SQLException
+
+    /**
+     * Sets new self assignable role.
+     *
+     * @param guildID the guild id
+     * @param roleID  the role id
+     * @param groupID the group id
+     * @return the new self assignable role
+     * @throws SQLException the sql exception
+     */
+    public boolean setNewSelfAssignableRole(Long guildID, Long roleID, Integer groupID) throws SQLException
 	{
 		return setNewSelfAssignableRole(guildID, roleID, groupID, null);
 	}
-	
-	public boolean setNewSelfAssignableRole(Long guildID, Long roleID, Integer groupID, Boolean isExculsive) throws SQLException
+
+    /**
+     * Sets new self assignable role.
+     *
+     * @param guildID     the guild id
+     * @param roleID      the role id
+     * @param groupID     the group id
+     * @param isExculsive the is exculsive
+     * @return the new self assignable role
+     * @throws SQLException the sql exception
+     */
+    public boolean setNewSelfAssignableRole(Long guildID, Long roleID, Integer groupID, Boolean isExculsive) throws SQLException
 	{
 		boolean isRoleNew = false;
 		
@@ -979,8 +1400,17 @@ public class DatabaseManager {
 		
 		return isRoleNew;
 	}
-	
-	public Boolean setGroupExculsive(Long guildID, Integer groupID, Boolean isExculsive) throws SQLException
+
+    /**
+     * Sets group exculsive.
+     *
+     * @param guildID     the guild id
+     * @param groupID     the group id
+     * @param isExculsive the is exculsive
+     * @return the group exculsive
+     * @throws SQLException the sql exception
+     */
+    public Boolean setGroupExculsive(Long guildID, Integer groupID, Boolean isExculsive) throws SQLException
 	{
 		boolean exculisveChanged = false;
 		//Check List
@@ -1008,7 +1438,16 @@ public class DatabaseManager {
 		pstmt.execute();
 	}
 
-	public Boolean setRoleExculsive(Long guildID, Long roleID, Boolean isExculsive) throws SQLException
+    /**
+     * Sets role exculsive.
+     *
+     * @param guildID     the guild id
+     * @param roleID      the role id
+     * @param isExculsive the is exculsive
+     * @return the role exculsive
+     * @throws SQLException the sql exception
+     */
+    public Boolean setRoleExculsive(Long guildID, Long roleID, Boolean isExculsive) throws SQLException
 	{
 		boolean exculisveChanged = false;
 		Integer groupID = null; 
@@ -1027,8 +1466,16 @@ public class DatabaseManager {
 		
 		return exculisveChanged;
 	}
-		
-	public Boolean removeRole(Long guildID, Long roleID) throws SQLException
+
+    /**
+     * Remove role boolean.
+     *
+     * @param guildID the guild id
+     * @param roleID  the role id
+     * @return the boolean
+     * @throws SQLException the sql exception
+     */
+    public Boolean removeRole(Long guildID, Long roleID) throws SQLException
 	{
 		boolean hasChanged = false;
 		if(listOfSelfRoles.containsKey(guildID))
@@ -1049,8 +1496,16 @@ public class DatabaseManager {
 		
 		return hasChanged;
 	}
-	
-	public HashSet<Long> removeGroup(Long guildID, Integer groupID) throws SQLException
+
+    /**
+     * Remove group hash set.
+     *
+     * @param guildID the guild id
+     * @param groupID the group id
+     * @return the hash set
+     * @throws SQLException the sql exception
+     */
+    public HashSet<Long> removeGroup(Long guildID, Integer groupID) throws SQLException
 	{
 		HashSet<Long> removedRolesList = null;
 		if(listOfSelfRoles.containsKey(guildID))
@@ -1074,8 +1529,17 @@ public class DatabaseManager {
 		
 		return removedRolesList;
 	}
-	
-	public Boolean setRoleGroup(Long guildID, Long roleID, Integer newGroup) throws SQLException
+
+    /**
+     * Sets role group.
+     *
+     * @param guildID  the guild id
+     * @param roleID   the role id
+     * @param newGroup the new group
+     * @return the role group
+     * @throws SQLException the sql exception
+     */
+    public Boolean setRoleGroup(Long guildID, Long roleID, Integer newGroup) throws SQLException
 	{
 		
 		boolean hasChanged = false;
@@ -1098,8 +1562,14 @@ public class DatabaseManager {
 		
 		return null;
 	}
-	
-	public Theme sqlGetThemeDesc(int id)
+
+    /**
+     * Sql get theme desc theme.
+     *
+     * @param id the id
+     * @return the theme
+     */
+    public Theme sqlGetThemeDesc(int id)
 	{
 		Statement dbState = null;
 		ResultSet dbRS = null;
@@ -1119,11 +1589,13 @@ public class DatabaseManager {
 		
 		return themeDes;
 	}
-	
-	/**
-	 * Get List of themes
-	 */
-	public List<String> sqlGetThemeList()
+
+    /**
+     * Get List of themes
+     *
+     * @return the list
+     */
+    public List<String> sqlGetThemeList()
 	{
 		//TODO Switch to a list of object
 		Statement dbState = null;
@@ -1153,13 +1625,14 @@ public class DatabaseManager {
 		}
 		return themeList;
 	}
-	
-	/**
-	 * 
-	 * @param id
-	 * @return
-	 */
-	public boolean sqlThemeCheck(int id)
+
+    /**
+     * Sql theme check boolean.
+     *
+     * @param id the id
+     * @return boolean
+     */
+    public boolean sqlThemeCheck(int id)
 	{
 		String sql = "SELECT count(*) AS themeCount FROM theme_detail WHERE id_key = ? AND loaded = 1";
 		boolean exists = false;
@@ -1182,22 +1655,18 @@ public class DatabaseManager {
 		{
 			e.printStackTrace();
 		}
-		
-		if(themeCount == 0)
-		{
-			exists = false;
-		} else {
-			exists = true;
-		}
+
+        exists = themeCount != 0;
 			
 		return exists;
 	}
-	
-	/**
-	 * 
-	 * @param id
-	 */
-	public void sqlIncThemeCount(int id)
+
+    /**
+     * Sql inc theme count.
+     *
+     * @param id the id
+     */
+    public void sqlIncThemeCount(int id)
 	{
 		Statement dbState = null;
 		
@@ -1223,11 +1692,13 @@ public class DatabaseManager {
 		}
 	}
 
-	/**
-	 * Get Details from Theme
-	 * @param id
-	 */
-	public Theme sqlGetTheme (int id) 
+    /**
+     * Get Details from Theme
+     *
+     * @param id the id
+     * @return the theme
+     */
+    public Theme sqlGetTheme (int id)
 	{
 		String sqlDetail = "SELECT * FROM theme_detail WHERE id_key = ?";
 		String sqlThemes = "SELECT * FROM theme WHERE theme_id = ?";

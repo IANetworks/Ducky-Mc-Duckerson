@@ -32,6 +32,9 @@ import net.dv8tion.jda.core.events.self.*;
 import net.dv8tion.jda.core.events.user.*;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
+/**
+ * The type Debug listener.
+ */
 public class DebugListener extends ListenerAdapter {
 	
 	/**
@@ -42,7 +45,12 @@ public class DebugListener extends ListenerAdapter {
 	 */
 	private DebugLevel debugLevel;
 
-	public DebugListener(DebugLevel debugLevel) {
+    /**
+     * Instantiates a new Debug listener.
+     *
+     * @param debugLevel the debug level
+     */
+    public DebugListener(DebugLevel debugLevel) {
 		this.setDebugLevel(debugLevel);
 	}
 	
@@ -577,20 +585,26 @@ public class DebugListener extends ListenerAdapter {
 
     }
 
-	public DebugLevel getDebugLevel() {
+    /**
+     * Gets debug level.
+     *
+     * @return the debug level
+     */
+    public DebugLevel getDebugLevel() {
 		return debugLevel;
 	}
 
-	public void setDebugLevel(DebugLevel debugLevel) {
+    /**
+     * Sets debug level.
+     *
+     * @param debugLevel the debug level
+     */
+    public void setDebugLevel(DebugLevel debugLevel) {
 		this.debugLevel = debugLevel;
 	}
 	
 	private boolean debugOutput(DebugLevel eventLevel) {
-		if (eventLevel.level() <= debugLevel.level()) {
-			return true;
-		} else { 
-			return false;
-		}
+        return eventLevel.level() <= debugLevel.level();
 		
 	}
 }

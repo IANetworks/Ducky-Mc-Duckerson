@@ -13,9 +13,20 @@ import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.User;
 
+/**
+ * The type Remove self role cs.
+ */
 public class RemoveSelfRoleCS extends CommandStructure {
 
-	public RemoveSelfRoleCS(SharedContainer container, String commandName, int commandID,
+    /**
+     * Instantiates a new Remove self role cs.
+     *
+     * @param container           the container
+     * @param commandName         the command name
+     * @param commandID           the command id
+     * @param commandDefaultLevel the command default level
+     */
+    public RemoveSelfRoleCS(SharedContainer container, String commandName, int commandID,
 			int commandDefaultLevel) {
 		super(container, commandName, commandID, commandDefaultLevel);
 		// TODO Auto-generated constructor stub

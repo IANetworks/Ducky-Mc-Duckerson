@@ -10,9 +10,20 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
 
+/**
+ * The type List self roles cs.
+ */
 public class ListSelfRolesCS extends CommandStructure {
 
-	public ListSelfRolesCS(SharedContainer container, String commandName, int commandID,
+    /**
+     * Instantiates a new List self roles cs.
+     *
+     * @param container           the container
+     * @param commandName         the command name
+     * @param commandID           the command id
+     * @param commandDefaultLevel the command default level
+     */
+    public ListSelfRolesCS(SharedContainer container, String commandName, int commandID,
 			int commandDefaultLevel) {
 		super(container, commandName, commandID, commandDefaultLevel);
 	}

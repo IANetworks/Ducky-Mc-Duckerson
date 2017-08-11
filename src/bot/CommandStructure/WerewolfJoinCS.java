@@ -9,7 +9,18 @@ import werewolf.GameState;
 
 import java.util.Map;
 
+/**
+ * The type Werewolf join cs.
+ */
 public class WerewolfJoinCS extends CommandStructure {
+    /**
+     * Instantiates a new Werewolf join cs.
+     *
+     * @param container           the container
+     * @param commandName         the command name
+     * @param commandID           the command id
+     * @param commandDefaultLevel the command default level
+     */
     public WerewolfJoinCS(SharedContainer container, String commandName, int commandID, int commandDefaultLevel) {
         super(container, commandName, commandID, commandDefaultLevel);
     }

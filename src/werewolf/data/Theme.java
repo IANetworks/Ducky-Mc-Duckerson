@@ -12,84 +12,120 @@ import java.util.*;
 import java.sql.*;
 import java.sql.Date;
 
+/**
+ * The type Theme.
+ */
 public class Theme {
 
-	//Varibles
+    /**
+     * The Theme name id.
+     */
+//Varibles
 	//Theme Details
 	int themeNameID = -1; //-1 Unknown ID, as the ID from DB starts at 0, using -1 to refer to theme not collected from DB
-	int themePlayedCount = 0;
-	
-	String themeName = "";
-	String themeDesc = "";
-	String themeAuthor = "";
-	
-	Date themeCreated = null;
-	Date themeModified = null;
-	
-	//Theme
+    /**
+     * The Theme played count.
+     */
+    int themePlayedCount = 0;
+
+    /**
+     * The Theme name.
+     */
+    String themeName = "";
+    /**
+     * The Theme desc.
+     */
+    String themeDesc = "";
+    /**
+     * The Theme author.
+     */
+    String themeAuthor = "";
+
+    /**
+     * The Theme created.
+     */
+    Date themeCreated = null;
+    /**
+     * The Theme modified.
+     */
+    Date themeModified = null;
+
+    /**
+     * The Theme db.
+     */
+//Theme
 	HashMap<String, List<String>> themeDB = new HashMap<String, List<String>>();
-	HashMap<String, String> themeDefault = new HashMap<String, String>();
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public int getPlayedCount()
+    /**
+     * The Theme default.
+     */
+    HashMap<String, String> themeDefault = new HashMap<String, String>();
+
+
+    /**
+     * Gets played count.
+     *
+     * @return played count
+     */
+    public int getPlayedCount()
 	{
 		return themePlayedCount;
 	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String getName()
+
+    /**
+     * Gets name.
+     *
+     * @return name
+     */
+    public String getName()
 	{
 		return themeName;
 	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String getAuthor()
+
+    /**
+     * Gets author.
+     *
+     * @return author
+     */
+    public String getAuthor()
 	{
 		return themeAuthor;
 	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String getDesc()
+
+    /**
+     * Gets desc.
+     *
+     * @return desc
+     */
+    public String getDesc()
 	{
 		return themeDesc;
 	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public Date getDateCreated()
+
+    /**
+     * Gets date created.
+     *
+     * @return date created
+     */
+    public Date getDateCreated()
 	{
 		return themeCreated;
 	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public Date getDateModified()
+
+    /**
+     * Gets date modified.
+     *
+     * @return date modified
+     */
+    public Date getDateModified()
 	{
 		return themeModified;
 	}
-	
-	
-	/**
-	 * 
-	 */
-	public Theme() {
+
+
+    /**
+     * Instantiates a new Theme.
+     */
+    public Theme() {
 		//Populate the Defaults
 		themeDefault.put("ONEWOLF", "Bad Person");
 		themeDefault.put("MANY_WOLVES","Bad People");
@@ -172,13 +208,24 @@ public class Theme {
 		themeDefault.put("VOTED_NO_LYNCH", "Everyone goes away for the night, having voted not to lynch anyone");
 		themeDefault.put("ROLE_IS_LYNCHED", "PLAYER1 has been killed, they were a ROLE");
 	}
-	
-	public int getThemeID()
+
+    /**
+     * Gets theme id.
+     *
+     * @return the theme id
+     */
+    public int getThemeID()
 	{
 		return themeNameID;
 	}
-	
-	public String getText(String themeID)
+
+    /**
+     * Gets text.
+     *
+     * @param themeID the theme id
+     * @return the text
+     */
+    public String getText(String themeID)
 	{
 		String textReturn = "";
 		if(themeDB.containsKey(themeID))
@@ -195,12 +242,13 @@ public class Theme {
 		
 		return textReturn;
 	}
-	
-	/**
-	 * 
-	 * @param rs
-	 */
-	public void setDetails(ResultSet rs)
+
+    /**
+     * Sets details.
+     *
+     * @param rs the rs
+     */
+    public void setDetails(ResultSet rs)
 	{
 		try
 		{
@@ -221,12 +269,13 @@ public class Theme {
 			e.printStackTrace();
 		}
 	}
-	
-	/**
-	 * 
-	 * @param rs
-	 */
-	public void setText(ResultSet rs)
+
+    /**
+     * Sets text.
+     *
+     * @param rs the rs
+     */
+    public void setText(ResultSet rs)
 	{
 		try
 		{
@@ -247,11 +296,11 @@ public class Theme {
 			e.printStackTrace();
 		}
 	}
-	
-	/**
-	 * 
-	 */
-	public void clear()
+
+    /**
+     * Clear.
+     */
+    public void clear()
 	{
 		themeNameID = -1;
 		themePlayedCount = 0;

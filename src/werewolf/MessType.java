@@ -1,5 +1,20 @@
 package werewolf;
 
+/**
+ * The enum Mess type.
+ */
 public enum MessType {
-	NOTICE, NARRATION, GAME, CONTROL
+    /**
+     * Notice mess type.
+     */
+    NOTICE, /**
+     * Narration mess type.
+     */
+    NARRATION, /**
+     * Game mess type.
+     */
+    GAME, /**
+     * Control mess type.
+     */
+    CONTROL
 }

@@ -1,27 +1,51 @@
 package bot;
 
+/**
+ * The enum Debug level.
+ */
 public enum DebugLevel {
-	/**
-	*	This to make it easier to read what level debug level is required. 
-	*	Again, Abby is terrible at comments/documentating	*
-	*
-	*
-	*/
-	OFF(0), LOW(1), MED(2), HIGH(3), VERBOSE(4);
+    /**
+     * This to make it easier to read what level debug level is required.
+     * Again, Abby is terrible at comments/documentating	*
+     */
+    OFF(0), /**
+     * Low debug level.
+     */
+    LOW(1), /**
+     * Med debug level.
+     */
+    MED(2), /**
+     * High debug level.
+     */
+    HIGH(3), /**
+     * Verbose debug level.
+     */
+    VERBOSE(4);
 	private int level;
 	
-	private DebugLevel(int level)
+	DebugLevel(int level)
 	{
 		this.level = level;
 	}
-	
-		
-	public int level()
+
+
+    /**
+     * Level int.
+     *
+     * @return the int
+     */
+    public int level()
 	{
 		return this.level;
 	}
-	
-	//Abby as forgotten how to do this correctly and do this terrible thing. I hope someone will correct this
+
+    /**
+     * Gets debug level.
+     *
+     * @param level the level
+     * @return the debug level
+     */
+//Abby as forgotten how to do this correctly and do this terrible thing. I hope someone will correct this
 	public static DebugLevel getDebugLevel(int level) {
 		switch(level) 
 		{

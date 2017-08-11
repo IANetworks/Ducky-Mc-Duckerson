@@ -4,10 +4,25 @@ import bot.database.manager.DatabaseManager;
 import net.dv8tion.jda.core.entities.User;
 import werewolf.Werewolf;
 
+/**
+ * The type Shared container.
+ */
 public class SharedContainer {
-	public DatabaseManager dbMan;
-	public String botAdmin;
-	public User botOwner;
-	public Werewolf ww;
+    /**
+     * The Db man.
+     */
+    public DatabaseManager dbMan;
+    /**
+     * The Bot admin.
+     */
+    public String botAdmin;
+    /**
+     * The Bot owner.
+     */
+    public User botOwner;
+    /**
+     * The Ww.
+     */
+    public Werewolf ww;
 
 }

@@ -16,8 +16,19 @@ import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.exceptions.PermissionException;
 import net.dv8tion.jda.core.managers.GuildController;
 
+/**
+ * The type Self roles cs.
+ */
 public class SelfRolesCS extends CommandStructure {
 
+	/**
+	 * Instantiates a new Self roles cs.
+	 *
+	 * @param container           the container
+	 * @param commandName         the command name
+	 * @param commandID           the command id
+	 * @param commandDefaultLevel the command default level
+	 */
 	public SelfRolesCS(SharedContainer container, String commandName, int commandID,
 			int commandDefaultLevel) {
 		super(container, commandName, commandID, commandDefaultLevel);

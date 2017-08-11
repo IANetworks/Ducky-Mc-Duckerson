@@ -10,9 +10,20 @@ import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.PrivateChannel;
 import net.dv8tion.jda.core.entities.User;
 
+/**
+ * The type Help cs.
+ */
 public class HelpCS extends CommandStructure {
 
-	public HelpCS(SharedContainer container, String commandName, int commandID,
+    /**
+     * Instantiates a new Help Command.
+     *
+     * @param container           the container
+     * @param commandName         the command name
+     * @param commandID           the command id
+     * @param commandDefaultLevel the command default level
+     */
+    public HelpCS(SharedContainer container, String commandName, int commandID,
 			int commandDefaultLevel) {
 		super(container, commandName, commandID, commandDefaultLevel);
 		// TODO Auto-generated constructor stub

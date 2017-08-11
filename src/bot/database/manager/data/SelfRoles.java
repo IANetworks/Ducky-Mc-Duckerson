@@ -4,22 +4,46 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+/**
+ * The type Self roles.
+ */
 public class SelfRoles {
-	//List of roles with group level
+    /**
+     * The List of roles.
+     */
+//List of roles with group level
 	Map<Long, Integer> listOfRoles = new HashMap<Long,Integer>();
-	Map<Integer, Boolean> groupExculsive =  new HashMap<Integer,Boolean>();
-	Map<Integer, HashSet<Long>> rolesByGroup = new HashMap<Integer,HashSet<Long>>();
+    /**
+     * The Group exculsive.
+     */
+    Map<Integer, Boolean> groupExculsive =  new HashMap<Integer,Boolean>();
+    /**
+     * The Roles by group.
+     */
+    Map<Integer, HashSet<Long>> rolesByGroup = new HashMap<Integer,HashSet<Long>>();
 	//Fetch list of roles by group level
 	
 	///fetch group level and exclusive by role id
-	
-	//Getters
+
+    /**
+     * Has group boolean.
+     *
+     * @param groupID the group id
+     * @return the boolean
+     */
+//Getters
 	public boolean hasGroup(Integer groupID)
 	{
 		return rolesByGroup.containsKey(groupID);
 	}
-	
-	public Boolean isRoleExclusive(Long roleID)
+
+    /**
+     * Is role exclusive boolean.
+     *
+     * @param roleID the role id
+     * @return the boolean
+     */
+    public Boolean isRoleExclusive(Long roleID)
 	{
 		if(listOfRoles.containsKey(roleID))
 		{
@@ -33,22 +57,45 @@ public class SelfRoles {
 			return null;
 		}
 	}
-	
-	public Map<Long, Integer> getListOfRoles()
+
+    /**
+     * Gets list of roles.
+     *
+     * @return the list of roles
+     */
+    public Map<Long, Integer> getListOfRoles()
 	{
 		return listOfRoles;
 	}
 
-	public Boolean isGroupExclusive(Integer groupID) {
+    /**
+     * Is group exclusive boolean.
+     *
+     * @param groupID the group id
+     * @return the boolean
+     */
+    public Boolean isGroupExclusive(Integer groupID) {
 		return groupExculsive.get(groupID);
 	}
-	
-	public Integer getRoleGroup(Long roleID)
+
+    /**
+     * Gets role group.
+     *
+     * @param roleID the role id
+     * @return the role group
+     */
+    public Integer getRoleGroup(Long roleID)
 	{
 		return listOfRoles.get(roleID);
 	}
-	
-	public HashSet<Long> getListOfRolesByGroup(Integer groupID)
+
+    /**
+     * Gets list of roles by group.
+     *
+     * @param groupID the group id
+     * @return the list of roles by group
+     */
+    public HashSet<Long> getListOfRolesByGroup(Integer groupID)
 	{
 		if(rolesByGroup.containsKey(groupID))
 		{
@@ -58,12 +105,26 @@ public class SelfRoles {
 			return null;
 		}
 	}
-	
-	public boolean isRoleSelfAssignable(Long roleID)
+
+    /**
+     * Is role self assignable boolean.
+     *
+     * @param roleID the role id
+     * @return the boolean
+     */
+    public boolean isRoleSelfAssignable(Long roleID)
 	{
 		return listOfRoles.containsKey(roleID);
 	}
-	//Setters
+
+    /**
+     * Sets new role.
+     *
+     * @param roleID  the role id
+     * @param groupID the group id
+     * @return the new role
+     */
+//Setters
 	//Add a new role - make role self assignable
 	public boolean setNewRole(Long roleID, Integer groupID)
 	{
@@ -79,8 +140,16 @@ public class SelfRoles {
 			return true; //let calling know we've successfully added the new role
 		}
 	}
-	
-	public boolean setNewRole(Long roleID, Integer groupID, Boolean isExculsive)
+
+    /**
+     * Sets new role.
+     *
+     * @param roleID      the role id
+     * @param groupID     the group id
+     * @param isExculsive the is exculsive
+     * @return the new role
+     */
+    public boolean setNewRole(Long roleID, Integer groupID, Boolean isExculsive)
 	{
 		//Check to make sure we do not have an existing role
 		if(listOfRoles.containsKey(roleID))
@@ -114,8 +183,15 @@ public class SelfRoles {
 			}
 		}
 	}
-	
-	public Boolean setRoleExculsive(Long roleID, Boolean isExculsive)
+
+    /**
+     * Sets role exculsive.
+     *
+     * @param roleID      the role id
+     * @param isExculsive the is exculsive
+     * @return the role exculsive
+     */
+    public Boolean setRoleExculsive(Long roleID, Boolean isExculsive)
 	{
 		if(!listOfRoles.containsKey(roleID))
 		{
@@ -124,8 +200,15 @@ public class SelfRoles {
 			return setGroupExculsive(listOfRoles.get(roleID), isExculsive);
 		}
 	}
-	
-	public Boolean setGroupExculsive(Integer groupID, Boolean isExculsive)
+
+    /**
+     * Sets group exculsive.
+     *
+     * @param groupID     the group id
+     * @param isExculsive the is exculsive
+     * @return the group exculsive
+     */
+    public Boolean setGroupExculsive(Integer groupID, Boolean isExculsive)
 	{
 		
 		if(!groupExculsive.containsKey(groupID))
@@ -136,8 +219,15 @@ public class SelfRoles {
 			return true;
 		}
 	}
-	
-	public Boolean setRoleGroup(Long roleID, Integer newGroup)
+
+    /**
+     * Sets role group.
+     *
+     * @param roleID   the role id
+     * @param newGroup the new group
+     * @return the role group
+     */
+    public Boolean setRoleGroup(Long roleID, Integer newGroup)
 	{
 		Integer oldGroup;
 		//Changing the role group
@@ -159,8 +249,14 @@ public class SelfRoles {
 			return true;
 		}
 	}
-	
-	//setting a role as not self-assignable
+
+    /**
+     * Remove role boolean.
+     *
+     * @param roleID the role id
+     * @return the boolean
+     */
+//setting a role as not self-assignable
 	public Boolean removeRole(Long roleID)
 	{
 		if(listOfRoles.containsKey(roleID))
@@ -173,8 +269,14 @@ public class SelfRoles {
 			return false; //inform calling code that we didn't remove any users
 		}
 	}
-	
-	//Remove group, WARNING - removing group will also set all roles in that group as not self assignable, returns all roles that were removed
+
+    /**
+     * Remove group hash set.
+     *
+     * @param groupID the group id
+     * @return the hash set
+     */
+//Remove group, WARNING - removing group will also set all roles in that group as not self assignable, returns all roles that were removed
 	public HashSet<Long> removeGroup(Integer groupID)
 	{
 		if(rolesByGroup.containsKey(groupID))

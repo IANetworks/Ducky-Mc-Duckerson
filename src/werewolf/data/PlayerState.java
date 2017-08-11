@@ -1,5 +1,23 @@
 package werewolf.data;
 
+/**
+ * The enum Player state.
+ */
 public enum PlayerState {
-	ERR, ALIVE, DEAD, FLED, NOLYNCH
+    /**
+     * Err player state.
+     */
+    ERR, /**
+     * Alive player state.
+     */
+    ALIVE, /**
+     * Dead player state.
+     */
+    DEAD, /**
+     * Fled player state.
+     */
+    FLED, /**
+     * Nolynch player state.
+     */
+    NOLYNCH
 }
