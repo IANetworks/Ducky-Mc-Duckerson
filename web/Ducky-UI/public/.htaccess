@@ -7,4 +7,12 @@ RewriteEngine On
 # RewriteBase /
 
 RewriteCond %{REQUEST_FILENAME} !-f
+# Append this list if you need any other excluded paths/aliasses
+RewriteCond %{REQUEST_URI} !^/pagespeed.*$ [NC]
+RewriteCond %{REQUEST_URI} !^/phpmyadmin.*$ [NC]
+RewriteCond %{REQUEST_URI} !^/phpldapadmin.*$ [NC]
+RewriteCond %{REQUEST_URI} !^/server-status.*$ [NC]
+RewriteCond %{REQUEST_URI} !^/server-info.*$ [NC]
+RewriteCond %{REQUEST_URI} !^/ldap-status.*$ [NC]
+RewriteCond %{REQUEST_URI} !^/balancer-manager.*$ [NC]
 RewriteRule ^ index.php [QSA,L]
