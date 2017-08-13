@@ -1,0 +1,29 @@
+<html lang="en">
+    <head>
+        <title><?=$PageTitle;?></title>
+        <meta charset="utf-8">
+        <meta name="HandheldFriendly" content="true">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="description" content="The web-ui for the Ducky Mc Duckerson Discord bot">
+        <meta name="author" content="AbbyTheRat">
+        <!-- Stylesheets -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" crossorigin="anonymous">
+        <link rel="stylesheet" href="/css/main.min.css">
+        <!-- Scripts -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js" crossorigin="anonymous"></script>
+        <script src="/js/main.min.js"></script>
+    </head>
+    <body>
+        <div class="container-fluid">
+<?=$PageNav;?>
+<?=$PageCrumbs;?>
+
+<?=$PageContent;?>
+        </div>
+<?=$PageFooter;?>
+    </body>
+</html>
