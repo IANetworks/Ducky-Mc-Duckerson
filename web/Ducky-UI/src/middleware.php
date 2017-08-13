@@ -1,4 +1,5 @@
 <?php
-// Application middleware
+    // Application middleware
+    use \Psr7Middlewares\Middleware\TrailingSlash;
 
-// e.g: $app->add(new \Slim\Csrf\Guard);
+    $app->add((new TrailingSlash(False))->redirect(301));

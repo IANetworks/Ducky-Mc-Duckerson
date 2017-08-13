@@ -1,3 +1,6 @@
 /vendor/
 /logs/*
-!/logs/README.md
+!/logs/.notempty
+/tmp/*
+!/tmp/.notempty
+/src/settings.php
