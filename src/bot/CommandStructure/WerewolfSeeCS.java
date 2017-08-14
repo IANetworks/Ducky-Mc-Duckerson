@@ -55,6 +55,11 @@ public class WerewolfSeeCS extends CommandStructure {
             } else {
                 //Let check that this person have permission to use see command
                 author = lastGuild.getMember(authorUser);
+                if(!dbMan.isWerewolfOn(lastGuildID))
+                {
+                    //Werewolf is turned off for this guild, so ignore the command
+                    return;
+                }
                 if(hasPermission(author)) {
                     //If we have a game, let make sure this is during nighttime.
                     GameState gs = ww.getWerewolfGameState(lastGuildID);

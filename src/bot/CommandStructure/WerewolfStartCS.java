@@ -31,7 +31,13 @@ public class WerewolfStartCS extends CommandStructure {
 	public void execute(Member author, User authorUser, MessageChannel channel, Message message, String parameters,
 						Map<String, CommandStructure> commandList) {
 		Long guildID = author.getGuild().getIdLong();
-		
+
+		if(!dbMan.isWerewolfOn(guildID))
+		{
+			//Werewolf is turned off for this guild, so ignore the command
+			return;
+		}
+
 		if(hasPermission(author))
 		{
 			//Check to make sure we do not have a game running (null GameState or IDLE)

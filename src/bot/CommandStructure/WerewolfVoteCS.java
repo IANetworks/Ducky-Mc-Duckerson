@@ -28,6 +28,11 @@ public class WerewolfVoteCS extends CommandStructure {
         Guild guild = author.getGuild();
         Long guildID = guild.getIdLong();
 
+        if(!dbMan.isWerewolfOn(guildID))
+        {
+            //Werewolf is turned off for this guild, so ignore the command
+            return;
+        }
 
         if(hasPermission(author))
         {

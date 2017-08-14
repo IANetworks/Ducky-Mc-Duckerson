@@ -29,6 +29,12 @@ public class WerewolfKillCS extends CommandStructure {
         Guild guild = author.getGuild();
         Long guildID = guild.getIdLong();
 
+        if(!dbMan.isWerewolfOn(guildID))
+        {
+            //Werewolf is turned off for this guild, so ignore the command
+            return;
+        }
+
         if(hasPermission(author))
         {
             //check to see if this is from a channel other than the guild wolf channel
