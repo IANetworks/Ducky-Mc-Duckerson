@@ -82,17 +82,6 @@ public class McDucky
 	 */
 	private void setupTables() throws SQLException
 	{
-		//TODO Permissions
-		//TODO Custom Responds !fb, etc
-		//TODO Profiles
-		//TODO Games Stats
-		//TODO Fun stuff
-		//TODO One time stuff (Welcome Messages)
-		//TODO FAQ?
-		//TODO Timer with TTS
-		//TODO Self nickname change
-		//TODO Playing status
-
 		//Shouldn't happen but let make sure we have conn
 		if(conn == null) //ERROR ERROR WILL ROBINSON
 			throw new SQLException("SQL connection failed.");

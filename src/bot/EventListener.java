@@ -145,7 +145,7 @@ public class EventListener extends ListenerAdapter {
 		name = "see";
 		privCmdList.put(name, new WerewolfSeeCS(container, name, 19, 999));
 	}
-	///TODO SetGameChannel
+
 	
 	@Override
 	public void onReady(ReadyEvent event)
