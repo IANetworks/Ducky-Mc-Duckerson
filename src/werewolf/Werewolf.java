@@ -2,6 +2,8 @@ package werewolf;
 
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.managers.PermOverrideManagerUpdatable;
+import net.dv8tion.jda.core.requests.restaction.PermissionOverrideAction;
 import werewolf.data.*;
 
 import java.util.*;
@@ -67,7 +69,7 @@ public class Werewolf {
      * @param guildID the guild id
      * @return the town channel
      */
-    public MessageChannel getTownChannel(Long guildID) {
+    public TextChannel getTownChannel(Long guildID) {
         return townChannelList.get(guildID);
     }
 
@@ -77,7 +79,7 @@ public class Werewolf {
      * @param guildID the guild id
      * @return the wolf channel
      */
-    public MessageChannel getWolfChannel(Long guildID) {
+    public TextChannel getWolfChannel(Long guildID) {
         return wolfChannelList.get(guildID);
     }
 
@@ -204,8 +206,6 @@ public class Werewolf {
             return; //We weren't able to setup the game channels for some reason. Don't start the game
         }
 
-        //TODO See if we have permission to adjust permissions on channel
-
         //Set gameStatus to GAMESTART
         setGameState(guildID, GameState.GAMESTART);
 
@@ -221,9 +221,6 @@ public class Werewolf {
         channel.sendMessage(getTheme("START_GAME", MessType.GAME, guildID, author, joinTime).build()).queue();
         getTownChannel(guildID).sendMessage(getTheme("START_GAME_NOTICE", MessType.GAME, guildID, author).build()).queue();
 
-        //TODO Setup town channel and wolf channel permissions, mute everyone, block everyone from wolf channel
-
-
         //Add the person who started the game into the game list.
         joinGame(guildID, author);
 
@@ -233,14 +230,130 @@ public class Werewolf {
 
     }
 
-    private MessageChannel getGameChannel(Long guildID) {
+    private TextChannel getGameChannel(Long guildID) {
         return gameChannelList.get(guildID); //setupGameChannels should have this setup for us. Let it error if something is wrong by this point. >_>
+    }
+
+    private void setVoice(TextChannel thisChannel, Member member, Boolean allow) {
+        Collection<Member> thisMember = new ArrayList<>();
+        thisMember.add(member);
+        setVoice(thisChannel, thisMember, allow);
+    }
+
+
+    /**
+     * Used to add or remove voice from town channel
+     *
+     * @param thisChannel
+     * @param memberList
+     * @param allow
+     */
+    private void setVoice(TextChannel thisChannel, Collection<Member> memberList, Boolean allow) {
+        LinkedList<Member> thisList = new LinkedList<>();
+        thisList.addAll(memberList);
+
+        List<PermissionOverride> po = thisChannel.getMemberPermissionOverrides();
+        HashMap<Member, PermissionOverride> allowPOList = new HashMap<Member, PermissionOverride>();
+        List<Permission> readwrite = new ArrayList<>();
+        readwrite.add(Permission.MESSAGE_WRITE);
+        readwrite.add(Permission.MESSAGE_READ);
+
+        for (PermissionOverride thisPO : po) {
+            if (thisPO.isMemberOverride()) {
+                if (thisList.contains(thisPO.getMember())) {
+                    if (!allow) {
+                        thisPO.getManager().deny(Permission.MESSAGE_WRITE).queue();
+                    } else {
+                        //to make sure we don't end up doubling up on members
+                        allowPOList.put(thisPO.getMember(), thisPO);
+                        thisList.remove(thisPO.getMember());
+                    }
+                }
+            }
+        }
+
+        if (allow) {
+            //do exisiting Permissions and make sure it has read/write
+            for (PermissionOverride thisPO : allowPOList.values()) {
+                PermOverrideManagerUpdatable poMan = thisPO.getManagerUpdatable();
+
+                poMan.grant(Permission.MESSAGE_WRITE);
+                poMan.update().queue();
+            }
+
+            //Create new permissions for read/write
+            for (Member thisMember : thisList) {
+                PermissionOverrideAction poa = thisChannel.createPermissionOverride(thisMember);
+                poa.setAllow(readwrite);
+                poa.queue();
+            }
+        }
+    }
+
+    private void setChannelPermissions(TextChannel thisChannel, Member member, Boolean allow) {
+        Collection<Member> thisMember = new ArrayList<>();
+        thisMember.add(member);
+        setChannelPermissions(thisChannel, thisMember, allow);
+    }
+
+    /**
+     * Used to add or remove people from the channels
+     *
+     * @param thisChannel
+     * @param memberList
+     * @param allow
+     */
+    private void setChannelPermissions(TextChannel thisChannel, Collection<Member> memberList, Boolean allow) {
+        LinkedList<Member> thisList = new LinkedList<>();
+        thisList.addAll(memberList);
+
+        List<PermissionOverride> po = thisChannel.getMemberPermissionOverrides();
+        HashMap<Member, PermissionOverride> allowPOList = new HashMap<Member, PermissionOverride>();
+        List<Permission> readwrite = new ArrayList<>();
+        readwrite.add(Permission.MESSAGE_WRITE);
+        readwrite.add(Permission.MESSAGE_READ);
+
+        for (PermissionOverride thisPO : po) {
+            if (thisPO.isMemberOverride()) {
+                if (thisList.contains(thisPO.getMember())) {
+                    if (!allow) {
+                        thisPO.delete().queue();
+                    } else {
+                        //to make sure we don't end up doubling up on members
+                        allowPOList.put(thisPO.getMember(), thisPO);
+                        thisList.remove(thisPO.getMember());
+                    }
+                }
+            }
+        }
+
+        if (allow) {
+            //do exisiting Permissions and make sure it has read/write
+            for (PermissionOverride thisPO : allowPOList.values()) {
+                PermOverrideManagerUpdatable poMan = thisPO.getManagerUpdatable();
+
+                poMan.grant(readwrite);
+                poMan.update().queue();
+            }
+
+            //Create new permissions for read/write
+            for (Member thisMember : thisList) {
+                PermissionOverrideAction poa = thisChannel.createPermissionOverride(thisMember);
+                poa.setAllow(readwrite);
+                poa.queue();
+            }
+        }
     }
 
     private Boolean setupGameChannels(Guild guild, Member author, MessageChannel channel) {
         Long guildID = guild.getIdLong();
         Member selfMember = guild.getSelfMember();
         List<String> setupChannels = new ArrayList<String>();
+
+        //This game requires the bot to have the ability to edit permissions,
+        if (!selfMember.hasPermission(Permission.MANAGE_PERMISSIONS)) {
+            channel.sendMessage("This game requires the bot to have manage permissions. If you don't wish to give the bot manage permissions, you can turn werewolf game off.").queue();
+        }
 
         //first check to make sure we're not already holding the channel object for this server
         if (gameChannelList.containsKey(guildID) && townChannelList.containsKey(guildID) && wolfChannelList.containsKey(guildID)) {
@@ -296,9 +409,20 @@ public class Werewolf {
             //attempt to create the channel, check permission
             if (selfMember.hasPermission(Permission.MANAGE_CHANNEL)) {
                 GuildController gController = guild.getController();
+                net.dv8tion.jda.core.entities.Role everyoneRole = guild.getPublicRole();
+                //set permission to deny everyone by default and allow itself
+                List<Permission> denyPermissions = new ArrayList<>();
+                List<Permission> allowPermissions = new ArrayList<>();
+
+                denyPermissions.add(Permission.MESSAGE_READ);
+                denyPermissions.add(Permission.MESSAGE_WRITE);
+                allowPermissions.add(Permission.MESSAGE_READ);
+                allowPermissions.add(Permission.MESSAGE_WRITE);
                 for (String name : setupChannels) {
                     ChannelAction thisChannel = gController.createTextChannel(name);
 
+                    thisChannel.addPermissionOverride(everyoneRole, null, denyPermissions);
+                    thisChannel.addPermissionOverride(selfMember, allowPermissions, null);
                     thisChannel.setTopic("game channels created by Ducky");
                     thisChannel.queue(success -> channelCreated(name, guild, author, channel));
                 }
@@ -406,10 +530,10 @@ public class Werewolf {
             Player newPlayer = addPlayer(guildID, player);
             getTownChannel(guildID).sendMessage(getTheme("JOIN", MessType.GAME, guildID, player, gamesPlayerLists.get(guildID).getPlayerSize()).build()).queue();
             sendPrivateMessage(getTheme("ADDED", MessType.NOTICE, guildID).build(), newPlayer);
+            setChannelPermissions(getTownChannel(guildID), player, true);
         } else {
             getTownChannel(guildID).sendMessage(player.getAsMention() + " You're already in game").queue();
         }
-        //TODO set channel permission to allow user to talk in channel, if we have permission role
     }
 
     private Player addPlayer(Long guildID, Member player) {
@@ -1058,14 +1182,15 @@ public class Werewolf {
 
         //Assign roles
         List<Player> roleList = gamesPlayerLists.get(guildID).randomOrder();
+        List<Member> wolvesList = new ArrayList<>();
 
         //Set Wolves
         for (int i = 0; i < numberOfWolves; i++) {
             //Assign
             roleList.get(i).setRole(Role.WOLF);
-            //set permission
-            //TODO set permission
+            wolvesList.add(roleList.get(i).getMember());
         }
+        setChannelPermissions(getWolfChannel(guildID), wolvesList, true); //set permission for wolves
 
         //Set Masons
         if (numberOfMasons > 1) {
@@ -1172,10 +1297,6 @@ public class Werewolf {
         user.openPrivateChannel().queue((channel) -> sendGameRole(channel, message, guildID, player));
     }
 
-    private void gamePermission(Long guildID) {
-        //TODO set up permissions
-    }
-
     private void startVoteTime(Long guildID) {
         Integer noPlayer = gamesPlayerLists.get(guildID).getNumberOfPlayerByState(PlayerState.ALIVE);
         int intTimeSet = gameList.get(guildID).getVoteTimeX() * noPlayer;
@@ -1215,8 +1336,15 @@ public class Werewolf {
             removeTimer(guildID, taskID);
         }
 
-        //TODO Reset Permissions to IDLE gamestate
+        setChannelPermissions(getTownChannel(guildID), gamesPlayerLists.get(guildID).getMemberList(), false);
 
+        List<Player> playerList = gamesPlayerLists.get(guildID).getPlayerListByRole(Role.WOLF);
+        List<Member> memberListWolves = new ArrayList<>();
+        for (Player thisPlayer : playerList) {
+            memberListWolves.add(thisPlayer.getMember());
+        }
+
+        setChannelPermissions(getWolfChannel(guildID), memberListWolves, false);
         //clear theme
         clearTheme(guildID);
         getTownChannel(guildID).sendMessage("Game Over.").queue();
@@ -1422,8 +1550,7 @@ public class Werewolf {
                 if (guilty.getRole() != Role.SEER) {
                     gamesPlayerLists.get(guildID).setDyingVoice(guilty.getUserID());
                 } else {
-                    //Seers don't get dying voice
-                    //TODO permissions
+                    setVoice(getTownChannel(guildID), guilty.getMember(), false);
                 }
 
             } else {
@@ -1444,7 +1571,7 @@ public class Werewolf {
                 embed = getTheme("NOT_VOTED", MessType.GAME, guildID, player.getMember(), null, null, embed);
                 embed = getTheme("ROLE_IS_KILLED", MessType.GAME, guildID, player.getMember(), null, null, embed);
                 getTownChannel(guildID).sendMessage(embed.build()).queue();
-                //TODO Permissions
+                setVoice(getTownChannel(guildID), player.getMember(), false);
             }
         }
     }
@@ -1519,7 +1646,7 @@ public class Werewolf {
         }
 
         //Night time, change permission to stop everyone talking expect for anyone with a dying voice
-        setPermissions(guildID);
+        setChannelVoice(guildID, false);
 
         //reset votes
         gamesPlayerLists.get(guildID).resetVotes();
@@ -1567,8 +1694,15 @@ public class Werewolf {
         addTimer(guildID, scheduler.schedule(new WereTask(guildID, timerCount), intTimeSet, TimeUnit.SECONDS));
     }
 
-    private void setPermissions(Long guildID) {
-        //TODO Change permissions as needed
+    private void setChannelVoice(Long guildID, Boolean allow) {
+        List<Player> thisPlayerList = gamesPlayerLists.get(guildID).getPlayerListByState(PlayerState.ALIVE);
+        List<Member> thisMemberList = new ArrayList<>();
+        for (Player thisPlayer : thisPlayerList) {
+            thisMemberList.add(thisPlayer.getMember());
+        }
+
+        setVoice(getTownChannel(guildID), thisMemberList, allow);
+
     }
 
     /**
@@ -1637,13 +1771,13 @@ public class Werewolf {
         gamesPlayerLists.get(guildID).resetVotes();
         //stop dying voice from being saved
         if (!gamesPlayerLists.get(guildID).isDyingVoiceEmpty()) {
+            setVoice(getTownChannel(guildID), gamesPlayerLists.get(guildID).getDyingVoice().getMember(), false);
             gamesPlayerLists.get(guildID).clearDyingVoice();
         }
-        //TODO Remove permission from the person who didn't use their dying breath
 
         //display people still alive.. STILL ALIVEEEE (Sings along to Still Alive by Jonathan Coulton)
         //getTownChannel(guildID).sendMessage((listAlive(guildID, null).build())).queue();
-        //TODO change Permissions to allow people to talk in town channel
+        setChannelVoice(guildID, true);
 
         //figure out Daytime
         Integer noPlayer = gamesPlayerLists.get(guildID).getNumberOfPlayerByState(PlayerState.ALIVE);
@@ -1814,7 +1948,6 @@ public class Werewolf {
                         setGameState(guildID, GameState.DAYTIME);
 
                         getTownChannel(guildID).sendMessage("Sending Roles, please wait.").queue();
-                        gamePermission(guildID); //Set up permissions
 
                         setRoles(guildID); //Set everyone roles
                         dbMan.sqlIncThemeCount(themeList.get(guildID).getThemeID());

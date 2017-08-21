@@ -238,10 +238,10 @@ public class DatabaseManager {
 		UserProfile up = getUserProfile(guildID, userID);
 		Long newFlipTotal = up.getFlipped();
 		newFlipTotal++;
-		
-		String sql = "UPDATE user_profile SET flipped = ? WHERE guild_id = ? AND user_id = ?"; //TODO I'm sure there's a SQL query that can inc the count for us.
-		PreparedStatement pstmt = conn.prepareStatement(sql);
-		pstmt.setLong(1, newFlipTotal);
+
+        String sql = "UPDATE user_profile SET flipped = ? WHERE guild_id = ? AND user_id = ?"; //TODO I'm sure there's a SQL query that can inc the count for us. (question is, does sqlite3 has this function?)
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setLong(1, newFlipTotal);
 		pstmt.setLong(2, guildID);
 		pstmt.setLong(3, userID);
 		pstmt.execute();
@@ -1598,7 +1598,6 @@ public class DatabaseManager {
      */
 	public List<ThemeDesc> sqlGetThemeList()
 	{
-		//TODO Switch to a list of object
 		Statement dbState = null;
 		ResultSet dbRs = null;
 

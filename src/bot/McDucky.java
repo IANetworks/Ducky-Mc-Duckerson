@@ -42,6 +42,8 @@ import java.sql.SQLException;
 
 /**
  * The type Mc ducky.
+ *
+ * The Main class
  */
 public class McDucky
 {

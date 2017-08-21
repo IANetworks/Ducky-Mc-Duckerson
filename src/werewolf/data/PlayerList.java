@@ -430,6 +430,18 @@ public class PlayerList
     	return playerNames;
     }
 
+    public List<Member> getMemberList() {
+        Map<Long, Player> removeNoLynch = new HashMap<Long, Player>(playerList);
+        removeNoLynch.remove((long) 0);
+
+        List<Member> playerNames = new ArrayList<Member>();
+
+        for (Player player : removeNoLynch.values()) {
+            playerNames.add(player.getMember());
+        }
+        return playerNames;
+    }
+
     /**
      * Gets player role.
      *
