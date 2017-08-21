@@ -148,22 +148,22 @@ public class EventListener extends ListenerAdapter {
         cmdList.put(name, new SetGameChannelCS(container, name, 21, 1));
 
         name = "alive";
-        cmdList.put(name, new WerewolfAliveCS(container, name, 21, 1));
+        cmdList.put(name, new WerewolfAliveCS(container, name, 22, 1));
 
         name = "kick-player";
-        cmdList.put(name, new WerewolfKickPlayerCS(container, name, 22, 1));
+        cmdList.put(name, new WerewolfKickPlayerCS(container, name, 23, 1));
 
         name = "flee";
-        cmdList.put(name, new WerewolfLeaveCS(container, name, 23, 999));
+        cmdList.put(name, new WerewolfLeaveCS(container, name, 24, 999));
 
         name = "theme";
-        cmdList.put(name, new WerewolfThemeDetailCS(container, name, 24, 999));
+        cmdList.put(name, new WerewolfThemeDetailCS(container, name, 25, 999));
 
         name = "list-theme";
-        cmdList.put(name, new WerewolfListThemeCS(container, name, 25, 999));
+        cmdList.put(name, new WerewolfListThemeCS(container, name, 26, 999));
 
         name = "stop-ww";
-        cmdList.put(name, new WerewolfStopCS(container, name, 26, 1));
+        cmdList.put(name, new WerewolfStopCS(container, name, 27, 1));
 
 		//********* PrivateMessage Commands *********//
 		name = "see";

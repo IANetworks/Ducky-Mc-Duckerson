@@ -28,6 +28,7 @@ public class WerewolfThemeDetailCS extends CommandStructure {
             return;
         }
         if (hasPermission(author)) {
+            parameters = parameters.trim();
             if (parameters.isEmpty()) {
                 channel.sendMessage("Syntax is " + dbMan.getPrefix(guildID) + commandName + " [themeID]").queue();
             } else if (isInteger(parameters)) {
@@ -38,6 +39,8 @@ public class WerewolfThemeDetailCS extends CommandStructure {
                 } else {
                     channel.sendMessage(embed).queue();
                 }
+            } else {
+                channel.sendMessage("Syntax is invalid, Syntax is " + dbMan.getPrefix(guildID) + commandName + " [themeID]").queue();
             }
 
         }

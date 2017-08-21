@@ -1570,18 +1570,20 @@ public class DatabaseManager {
      * @param id the id
      * @return the theme
      */
-    public Theme sqlGetThemeDesc(int id)
-	{
-		Statement dbState = null;
-		ResultSet dbRS = null;
-		Theme themeDes = new Theme();
+    public Theme sqlGetThemeDesc(int id) {
+
+        String sql = "SELECT * FROM theme_detail WHERE id_key = ?";
+
+        ResultSet dbRS;
+        Theme themeDes = new Theme();
 				
 		try
 		{
-			//db_state = db_cn.createStatement();
-			dbRS = dbState.executeQuery("SELECT * FROM theme_detail WHERE id_key = " + id);
-			
-			themeDes.setDetails(dbRS);
+            PreparedStatement dbState = conn.prepareStatement(sql);
+            dbState.setInt(1, id);
+            dbRS = dbState.executeQuery();
+
+            themeDes.setDetails(dbRS);
 			
 		} catch (SQLException e)
 		{
@@ -1596,17 +1598,16 @@ public class DatabaseManager {
      *
      * @return the list
      */
-	public List<ThemeDesc> sqlGetThemeList()
-	{
-		Statement dbState = null;
+    public List<ThemeDesc> sqlGetThemeList() {
+
 		ResultSet dbRs = null;
 
 		List<ThemeDesc> themeList = new ArrayList<ThemeDesc>();
 		
 		try {
-			//db_state = db_cn.createStatement();
-	
-			dbRs = dbState.executeQuery("SELECT * FROM theme_detail WHERE loaded = 1 ORDER BY id_key");
+            Statement dbState = conn.createStatement();
+
+            dbRs = dbState.executeQuery("SELECT * FROM theme_detail WHERE loaded = 1 ORDER BY id_key");
 
 			
 			while(dbRs.next())

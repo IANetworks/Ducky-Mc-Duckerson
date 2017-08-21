@@ -209,6 +209,9 @@ public class Werewolf {
         //Set gameStatus to GAMESTART
         setGameState(guildID, GameState.GAMESTART);
 
+        //Clear Permissions
+        //TODO CLEAR PERMISSIONS
+
         //reset roundNo
         resetRounds(guildID);
 
@@ -418,6 +421,7 @@ public class Werewolf {
                 denyPermissions.add(Permission.MESSAGE_WRITE);
                 allowPermissions.add(Permission.MESSAGE_READ);
                 allowPermissions.add(Permission.MESSAGE_WRITE);
+                allowPermissions.add(Permission.MESSAGE_HISTORY);
                 for (String name : setupChannels) {
                     ChannelAction thisChannel = gController.createTextChannel(name);
 
@@ -528,9 +532,10 @@ public class Werewolf {
         if (!hasPlayer(guildID, player)) {
             //add player to the list
             Player newPlayer = addPlayer(guildID, player);
-            getTownChannel(guildID).sendMessage(getTheme("JOIN", MessType.GAME, guildID, player, gamesPlayerLists.get(guildID).getPlayerSize()).build()).queue();
-            sendPrivateMessage(getTheme("ADDED", MessType.NOTICE, guildID).build(), newPlayer);
             setChannelPermissions(getTownChannel(guildID), player, true);
+
+            EmbedBuilder embed = getTheme("JOIN", MessType.GAME, guildID, player, gamesPlayerLists.get(guildID).getPlayerSize());
+            getTownChannel(guildID).sendMessage(getTheme("ADDED", MessType.NOTICE, guildID, player, null, null, embed).build());
         } else {
             getTownChannel(guildID).sendMessage(player.getAsMention() + " You're already in game").queue();
         }
@@ -704,9 +709,13 @@ public class Werewolf {
         EmbedBuilder eBuilder;
         if (previousEmbed != null) {
             eBuilder = previousEmbed;
-            eBuilder.addField(null, null, false);
+            //eBuilder.addField(null, null, false);
         } else {
             eBuilder = new EmbedBuilder();
+        }
+
+        if (number == null) {
+            number = 0;
         }
 
         String themeText = getThemeText(guildID, theme_id);
@@ -814,8 +823,8 @@ public class Werewolf {
 		
 		/* Return Theme Text */
         //System.out.println(prefix + themeText + suffix);
-        eBuilder.setAuthor(null, null, getThemeText(guildID, avatarType));
-        eBuilder.addField(null, themeText, false);
+        if (avatarType != null) eBuilder.setAuthor(null, null, getThemeText(guildID, avatarType));
+        eBuilder.addField("", themeText, false);
         return eBuilder;
     }
 
@@ -1072,7 +1081,7 @@ public class Werewolf {
         int count = 0;
         final int top = 5;
 
-        theme.addField("Current Count", null, false);
+        theme.addField("Current Count", "", false);
         for (Player player : voteCount) {
             if (player.getVoteCount() > 0 && count <= top) {
                 theme.addField(player.getEffectiveName(), player.getVoteCount().toString(), true);
@@ -1330,7 +1339,7 @@ public class Werewolf {
     {
         //set gamestate to Idle, this basically tell us this guild has no-games running anymore
         setGameState(guildID, GameState.IDLE);//Either way, as long as gamestate is set to IDLE, the scheduled will eventually stop, instead of right away.
-        Map<Long, ScheduledFuture<?>> listOfTimers = timerThreads.get(guildID);
+        Map<Long, ScheduledFuture<?>> listOfTimers = new HashMap<>(timerThreads.get(guildID));
         for (Long taskID : listOfTimers.keySet()) {
             listOfTimers.get(taskID).cancel(true);
             removeTimer(guildID, taskID);
@@ -1373,7 +1382,8 @@ public class Werewolf {
         if (wolfCount >= humanCount && wolfCount != 0) {
             if (wolfCount == 1) {
                 EmbedBuilder thisEmbed = getTheme("WOLF_WIN", MessType.NARRATION, guildID);
-                getTownChannel(guildID).sendMessage(getTheme("CONGR_WOLF", MessType.GAME, guildID, null, null, null, thisEmbed).build()).queue();
+                Player wolf = gamesPlayerLists.get(guildID).getPlayerListByRolePlayerState(Role.WOLF, PlayerState.ALIVE).get(0);
+                getTownChannel(guildID).sendMessage(getTheme("CONGR_WOLF", MessType.GAME, guildID, wolf.getMember(), null, null, thisEmbed).build()).queue();
             } else {
                 EmbedBuilder thisEmbed = getTheme("WOLVES_WIN", MessType.NARRATION, guildID);
                 getTownChannel(guildID).sendMessage(getTheme("CONGR_WOLVES", MessType.GAME, guildID, null, null, null, thisEmbed).build()).queue();
@@ -1471,7 +1481,7 @@ public class Werewolf {
 
         EmbedBuilder newEmbed = new EmbedBuilder();
         newEmbed.setAuthor(themeDesc.getName(), null, themeDesc.getAvatar());
-        newEmbed.setTitle(themeDesc.getAuthor());
+        newEmbed.setTitle("Author: " + themeDesc.getAuthor());
         newEmbed.setDescription(themeDesc.getDesc());
         newEmbed.addField("Created on: ", themeDesc.getDateCreated().toString(), true);
         newEmbed.addField("Last Modified On: ", themeDesc.getDateModified().toString(), true);
@@ -1776,7 +1786,7 @@ public class Werewolf {
         }
 
         //display people still alive.. STILL ALIVEEEE (Sings along to Still Alive by Jonathan Coulton)
-        //getTownChannel(guildID).sendMessage((listAlive(guildID, null).build())).queue();
+        embedBuilder = listAlive(guildID, null);
         setChannelVoice(guildID, true);
 
         //figure out Daytime
@@ -1825,19 +1835,23 @@ public class Werewolf {
      * @param author  the author
      */
     public void leaveGame(Long guildID, Member author) {
-        if (!isPlaying(guildID)) {
-            if (gamesPlayerLists.get(guildID).hasPlayer(author.getUser().getIdLong())) {
-                Long userID = author.getUser().getIdLong();
-                if (getGameChannel(guildID).equals(GameState.GAMESTART)) {
+        if (isPlaying(guildID)) {
+            Long userID = author.getUser().getIdLong();
+
+            if (gamesPlayerLists.get(guildID).hasPlayer(userID)) {
+                if (getWerewolfGameState(guildID).equals(GameState.GAMESTART)) {
                     gamesPlayerLists.get(guildID).removePlayer(userID);
                     getTownChannel(guildID).sendMessage(getTheme("FLEE", MessType.NARRATION, guildID, author, gamesPlayerLists.get(guildID).getPlayerSize()).build()).queue();
+                    setChannelPermissions(getTownChannel(guildID), author, false);
                 } else {
                     if (gamesPlayerLists.get(guildID).getPlayerState(userID).equals(PlayerState.ALIVE)) {
                         gamesPlayerLists.get(guildID).playerFled(userID);
                         getTownChannel(guildID).sendMessage(getTheme("FLEE_ROLE", MessType.NARRATION, guildID, author).build()).queue();
+                        setVoice(getTownChannel(guildID), author, false);
                         checkWin(guildID);
                     }
                 }
+
             }
         }
 
@@ -1942,6 +1956,7 @@ public class Werewolf {
                             //NOT-ENOUGHT - Theme ID
                             getTownChannel(guildID).sendMessage(getTheme("NOT_ENOUGH", MessType.GAME, guildID).build()).queue();
                             setGameState(guildID, GameState.IDLE);
+                            setChannelPermissions(getTownChannel(guildID), gamesPlayerLists.get(guildID).getMemberList(), false);
                             break;
                         }
                         //Set gameState first to prevent people joining while roles are being sent out

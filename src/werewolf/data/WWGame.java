@@ -15,16 +15,16 @@ public class WWGame {
 
     //Setting for Daytime
 	private Integer maxDayTime = 120;
-	private Integer dayTimeX = 10;
+	private Integer dayTimeX = 12;
 	
 	//setting for vote time
 	private Integer voteTimeX = 10;
-	private Integer maxVoteTime = 200;
-	private Integer minVoteTime = 60;
-	
-	private int joinTime = 90; //time (in seconds) for join up
+	private Integer maxVoteTime = 240;
+	private Integer minVoteTime = 120;
+
+	private int joinTime = 120; //time (in seconds) for join up
 	private int minPlayers = 5; // min players
-	private int noVoteRounds = 2; // number of rounds in a row a player can skip voting, may change this to vary depending on number of people
+	private int noVoteRounds = 3; // number of rounds in a row a player can skip voting, may change this to vary depending on number of people
 	private int nickLimt = 2; // Number of times a player can change nickname
 	private int upperNickLimit = 4; //Number of times a player can change nickname before being removed from the game
 	

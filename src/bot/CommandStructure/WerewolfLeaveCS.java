@@ -34,12 +34,13 @@ public class WerewolfLeaveCS extends CommandStructure {
         if (hasPermission(author)) {
             if (!ww.getWerewolfGameState(guildID).equals(GameState.IDLE)) {
                 ww.leaveGame(guildID, author);
+            } else {
             }
         }
     }
 
     @Override
     public String help(Long guildID) {
-        return null;
+        return "Run away from a game of werewolf";
     }
 }
