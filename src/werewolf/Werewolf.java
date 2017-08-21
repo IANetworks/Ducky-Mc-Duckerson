@@ -1327,15 +1327,6 @@ public class Werewolf {
     }
 
     /**
-     * Display theme list message embed.
-     *
-     * @return the message embed
-     */
-    public MessageEmbed displayThemeList() {
-        dbMan.sqlGetThemeList();
-    }
-
-    /**
      * Display theme.
      *
      * @param themeID the id
