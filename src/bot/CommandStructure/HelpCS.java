@@ -26,7 +26,6 @@ public class HelpCS extends CommandStructure {
     public HelpCS(SharedContainer container, String commandName, int commandID,
 			int commandDefaultLevel) {
 		super(container, commandName, commandID, commandDefaultLevel);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -65,7 +64,6 @@ private void sendHelpList(PrivateChannel privChannel, Map<String, CommandStructu
 	public String help(Long guildID) {
 		
 		return "returns a list of commands";
-		// TODO Auto-generated method stub
 
 	}
 

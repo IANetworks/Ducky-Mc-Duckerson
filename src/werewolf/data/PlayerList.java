@@ -248,7 +248,7 @@ public class PlayerList
      * @param playerNo the player no
      * @return player name by player id
      */
-    public Player getPlayerNameByPlayerID(int playerNo)
+    public Player getPlayerByPlayerID(int playerNo)
     {
     	for(Player player : playerList.values())
     	{
@@ -384,13 +384,13 @@ public class PlayerList
     /**
      * Remove player.
      *
-     * @param name the name
+     * @param userID the name
      */
-    public void removePlayer(String name)
+    public void removePlayer(Long userID)
     {
-    	if(playerList.containsKey(name)) {
-    		playerList.remove(name);
-    	}
+        if (playerList.containsKey(userID)) {
+            playerList.remove(userID);
+        }
     }
 
     /**

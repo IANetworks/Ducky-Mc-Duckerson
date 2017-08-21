@@ -28,7 +28,6 @@ public class RemoveSelfRoleGroup extends CommandStructure {
     public RemoveSelfRoleGroup(SharedContainer container, String commandName, int commandID,
 			int commandDefaultLevel) {
 		super(container, commandName, commandID, commandDefaultLevel);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

@@ -141,9 +141,16 @@ public class EventListener extends ListenerAdapter {
 		name = "vote";
 		cmdList.put(name, new WerewolfVoteCS(container, name, 18, 999));
 
+		name = "togglewerewolf";
+		cmdList.put(name, new SetWerewolfOnOffCS(container, name, 20, 1));
+
+		name = "setgamechannel";
+		cmdList.put(name, new SetGameChannelCS(container, name, 21, 1));
+
 		//********* PrivateMessage Commands *********//
 		name = "see";
 		privCmdList.put(name, new WerewolfSeeCS(container, name, 19, 999));
+
 	}
 
 	
@@ -165,7 +172,6 @@ public class EventListener extends ListenerAdapter {
 		try {
 			dbMan.setNewPermissionNames(guildID);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -176,19 +182,20 @@ public class EventListener extends ListenerAdapter {
 	{
 		Member member = event.getMember();
         Guild guild = event.getGuild();
-        //TODO Update this to be adjustable for now, we'll use event-log
-        
-        List<TextChannel> ltc = guild.getTextChannelsByName("event-log", true);
-        if (ltc.isEmpty())
-        {
-        	System.out.printf("Found no text channels with event-log");
-        	return;
-        }
-        
-        for(TextChannel tc : ltc)
-        {
-        	tc.sendMessage("Member " + member.getAsMention() + " has joined " + guild.getName() + ".").queue();
-   		}
+		Long guildID = guild.getIdLong();
+		String name = dbMan.getLoggingChannel(guildID);
+		if (dbMan.isLoggingOn(guildID) || name != null) {
+			List<TextChannel> ltc = guild.getTextChannelsByName(name, true);
+
+			if (ltc.isEmpty()) {
+				System.out.printf("Found no text channels with event-log");
+				return;
+			}
+
+			for (TextChannel tc : ltc) {
+				tc.sendMessage("Member `" + member.getEffectiveName() + "` has left " + guild.getName() + ".").queue();
+			}
+		}
 	}
 	
 	//Users leaving server
@@ -197,19 +204,20 @@ public class EventListener extends ListenerAdapter {
 	{
 		Member member = event.getMember();
         Guild guild = event.getGuild();
-        //TODO Update this to be adjustable for now, we'll use event-log
-        List<TextChannel> ltc=  guild.getTextChannelsByName("event-log", true);
+		Long guildID = guild.getIdLong();
+		String name = dbMan.getLoggingChannel(guildID);
+		if (dbMan.isLoggingOn(guildID) || name != null) {
+			List<TextChannel> ltc = guild.getTextChannelsByName(name, true);
 
-        if (ltc.isEmpty())
-        {
-        	System.out.printf("Found no text channels with event-log");
-        	return;
-        }
-        
-        for(TextChannel tc : ltc)
-        {
-        	tc.sendMessage("Member `" + member.getEffectiveName() + "` has left " + guild.getName() + ".").queue();
-   		}
+			if (ltc.isEmpty()) {
+				System.out.printf("Found no text channels with event-log");
+				return;
+			}
+
+			for (TextChannel tc : ltc) {
+				tc.sendMessage("Member `" + member.getEffectiveName() + "` has left " + guild.getName() + ".").queue();
+			}
+		}
 	}
 
 	
@@ -265,7 +273,6 @@ public class EventListener extends ListenerAdapter {
 					try {
 						dbMan.incUserFlipped(guildID, userID);
 					} catch (SQLException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				} else if(msg.contains("┬─┬﻿ ノ( ゜-゜ノ)"))
@@ -273,7 +280,6 @@ public class EventListener extends ListenerAdapter {
 					try {
 						dbMan.incUserUnflipped(guildID, userID);
 					} catch (SQLException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}

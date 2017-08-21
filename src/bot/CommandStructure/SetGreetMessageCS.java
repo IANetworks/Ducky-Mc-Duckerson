@@ -24,19 +24,16 @@ public class SetGreetMessageCS extends CommandStructure {
     public SetGreetMessageCS(SharedContainer container, String commandName, int commandID,
 			int commandDefaultLevel) {
 		super(container, commandName, commandID, commandDefaultLevel);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public void execute(Member author, User authorUser, MessageChannel channel, Message message, String parameters,
 						Map<String, CommandStructure> commandList) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public String help(Long guildID) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

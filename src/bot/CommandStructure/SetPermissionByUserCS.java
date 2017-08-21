@@ -64,7 +64,6 @@ public class SetPermissionByUserCS extends CommandStructure {
 									dbMan.setUserLevel(guildID, levelID, user.getIdLong());
 									channel.sendMessage("I've assigned level: " + userLevelName + " to the user: " + user.getAsMention()).queue();
 								} catch (SQLException e) {
-									// TODO Auto-generated catch block
 									e.printStackTrace();
 									channel.sendMessage("Ouch, Setting users broke me.").queue();
 								}

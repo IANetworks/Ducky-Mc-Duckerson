@@ -135,10 +135,8 @@ public class McDucky
 			try {
 				setupProperties();
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
@@ -198,7 +196,6 @@ public class McDucky
 			try {
 				setupTables();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				// Destory the database so that it'll reset up the bot next time
 				dbFile.delete();
 				e.printStackTrace();
@@ -210,7 +207,6 @@ public class McDucky
 		try {
 			dbMan = new DatabaseManager(conn);
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
     		

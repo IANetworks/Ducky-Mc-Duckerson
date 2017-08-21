@@ -7,6 +7,7 @@ import werewolf.data.*;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import bot.database.manager.DatabaseManager;
@@ -20,19 +21,19 @@ import werewolf.data.Role;
     * priority, more = higher,
     x - created command file
     xx - coded
-    rule - all
-    listtheme - all
-    themeinfo - all
+    xxrule - all
+    xxlisttheme - all
+    xxthemeinfo - all
     xx**start - idle only
     xx**join - gamestart only
-    x**vote - from townchannel(Not idle/gamestart)
-    x**kill - from wolfchannel (Not idle/gamestart)
-    *alive - during game only (Not idle/gamestart)
-    *stopww - all times but idle
-    *kickplayer - all times but idle - for removing bad players from game
-    x**see - privatemessage during nighttime
-    *role - privatemessage/ingame during game only
-    *leave - all times but idle (during gamestart, remove player, during gametime, mark as fled)
+    xx**vote - from townchannel(Not idle/gamestart)
+    xx**kill - from wolfchannel (Not idle/gamestart)
+    xx*alive - during game only (Not idle/gamestart)
+    xx*stopww - all times but idle
+    x*kickplayer - all times but idle - for removing bad players from game
+    xx**see - privatemessage during nighttime
+    xx*role - privatemessage/ingame during game only
+    xx*leave - all times but idle (during gamestart, remove player, during gametime, mark as fled)
  */
 
 /**
@@ -48,12 +49,15 @@ public class Werewolf {
     private String wolfChannelSuffix = "-wolf"; //Game channel, bot will attempt create a wolf channel if one does not exist.
     private Map<Long, TextChannel> townChannelList = new HashMap<Long, TextChannel>(); //Hold all the server's vill channel. Make it easier to refer to as needed.
     private Map<Long, TextChannel> wolfChannelList = new HashMap<Long, TextChannel>(); //Hold all the server's wolf channel. Make it easier to refer to as needed.
+    private Map<Long, Map<Long, ScheduledFuture<?>>> timerThreads = new HashMap<Long, Map<Long, ScheduledFuture<?>>>(); //holds a count for timer tasks
+    private Long timerCount = 0L;
     private User thisBot;
 
     /**
      * The Db man.
      */
     DatabaseManager dbMan = null;
+
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(5);
 
@@ -75,6 +79,25 @@ public class Werewolf {
      */
     public MessageChannel getWolfChannel(Long guildID) {
         return wolfChannelList.get(guildID);
+    }
+
+    private void addTimer(Long guildID, ScheduledFuture<?> schTasks) {
+        if (timerThreads.containsKey(guildID)) {
+            timerThreads.get(guildID).put(timerCount, schTasks);
+        } else {
+            Map<Long, ScheduledFuture<?>> gameTimers = new HashMap<Long, ScheduledFuture<?>>();
+            gameTimers.put(timerCount, schTasks);
+            timerThreads.put(guildID, gameTimers);
+        }
+        timerCount++;
+    }
+
+    private void removeTimer(Long guildID, Long taskID) {
+        if (timerThreads.containsKey(guildID)) {
+            if (timerThreads.get(guildID).containsKey(taskID)) {
+                timerThreads.get(guildID).remove(taskID);
+            }
+        }
     }
 
     private void setGameState(Long guildID, GameState gameState) {
@@ -162,7 +185,6 @@ public class Werewolf {
 
         channel.sendMessage("Rules rules rules.. This still need to be implemented");
         scheduler.schedule(new RulesRefresh(guildID), 10, TimeUnit.MINUTES);
-
     }
 
     /**
@@ -205,9 +227,9 @@ public class Werewolf {
         //Add the person who started the game into the game list.
         joinGame(guildID, author);
 
-        //Set Timers
-        scheduler.schedule(new TenSecWarning(guildID), joinTime - 10, TimeUnit.SECONDS);
-        scheduler.schedule(new WereTask(guildID), joinTime, TimeUnit.SECONDS);
+        //startTimers
+        addTimer(guildID, scheduler.schedule(new TenSecWarning(guildID, timerCount), joinTime - 10, TimeUnit.SECONDS));
+        addTimer(guildID, scheduler.schedule(new WereTask(guildID, timerCount), joinTime, TimeUnit.SECONDS));
 
     }
 
@@ -385,7 +407,7 @@ public class Werewolf {
             getTownChannel(guildID).sendMessage(getTheme("JOIN", MessType.GAME, guildID, player, gamesPlayerLists.get(guildID).getPlayerSize()).build()).queue();
             sendPrivateMessage(getTheme("ADDED", MessType.NOTICE, guildID).build(), newPlayer);
         } else {
-            //TODO alert user that they are in channel and have joined game
+            getTownChannel(guildID).sendMessage(player.getAsMention() + " You're already in game").queue();
         }
         //TODO set channel permission to allow user to talk in channel, if we have permission role
     }
@@ -460,8 +482,8 @@ public class Werewolf {
      * @param guildID  the guild id
      * @return the theme
      */
-    protected MessageBuilder getTheme(String theme_id, MessType type, Long guildID) {
-        return getTheme(theme_id, type, guildID, null, 0, null);
+    protected EmbedBuilder getTheme(String theme_id, MessType type, Long guildID) {
+        return getTheme(theme_id, type, guildID, null, 0, null, null);
     }
 
     /**
@@ -473,8 +495,8 @@ public class Werewolf {
      * @param number   the number
      * @return the theme
      */
-    protected MessageBuilder getTheme(String theme_id, MessType type, Long guildID, int number) {
-        return getTheme(theme_id, type, guildID, null, number, null);
+    protected EmbedBuilder getTheme(String theme_id, MessType type, Long guildID, int number) {
+        return getTheme(theme_id, type, guildID, null, number, null, null);
     }
 
     /**
@@ -486,8 +508,8 @@ public class Werewolf {
      * @param player1  the player 1
      * @return the theme
      */
-    protected MessageBuilder getTheme(String theme_id, MessType type, Long guildID, Member player1) {
-        return getTheme(theme_id, type, guildID, player1, 0, null);
+    protected EmbedBuilder getTheme(String theme_id, MessType type, Long guildID, Member player1) {
+        return getTheme(theme_id, type, guildID, player1, 0, null, null);
     }
 
     /**
@@ -500,8 +522,8 @@ public class Werewolf {
      * @param time     the time
      * @return the theme
      */
-    protected MessageBuilder getTheme(String theme_id, MessType type, Long guildID, Member player1, Integer time) {
-        return getTheme(theme_id, type, guildID, player1, time, null);
+    protected EmbedBuilder getTheme(String theme_id, MessType type, Long guildID, Member player1, Integer time) {
+        return getTheme(theme_id, type, guildID, player1, time, null, null);
     }
 
     /**
@@ -514,8 +536,8 @@ public class Werewolf {
      * @param player2  the player 2
      * @return the theme
      */
-    protected MessageBuilder getTheme(String theme_id, MessType type, Long guildID, Member player1, List<Member> player2) {
-        return getTheme(theme_id, type, guildID, player1, 0, player2);
+    protected EmbedBuilder getTheme(String theme_id, MessType type, Long guildID, Member player1, List<Member> player2) {
+        return getTheme(theme_id, type, guildID, player1, 0, player2, null);
     }
 
     /**
@@ -527,22 +549,23 @@ public class Werewolf {
      * @param player2  the player 2
      * @return the theme
      */
-    protected MessageBuilder getTheme(String theme_id, MessType type, Long guildID, List<Member> player2) {
-        return getTheme(theme_id, type, guildID, null, 0, player2);
+    protected EmbedBuilder getTheme(String theme_id, MessType type, Long guildID, List<Member> player2) {
+        return getTheme(theme_id, type, guildID, null, 0, player2, null);
     }
 
     /**
      * Gets theme.
      *
-     * @param theme_id the theme id
-     * @param type     the type
-     * @param guildID  the guild id
-     * @param player1  the player 1
-     * @param number   the number
-     * @param player2  the player 2
+     * @param theme_id      the theme id
+     * @param type          the type
+     * @param guildID       the guild id
+     * @param player1       the player 1
+     * @param number        the number
+     * @param player2       the player 2
+     * @param previousEmbed the previous embed
      * @return the theme
      */
-    protected MessageBuilder getTheme(String theme_id, MessType type, Long guildID, Member player1, Integer number, List<Member> player2) {
+    protected EmbedBuilder getTheme(String theme_id, MessType type, Long guildID, Member player1, Integer number, List<Member> player2, EmbedBuilder previousEmbed) {
 
 
         String bold = "**";
@@ -553,11 +576,16 @@ public class Werewolf {
         String prefix = "";
         String infoPrefix = "";
         String infoSuffix = "";
-        MessageBuilder msgBuilder = new MessageBuilder();
+        String avatarType;
+        EmbedBuilder eBuilder;
+        if (previousEmbed != null) {
+            eBuilder = previousEmbed;
+            eBuilder.addField(null, null, false);
+        } else {
+            eBuilder = new EmbedBuilder();
+        }
 
         String themeText = getThemeText(guildID, theme_id);
-
-        //TODO Think about allow themes to add random avatars for Narration, Game, and Notice (AVATAR_NOTICE, AVATAR_NARR, and AVATAR_GAME)
         //(Notice is left over from IRC, but that's doesn't mean we can't use it in a different way
 
         /*StringBuilder listOfNames = new StringBuilder();
@@ -593,6 +621,7 @@ public class Werewolf {
         switch (type) {
             case NOTICE:
                 //No formatting
+                avatarType = "AVATAR_NOTICE";
                 break;
             case NARRATION:
                 //We Want this Itatic with player names bolded and underlined
@@ -600,7 +629,7 @@ public class Werewolf {
                 prefix = "";
                 infoPrefix = bold + underline;
                 infoSuffix = underline + bold; //make sure to mirror prefix
-
+                avatarType = "AVATAR_NARR";
                 break;
             case GAME:
                 //Game Text bold with names itatic and underlined
@@ -608,32 +637,50 @@ public class Werewolf {
                 prefix = "";
                 infoPrefix = italic + underline;
                 infoSuffix = underline + italic; //make sure to mirror prefix
+                avatarType = "AVATAR_GAME";
                 break;
 
             case CONTROL:
-                //Not sure
+                avatarType = null;
                 break;
 
             default:
+                avatarType = null;
                 break;
         }
         if (themeText == null) {
             return null;
         }
         String strPlayer1 = "";
-        String strOtherPlayers = "";
         Role playerRole = null;
         if (player1 != null) {
             strPlayer1 = player1.getEffectiveName();
             playerRole = gamesPlayerLists.get(guildID).getPlayerRole(player1.getUser().getIdLong());
+            themeText = themeText.replaceAll("MENTION", player1.getAsMention());
+        } else if (player2 != null) {
+            String mentions = "";
+            for (Member player : player2) {
+                String mention = "";
+                if (player != null)
+                    mention = player.getAsMention();
+                else {
+                    mention = "No Lynch";
+                }
+                if (mentions.equals("")) {
+                    mentions = mention;
+                } else {
+                    mentions = mentions + ", " + mention;
+                }
+            }
+            themeText = themeText.replaceAll("MENTION", mentions);
         }
-
         themeText = themeText.replaceAll("WOLFPURAL", "WOLFPLURAL"); //Fix typo
         themeText = themeText.replaceAll("PLAYER1", suffix + infoPrefix + strPlayer1 + infoSuffix + prefix);
         themeText = themeText.replaceAll("PLAYER2", suffix + infoPrefix + listOfNames.toString() + infoSuffix + prefix);
         themeText = themeText.replaceAll("BOTNAME", suffix + infoPrefix + thisBot.getName() + infoSuffix + prefix);
         themeText = themeText.replaceAll("ROLE", suffix + infoPrefix + getRoleString(guildID, playerRole) + infoSuffix + prefix);
         themeText = themeText.replaceAll("NUMBER", suffix + infoPrefix + number.toString() + infoSuffix + prefix);
+
 
         if (manyWolves(guildID)) {
             themeText = themeText.replaceAll("WOLFPLURAL", suffix + infoPrefix + getThemeText(guildID, "ONEWOLF") + infoSuffix + prefix);
@@ -642,11 +689,10 @@ public class Werewolf {
         }
 		
 		/* Return Theme Text */
-        System.out.println(prefix + themeText + suffix);
-        msgBuilder.append(prefix);
-        msgBuilder.append(themeText);
-        msgBuilder.append(suffix);
-        return msgBuilder;
+        //System.out.println(prefix + themeText + suffix);
+        eBuilder.setAuthor(null, null, getThemeText(guildID, avatarType));
+        eBuilder.addField(null, themeText, false);
+        return eBuilder;
     }
 
     /**
@@ -809,7 +855,7 @@ public class Werewolf {
         Player voteForPlayer = gamesPlayerLists.get(guildID).getPlayer(userID);
 
         if (voteForPlayer == null) {
-            //TODO Invalid votee, not a player
+            getTownChannel(guildID).sendMessage("You can't vote for " + votee.getEffectiveName() + ". They are not a player.").queue();
         } else {
             setVote(guildID, voterPlayer, voteForPlayer);
         }
@@ -859,7 +905,7 @@ public class Werewolf {
         List<Member> listVotee = new ArrayList<Member>();
         listVotee.add(votee.getMember());
 
-        MessageBuilder theme;
+        EmbedBuilder theme;
         if (votee.getRole() == Role.NOLYNCH) {
 
             if (gamesPlayerLists.get(guildID).playerHasVoted(voter.getUserID())) {
@@ -892,52 +938,47 @@ public class Werewolf {
      * @param guildID the guild id
      * @param theme   the theme
      */
-    public void displayVoteCount(Long guildID, MessageBuilder theme) {
-        EmbedBuilder voteCountList = new EmbedBuilder();
+    public void displayVoteCount(Long guildID, EmbedBuilder theme) {
         //display current vote
         List<Player> voteCount = gamesPlayerLists.get(guildID).voteCount(false, 1);
+        if (theme == null) {
+            theme = new EmbedBuilder();
+        }
 
         int count = 0;
         final int top = 5;
 
-        voteCountList.setAuthor("Current Count", null, null);
+        theme.addField("Current Count", null, false);
         for (Player player : voteCount) {
             if (player.getVoteCount() > 0 && count <= top) {
-                voteCountList.addField(player.getEffectiveName(), player.getVoteCount().toString(), true);
+                theme.addField(player.getEffectiveName(), player.getVoteCount().toString(), true);
             } else if (count > top) {
                 break;
             }
             count++;
         }
-
-        if (theme == null) {
-            getTownChannel(guildID).sendMessage(voteCountList.build()).queue();
-        } else {
-            //theme.append(voteCountList);
-            getTownChannel(guildID).sendMessage(theme.build()).queue();
-            getTownChannel(guildID).sendMessage(voteCountList.build()).queue();
-        }
+        getTownChannel(guildID).sendMessage(theme.build()).queue();
     }
 
     private Player playerNumberToPlayer(Long guildID, int votee) {
-        return gamesPlayerLists.get(guildID).getPlayerNameByPlayerID(votee);
+        return gamesPlayerLists.get(guildID).getPlayerByPlayerID(votee);
     }
 
     private String getThemeText(Long guildID, String theme_id) {
         if (themeList.containsKey(guildID)) {
             return themeList.get(guildID).getText(theme_id);
         } else {
-            return null; //TODO Return error
+            return "ERR - Server has not obtained Theme Text.";
         }
     }
 
-    private void sendGameRole(PrivateChannel channel, Message message, Long guildID, Player player) {
+    private void sendGameRole(PrivateChannel channel, MessageEmbed message, Long guildID, Player player) {
         channel.sendMessage(message).queue((m) -> setMessageReceived(guildID, player));
     }
 
     private void setMessageReceived(Long guildID, Player player) {
         player.setRoleRecieved(true);
-        System.out.println(player.getEffectiveName() + " recieved Role");
+        //System.out.println(player.getEffectiveName() + " received Role");
         if (gamesPlayerLists.get(guildID).hasAllPlayerReceivedRoles()) {
             System.out.println("Starting game");
             gameStarted(guildID);
@@ -953,17 +994,19 @@ public class Werewolf {
             return;
         }
         //Ok all the users should have their roles, let conuntine with the the gameeee~ (you've lost the game)
+        EmbedBuilder embed;
         if (manyWolves(guildID)) {
-            getTownChannel(guildID).sendMessage(getTheme("TWO_WOLVES", MessType.GAME, guildID, gamesPlayerLists.get(guildID).getNumberOfPlayerByRole(Role.WOLF)).build()).queue();
+            embed = getTheme("TWO_WOLVES", MessType.GAME, guildID, gamesPlayerLists.get(guildID).getNumberOfPlayerByRole(Role.WOLF));
+        } else {
+            embed = new EmbedBuilder();
         }
 
         if (gamesPlayerLists.get(guildID).getPlayerSize() == gameList.get(guildID).getMinPlayers()) {
             setGameState(guildID, GameState.DAYTIME);
-            startDayTime(guildID);
+            startDayTime(guildID, embed);
         } else {
-            getTownChannel(guildID).sendMessage((listAlive(guildID).build())).queue();
             setGameState(guildID, GameState.NIGHTTIME);
-            startNightTime(guildID);
+            startNightTime(guildID, embed);
         }
     }
 
@@ -1037,35 +1080,42 @@ public class Werewolf {
         //send wolves their role description
         if (manyWolves(guildID)) {
             for (Player player : gamesPlayerLists.get(guildID).getPlayerListByRole(Role.WOLF)) {
-                sendRole(guildID, player);
+                sendRole(guildID, player.getMember());
             }
         } else {
             for (Player player : gamesPlayerLists.get(guildID).getPlayerListByRole(Role.WOLF)) {
-                sendRole(guildID, player);
+                sendRole(guildID, player.getMember());
             }
         }
 
         //Send Masons their role description
         if (numberOfMasons > 1) {
             for (Player player : gamesPlayerLists.get(guildID).getPlayerListByRole(Role.MASON)) {
-                sendRole(guildID, player);
+                sendRole(guildID, player.getMember());
             }
         }
 
         //Send Seer
         for (Player player : gamesPlayerLists.get(guildID).getPlayerListByRole(Role.SEER)) {
-            sendRole(guildID, player);
+            sendRole(guildID, player.getMember());
         }
 
         //Send vill text
         for (Player player : gamesPlayerLists.get(guildID).getPlayerListByRole(Role.VILL)) {
-            sendRole(guildID, player);
+            sendRole(guildID, player.getMember());
         }
     }
 
-    private void sendRole(Long guildID, Player player) {
+    /**
+     * Send role.
+     *
+     * @param guildID      the guild id
+     * @param playerMember the player member
+     */
+    public void sendRole(Long guildID, Member playerMember) {
         //Make sure this is during a game
         if (!isPlaying(guildID)) return;
+        Player player = gamesPlayerLists.get(guildID).getPlayer(playerMember.getUser().getIdLong());
 
         String formatting;
         List<Member> otherPlayers = new ArrayList<Member>();
@@ -1101,7 +1151,7 @@ public class Werewolf {
                 sendPrivateMessage(getTheme("VILL_DESCRIPTION", MessType.NOTICE, guildID, player.getMember()).build(), player);
                 break;
             default:
-                //TODO Error - unknown role. Shouldn't ever happen but who knows
+                getTownChannel(guildID).sendMessage("Error on see. Missing Role").queue();
                 break;
         }
         if (player.isRoleRecieved()) {
@@ -1117,10 +1167,8 @@ public class Werewolf {
         }
     }
 
-    private void sendPrivateMessageRole(Message message, Long guildID, Player player) {
+    private void sendPrivateMessageRole(MessageEmbed message, Long guildID, Player player) {
         User user = player.getMember().getUser();
-        //TODO check to see if a privateChannel is already open with user
-
         user.openPrivateChannel().queue((channel) -> sendGameRole(channel, message, guildID, player));
     }
 
@@ -1141,8 +1189,8 @@ public class Werewolf {
 
         getTownChannel(guildID).sendMessage(getTheme("VOTE_TIME", MessType.NARRATION, guildID, intTimeSet).build()).queue();
 
-        scheduler.schedule(new TenSecWarning(guildID), intTimeSet - 11, TimeUnit.SECONDS);
-        scheduler.schedule(new WereTask(guildID), intTimeSet, TimeUnit.SECONDS);
+        addTimer(guildID, scheduler.schedule(new TenSecWarning(guildID, timerCount), intTimeSet - 11, TimeUnit.SECONDS));
+        addTimer(guildID, scheduler.schedule(new WereTask(guildID, timerCount), intTimeSet, TimeUnit.SECONDS));
     }
 
     /**
@@ -1160,15 +1208,18 @@ public class Werewolf {
     public void stopGame(Long guildID) //Cause a hard stop of the game on the called from server
     {
         //set gamestate to Idle, this basically tell us this guild has no-games running anymore
-        setGameState(guildID, GameState.IDLE);
-
-        //TODO figure out how to cancel scheduled task, I think using ScheduledFuture ?
-        //Either way, as long as gamestate is set to IDLE, the scheduled will eventually stop, instead of right away.
+        setGameState(guildID, GameState.IDLE);//Either way, as long as gamestate is set to IDLE, the scheduled will eventually stop, instead of right away.
+        Map<Long, ScheduledFuture<?>> listOfTimers = timerThreads.get(guildID);
+        for (Long taskID : listOfTimers.keySet()) {
+            listOfTimers.get(taskID).cancel(true);
+            removeTimer(guildID, taskID);
+        }
 
         //TODO Reset Permissions to IDLE gamestate
 
         //clear theme
         clearTheme(guildID);
+        getTownChannel(guildID).sendMessage("Game Over.").queue();
     }
 
     private boolean checkWin(Long guildID) {
@@ -1186,18 +1237,18 @@ public class Werewolf {
         boolean win = false;
         //TODO Add score to player's profile, 10 for winning + 10 point for staying alive on the winning team
         if (wolfCount == 0 && humanCount != 0) {
-            getTownChannel(guildID).sendMessage(getTheme("VILL_WIN", MessType.NARRATION, guildID).build()).queue();
-            getTownChannel(guildID).sendMessage(getTheme("CONGR_VILL", MessType.GAME, guildID).build()).queue();
+            EmbedBuilder thisEmbed = getTheme("VILL_WIN", MessType.NARRATION, guildID);
+            getTownChannel(guildID).sendMessage(getTheme("CONGR_VILL", MessType.GAME, guildID, null, null, null, thisEmbed).build()).queue();
             win = true;
         }
 
         if (wolfCount >= humanCount && wolfCount != 0) {
             if (wolfCount == 1) {
-                getTownChannel(guildID).sendMessage(getTheme("WOLF_WIN", MessType.NARRATION, guildID).build()).queue();
-                getTownChannel(guildID).sendMessage(getTheme("CONGR_WOLF", MessType.GAME, guildID).build()).queue();
+                EmbedBuilder thisEmbed = getTheme("WOLF_WIN", MessType.NARRATION, guildID);
+                getTownChannel(guildID).sendMessage(getTheme("CONGR_WOLF", MessType.GAME, guildID, null, null, null, thisEmbed).build()).queue();
             } else {
-                getTownChannel(guildID).sendMessage(getTheme("WOLVES_WIN", MessType.NARRATION, guildID).build()).queue();
-                getTownChannel(guildID).sendMessage(getTheme("CONGR_WOLVES", MessType.GAME, guildID).build()).queue();
+                EmbedBuilder thisEmbed = getTheme("WOLVES_WIN", MessType.NARRATION, guildID);
+                getTownChannel(guildID).sendMessage(getTheme("CONGR_WOLVES", MessType.GAME, guildID, null, null, null, thisEmbed).build()).queue();
             }
             win = true;
         }
@@ -1235,16 +1286,15 @@ public class Werewolf {
      * @return the player state string
      */
     protected String getPlayerStateString(PlayerState state, Long guildID) {
-        //TODO Add STATE_ALIVE, STATE_KILLED, STATE_FLED to Theme
         switch (state) {
             case ALIVE:
-                return "Still Alive";
+                return getThemeText(guildID, "STATE_ALIVE");
             case DEAD:
-                return "Killed";
+                return getThemeText(guildID, "STATE_KILLED");
             case FLED:
-                return "Fled the game";
+                return getThemeText(guildID, "STATE_FLED");
             case NOLYNCH:
-                return "Special No Lynch";
+                return "No Lynch";
             case ERR:
             default:
                 return "Error";
@@ -1277,25 +1327,39 @@ public class Werewolf {
     }
 
     /**
+     * Display theme list message embed.
+     *
+     * @return the message embed
+     */
+    public MessageEmbed displayThemeList() {
+        dbMan.sqlGetThemeList();
+    }
+
+    /**
      * Display theme.
      *
-     * @param sender the sender
-     * @param id     the id
+     * @param themeID the id
+     * @return the message embed
      */
-    protected void displayTheme(String sender, int id) {
-        //TODO display Theme info
-        /*if(id <= 0)
+    public MessageEmbed displayTheme(Integer themeID) {
+
+        if (themeID == null || themeID <= 0)
         {
-            return;
+            return null;
         }
 
-        Theme themeDesc = db.sql_GetThemeDesc(id);
-        String format = "";
-        format = "Name: " + themeDesc.getName() + " - Author: " + themeDesc.getAuthor() + " - " +
-                "Created on: " + themeDesc.getDateCreated().toString() + " - Modifed on: " + themeDesc.getDateModified().toString() +
-                " - Played " + themeDesc.getPlayedCount() + " times";
-        this.sendMessage(sender, format);
-        this.sendMessage(sender, themeDesc.getDesc());*/
+        Theme themeDesc = dbMan.sqlGetThemeDesc(themeID);
+
+        EmbedBuilder newEmbed = new EmbedBuilder();
+        newEmbed.setAuthor(themeDesc.getName(), null, themeDesc.getAvatar());
+        newEmbed.setTitle(themeDesc.getAuthor());
+        newEmbed.setDescription(themeDesc.getDesc());
+        newEmbed.addField("Created on: ", themeDesc.getDateCreated().toString(), true);
+        newEmbed.addField("Last Modified On: ", themeDesc.getDateModified().toString(), true);
+        newEmbed.addField("Theme played: ", themeDesc.getPlayedCount().toString(), true);
+        newEmbed.setFooter("Theme ID: " + themeID.toString(), null);
+
+        return newEmbed.build();
 
     }
 
@@ -1305,11 +1369,14 @@ public class Werewolf {
         List<Player> mjVote = new LinkedList<Player>();
 
         Player guilty = null;
-        getTownChannel(guildID).sendMessage(getTheme("TALLY", MessType.GAME, guildID).build()).queue();
+        EmbedBuilder thisEmbed = new EmbedBuilder();
+        thisEmbed = getTheme("TALLY", MessType.GAME, guildID);
 
         if (voteList.isEmpty()) {
-            getTownChannel(guildID).sendMessage(getTheme("NO_LYNCH", MessType.NARRATION, guildID).build()).queue();
+            thisEmbed = getTheme("NO_LYNCH", MessType.NARRATION, guildID, null, null, null, thisEmbed);
         } else {
+            getTownChannel(guildID).sendMessage(thisEmbed.build()).queue();
+            thisEmbed = new EmbedBuilder();
             //pretend to count
             Random rnd = new Random();
             int countTime = rnd.nextInt(8) + 2;
@@ -1337,29 +1404,29 @@ public class Werewolf {
                 guilty = mjVote.get(0);
             } else {
                 Random rndno = new Random();
-                getTownChannel(guildID).sendMessage(getTheme("TIE", MessType.GAME, guildID, mjVote.size()).build()).queue();
+                thisEmbed = getTheme("TIE", MessType.GAME, guildID, null, mjVote.size(), null, thisEmbed);
                 guilty = mjVote.get(rndno.nextInt((mjVote.size())));
             }
+
             if (guilty.getPlayerNo() != 0) {
                 Role guiltyRole = guilty.getRole();
                 guilty.setPlayerState(PlayerState.DEAD);
                 switch (guiltyRole) {
                     case WOLF:
-                        getTownChannel(guildID).sendMessage(getTheme("WOLF_LYNCH", MessType.NARRATION, guildID, guilty.getMember()).build()).queue();
+                        thisEmbed = getTheme("WOLF_LYNCH", MessType.NARRATION, guildID, guilty.getMember(), null, null, thisEmbed);
                         break;
                     case SEER:
-                        getTownChannel(guildID).sendMessage(getTheme("SEER_LYNCH", MessType.NARRATION, guildID, guilty.getMember()).build()).queue();
+                        thisEmbed = getTheme("SEER_LYNCH", MessType.NARRATION, guildID, guilty.getMember(), null, null, thisEmbed);
                         break;
                     case VILL:
                     case MASON:
-                        getTownChannel(guildID).sendMessage(getTheme("VILL_LYNCH", MessType.NARRATION, guildID, guilty.getMember()).build()).queue();
+                        thisEmbed = getTheme("VILL_LYNCH", MessType.NARRATION, guildID, guilty.getMember(), null, null, thisEmbed);
                         break;
                     default:
                         getTownChannel(guildID).sendMessage("Error, unknown Role " + guilty.getEffectiveName() + " is lynched");
                         break;
                 }
-                getTownChannel(guildID).sendMessage(getTheme("ROLE_IS_LYNCHED", MessType.GAME, guildID, guilty.getMember()).build()).queue();
-
+                thisEmbed = getTheme("ROLE_IS_LYNCHED", MessType.GAME, guildID, guilty.getMember(), null, null, thisEmbed);
                 //I think this was a balancing issue, I can't exactly remember why
                 if (guilty.getRole() != Role.SEER) {
                     gamesPlayerLists.get(guildID).setDyingVoice(guilty.getUserID());
@@ -1369,9 +1436,10 @@ public class Werewolf {
                 }
 
             } else {
-                getTownChannel(guildID).sendMessage(getTheme("VOTED_NO_LYNCH", MessType.NARRATION, guildID).build()).queue();
+                thisEmbed = getTheme("VOTED_NO_LYNCH", MessType.NARRATION, guildID, null, null, null, thisEmbed);
             }
         }
+        getTownChannel(guildID).sendMessage(thisEmbed.build()).queue();
 
         //We'll now see if anyone defied the goddess for too long
         List<Player> badPlayer = gamesPlayerLists.get(guildID).getPlayerListByNonVoteCount(gameList.get(guildID).getNoVoteRounds());
@@ -1379,11 +1447,12 @@ public class Werewolf {
         //check to make sure we haven't won already before killing off the non-voters (to prevent people from idling)
         if (!checkWin(guildID)) {
             for (Player player : badPlayer) {
+                EmbedBuilder embed = new EmbedBuilder();
                 player.setPlayerState(PlayerState.DEAD);
                 sendPrivateMessage(getTheme("NOT_VOTED_NOTICE", MessType.NOTICE, guildID).build(), player);
-                getTownChannel(guildID).sendMessage(getTheme("NOT_VOTED", MessType.GAME, guildID, player.getMember()).build()).queue();
-                getTownChannel(guildID).sendMessage(getTheme("ROLE_IS_KILLED", MessType.GAME, guildID, player.getMember()).build()).queue();
-
+                embed = getTheme("NOT_VOTED", MessType.GAME, guildID, player.getMember(), null, null, embed);
+                embed = getTheme("ROLE_IS_KILLED", MessType.GAME, guildID, player.getMember(), null, null, embed);
+                getTownChannel(guildID).sendMessage(embed.build()).queue();
                 //TODO Permissions
             }
         }
@@ -1426,7 +1495,6 @@ public class Werewolf {
                 sendPrivateMessage(getTheme("SEER_GOT_KILLED", MessType.NARRATION, guildID, seerVote.getMember()).build(), seer);
             }
         }
-
     }
 
     private void sendWolfKillRole(Long guildID, Player playerKilled) {
@@ -1447,7 +1515,7 @@ public class Werewolf {
         }
     }
 
-    private void startNightTime(Long guildID) {
+    private void startNightTime(Long guildID, EmbedBuilder embed) {
         Integer noWolvesLeft = gamesPlayerLists.get(guildID).getNumberOfPlayerByRolePlayerState(Role.WOLF, PlayerState.ALIVE);
         WWGame thisGameSetting = gameList.get(guildID);
         //How long is the night?
@@ -1455,6 +1523,9 @@ public class Werewolf {
         Double timeSet = thisGameSetting.getNightTimeX() - (thisGameSetting.getNightTimeY() * powerOf);
         Long lngTimeSet = Math.round(timeSet); //returns a Long type, although the value can fit in an Integer.
         Integer intTimeSet = lngTimeSet.intValue();
+        if (embed == null) {
+            embed = new EmbedBuilder();
+        }
 
         //Night time, change permission to stop everyone talking expect for anyone with a dying voice
         setPermissions(guildID);
@@ -1469,20 +1540,21 @@ public class Werewolf {
 
         //Night time description (FIRST_NIGHT/NIGHT_TIME)
         if (thisGameSetting.getRoundNo() == 0) {
-            getTownChannel(guildID).sendMessage(getTheme("FIRST_NIGHT", MessType.NARRATION, guildID, intTimeSet).build()).queue();
+            embed = getTheme("FIRST_NIGHT", MessType.NARRATION, guildID, null, intTimeSet, null, embed);
         } else {
-            getTownChannel(guildID).sendMessage(getTheme("NIGHT_TIME", MessType.NARRATION, guildID, intTimeSet).build()).queue();
+            embed = getTheme("NIGHT_TIME", MessType.NARRATION, guildID, null, intTimeSet, null, embed);
         }
 
         List<Player> seers = gamesPlayerLists.get(guildID).getPlayerListByRolePlayerState(Role.SEER, PlayerState.ALIVE);
 
+        getTownChannel(guildID).sendMessage(embed.build()).queue();
 
         //Grab Seer/clear choice and give instructions (private message)
         if (seers.size() > 0) {
             Player seer = seers.get(0);
 
             sendPrivateMessage(getTheme("SEER_INSTRUCTIONS", MessType.NARRATION, guildID, intTimeSet).build(), seer);
-            sendPrivateMessage(listAlive(guildID).build(), seer);
+            sendPrivateMessage(listAlive(guildID, null).build(), seer);
         }
         gamesPlayerLists.get(guildID).clearSeerView();
 
@@ -1493,23 +1565,35 @@ public class Werewolf {
             for (Player player : wolves) {
                 wolvesList.add(player.getMember());
             }
-            getWolfChannel(guildID).sendMessage(getTheme("WOLVES_INSTRUCTIONS", MessType.NARRATION, guildID, null, intTimeSet, wolvesList).build()).queue();
+            getWolfChannel(guildID).sendMessage(getTheme("WOLVES_INSTRUCTIONS", MessType.NARRATION, guildID, null, intTimeSet, wolvesList, null).build()).queue();
         } else if (wolves.size() == 1) {
             getWolfChannel(guildID).sendMessage(getTheme("WOLF_INSTRUCTIONS", MessType.NARRATION, guildID, intTimeSet).build()).queue();
         }
-        getWolfChannel(guildID).sendMessage((listAlive(guildID).build())).queue();
+        getWolfChannel(guildID).sendMessage((listAlive(guildID, null).build())).queue();
 
         //start timers
-        scheduler.schedule(new TenSecWarning(guildID), intTimeSet - 11, TimeUnit.SECONDS);
-        scheduler.schedule(new WereTask(guildID), intTimeSet, TimeUnit.SECONDS);
+        addTimer(guildID, scheduler.schedule(new TenSecWarning(guildID, timerCount), intTimeSet - 11, TimeUnit.SECONDS));
+        addTimer(guildID, scheduler.schedule(new WereTask(guildID, timerCount), intTimeSet, TimeUnit.SECONDS));
     }
 
     private void setPermissions(Long guildID) {
         //TODO Change permissions as needed
     }
 
-    private EmbedBuilder listAlive(Long guildID) {
-        EmbedBuilder embedRoleList = new EmbedBuilder();
+    /**
+     * List alive embed builder.
+     *
+     * @param guildID the guild id
+     * @param embed   the embed
+     * @return the embed builder
+     */
+    public EmbedBuilder listAlive(Long guildID, EmbedBuilder embed) {
+        EmbedBuilder embedRoleList;
+        if (embed == null) {
+            embedRoleList = new EmbedBuilder();
+        } else {
+            embedRoleList = embed;
+        }
         embedRoleList.setAuthor("Player list", null, null);
         String list = "";
         for (Player player : gamesPlayerLists.get(guildID).getPlayerListByState(PlayerState.ALIVE)) {
@@ -1546,14 +1630,18 @@ public class Werewolf {
             }
             embedRoleList.addField(getPlayerStateString(PlayerState.FLED, guildID), list, true);
         }
-
+        Integer numberWolvesAlive = gamesPlayerLists.get(guildID).getNumberOfPlayerByRolePlayerState(Role.WOLF, PlayerState.ALIVE);
+        if (numberWolvesAlive > 1) {
+            embedRoleList.addField("", "There are " + numberWolvesAlive + " " +
+                    getThemeText(guildID, "MANY_WOLVES") + ".", false);
+        } else {
+            embedRoleList.addField("There is just one ", getThemeText(guildID, "ONEWOLF"), false);
+        }
 
         return embedRoleList;
-
-        //TODO Count wolves
     }
 
-    private void startDayTime(Long guildID) {
+    private void startDayTime(Long guildID, EmbedBuilder embedBuilder) {
         //reset votes
         gamesPlayerLists.get(guildID).resetVotes();
         //stop dying voice from being saved
@@ -1563,7 +1651,7 @@ public class Werewolf {
         //TODO Remove permission from the person who didn't use their dying breath
 
         //display people still alive.. STILL ALIVEEEE (Sings along to Still Alive by Jonathan Coulton)
-        getTownChannel(guildID).sendMessage((listAlive(guildID).build())).queue();
+        //getTownChannel(guildID).sendMessage((listAlive(guildID, null).build())).queue();
         //TODO change Permissions to allow people to talk in town channel
 
         //figure out Daytime
@@ -1575,28 +1663,81 @@ public class Werewolf {
         }
 
         //Send Daytime Theme Message DAY_TIME
-        getTownChannel(guildID).sendMessage(getTheme("DAY_TIME", MessType.NARRATION, guildID, intTimeSet).build()).queue();
+        MessageEmbed mess;
+        if (embedBuilder != null) {
+            mess = getTheme("DAY_TIME", MessType.NARRATION, guildID, null, intTimeSet, null, embedBuilder).build();
+        } else {
+            mess = getTheme("DAY_TIME", MessType.NARRATION, guildID, intTimeSet).build();
+        }
+        getTownChannel(guildID).sendMessage(mess).queue();
 
         //Start Timer until Vote time
-        scheduler.schedule(new WereTask(guildID), intTimeSet, TimeUnit.SECONDS);
+        addTimer(guildID, scheduler.schedule(new WereTask(guildID, timerCount), intTimeSet, TimeUnit.SECONDS));
+    }
+
+    /**
+     * Leave game.
+     *
+     * @param guildID  the guild id
+     * @param playerNo the author
+     */
+    public boolean leaveGame(Long guildID, Integer playerNo) {
+        Player kickPlayer = gamesPlayerLists.get(guildID).getPlayerByPlayerID(playerNo);
+
+        if (kickPlayer == null) {
+            return false;
+        } else {
+            leaveGame(guildID, kickPlayer.getMember());
+            return true;
+        }
+
+    }
+
+    /**
+     * Leave game.
+     *
+     * @param guildID the guild id
+     * @param author  the author
+     */
+    public void leaveGame(Long guildID, Member author) {
+        if (!isPlaying(guildID)) {
+            if (gamesPlayerLists.get(guildID).hasPlayer(author.getUser().getIdLong())) {
+                Long userID = author.getUser().getIdLong();
+                if (getGameChannel(guildID).equals(GameState.GAMESTART)) {
+                    gamesPlayerLists.get(guildID).removePlayer(userID);
+                    getTownChannel(guildID).sendMessage(getTheme("FLEE", MessType.NARRATION, guildID, author, gamesPlayerLists.get(guildID).getPlayerSize()).build()).queue();
+                } else {
+                    if (gamesPlayerLists.get(guildID).getPlayerState(userID).equals(PlayerState.ALIVE)) {
+                        gamesPlayerLists.get(guildID).playerFled(userID);
+                        getTownChannel(guildID).sendMessage(getTheme("FLEE_ROLE", MessType.NARRATION, guildID, author).build()).queue();
+                        checkWin(guildID);
+                    }
+                }
+            }
+        }
+
     }
 
 
     private class TenSecWarning implements Runnable {
         private Long guildID;
+        private Long taskID;
 
         /**
          * Instantiates a new Ten sec warning.
          *
          * @param guildID the guild id
+         * @param taskID  the task id
          */
-        public TenSecWarning(Long guildID) {
+        public TenSecWarning(Long guildID, Long taskID) {
             this.guildID = guildID;
+            this.taskID = taskID;
         }
 
         @Override
         public void run() {
             System.out.println("TenSecPing");
+            removeTimer(guildID, taskID);
             if (gameList.containsKey(guildID)) {
                 switch (gameList.get(guildID).getGameState()) {
                     case IDLE:
@@ -1622,7 +1763,7 @@ public class Werewolf {
                 }
 
             } else {
-                //TODO Do something about an empty gameStatus
+                System.err.println("Empty GameState in TenSecRun Timer");
             }
 
         }
@@ -1632,7 +1773,7 @@ public class Werewolf {
         /**
          * The Guild id.
          */
-        Long guildID;
+        private Long guildID;
 
         /**
          * Instantiates a new Rules refresh.
@@ -1642,7 +1783,6 @@ public class Werewolf {
         public RulesRefresh(Long guildID) {
             this.guildID = guildID;
         }
-
         @Override
         public void run() {
             isRuleSentList.put(guildID, false);
@@ -1651,19 +1791,23 @@ public class Werewolf {
 
     private class WereTask implements Runnable {
         private Long guildID;
+        private Long taskID;
 
         /**
          * Instantiates a new Were task.
          *
          * @param guildID the guild id
+         * @param taskID  the task id
          */
-        public WereTask(Long guildID) {
+        public WereTask(Long guildID, Long taskID) {
             this.guildID = guildID;
+            this.taskID = taskID;
         }
 
         @Override
         public void run() {
-            System.out.println("GameState Change");
+            //System.out.println("GameState Change");
+            removeTimer(guildID, taskID);
             if (gameList.containsKey(guildID)) {
                 switch (gameList.get(guildID).getGameState()) {
                     case IDLE:
@@ -1702,7 +1846,7 @@ public class Werewolf {
 
                         //If we haven't won, move onto Nighttime
                         if (!checkWin(guildID))
-                            startNightTime(guildID);
+                            startNightTime(guildID, null);
                         break;
 
                     case NIGHTTIME:
@@ -1711,7 +1855,7 @@ public class Werewolf {
                         //remove dying voice
 
                         if (!checkWin(guildID)) {
-                            startDayTime(guildID); //if game hasn't been won, move onto daytime
+                            startDayTime(guildID, null); //if game hasn't been won, move onto daytime
                         }
 
 
@@ -1720,7 +1864,7 @@ public class Werewolf {
                         break;
                 }
             } else {
-                //TODO Do something about an empty gameState, it shouldn't happen this is not to say in a future there's introduced bug that cause a lack of gameState
+                System.err.println("Missing GameState in WereTask");
             }
         }
     }

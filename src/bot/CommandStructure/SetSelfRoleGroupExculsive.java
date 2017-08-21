@@ -27,7 +27,6 @@ public class SetSelfRoleGroupExculsive extends CommandStructure {
     public SetSelfRoleGroupExculsive(SharedContainer container, String commandName,
 			int commandID, int commandDefaultLevel) {
 		super(container, commandName, commandID, commandDefaultLevel);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -73,7 +72,6 @@ public class SetSelfRoleGroupExculsive extends CommandStructure {
 	}
 	@Override
 	public String help(Long guildID) {
-		// TODO Auto-generated method stub
 		return "Toggle a group to be exculsive or not exculsive Syntax: " + dbMan.getPrefix(guildID) + commandName + " [group id]";
 	}
 

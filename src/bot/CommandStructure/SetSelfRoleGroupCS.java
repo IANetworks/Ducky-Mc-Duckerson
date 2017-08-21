@@ -29,7 +29,6 @@ public class SetSelfRoleGroupCS extends CommandStructure {
     public SetSelfRoleGroupCS(SharedContainer container, String commandName, int commandID,
 			int commandDefaultLevel) {
 		super(container, commandName, commandID, commandDefaultLevel);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

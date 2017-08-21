@@ -8,9 +8,12 @@ package werewolf.data;
  *
  */
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
-import java.sql.*;
-import java.sql.Date;
 
 /**
  * The type Theme.
@@ -44,14 +47,19 @@ public class Theme {
     /**
      * The Theme created.
      */
-    Date themeCreated = null;
-    /**
+	java.util.Date themeCreated = null;
+	/**
      * The Theme modified.
      */
-    Date themeModified = null;
+	java.util.Date themeModified = null;
 
-    /**
-     * The Theme db.
+	/**
+	 *
+	 */
+	String themeAvatar = null;
+
+	/**
+	 * The Theme db.
      */
 //Theme
 	HashMap<String, List<String>> themeDB = new HashMap<String, List<String>>();
@@ -66,7 +74,7 @@ public class Theme {
      *
      * @return played count
      */
-    public int getPlayedCount()
+	public Integer getPlayedCount()
 	{
 		return themePlayedCount;
 	}
@@ -207,6 +215,12 @@ public class Theme {
 		themeDefault.put("CHANGE_VOTE_NOLYNCH", "PLAYER1 has changed their vote for No Lynching");
 		themeDefault.put("VOTED_NO_LYNCH", "Everyone goes away for the night, having voted not to lynch anyone");
 		themeDefault.put("ROLE_IS_LYNCHED", "PLAYER1 has been killed, they were a ROLE");
+		themeDefault.put("STATE_ALIVE", "Still Alive");
+		themeDefault.put("STATE_KILLED", "Has been killed");
+		themeDefault.put("STATE_FLED", "Ran away");
+		themeDefault.put("AVATAR_GAME", null);
+		themeDefault.put("AVATAR_NOTICE", null);
+		themeDefault.put("AVATAR_NARR", null);
 	}
 
     /**
@@ -250,6 +264,10 @@ public class Theme {
      */
     public void setDetails(ResultSet rs)
 	{
+		String dateCreated = "";
+		String dateModified = "";
+		String dateFormat = "yyyy-MM-dd HH:mm:ss";
+
 		try
 		{
 			while(rs.next())
@@ -258,14 +276,22 @@ public class Theme {
 				themeName = rs.getString("theme_name");
 				themeDesc = rs.getString("theme_disc");
 				themeAuthor = rs.getString("theme_author");
-				//themeCreated = rs.getDate("theme_created");
-				//themeModified = rs.getDate("theme_modifed");
-				//TODO fix Datetime function
-				themePlayedCount = rs.getInt("played_count"); 
+				dateCreated = rs.getString("theme_created");
+				dateModified = rs.getString("theme_modifed");
+				themePlayedCount = rs.getInt("played_count");
+				themeAvatar = rs.getString("avatar");
 			}
 		}
 		catch (SQLException e)
 		{
+			e.printStackTrace();
+		}
+
+		DateFormat df = new SimpleDateFormat(dateFormat);
+		try {
+			themeCreated = df.parse(dateCreated);
+			themeModified = df.parse(dateModified);
+		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 	}
@@ -313,5 +339,9 @@ public class Theme {
 		themeModified = null;
 		
 		themeDB.clear();
+	}
+
+	public String getAvatar() {
+		return this.themeAvatar;
 	}
 }

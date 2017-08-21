@@ -41,7 +41,6 @@ public class PreloadCS extends CommandStructure {
 			}
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

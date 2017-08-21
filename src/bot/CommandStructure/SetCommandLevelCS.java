@@ -48,7 +48,6 @@ public class SetCommandLevelCS extends CommandStructure {
 						dbMan.setCommandLevel(guildID, commandList.get(cmdID).commandID, commandLevel);
 						channel.sendMessage("I have assigned level: "+ dbMan.getLevelName(guildID, commandLevel) + " to the command: " + cmdID).queue();
 					} catch (SQLException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 						channel.sendMessage("I had a hicup, excuse me. Someone get Mistress to look at setting Command Level").queue();
 					}

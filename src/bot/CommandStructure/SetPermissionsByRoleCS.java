@@ -67,7 +67,6 @@ public class SetPermissionsByRoleCS extends CommandStructure {
 									dbMan.setRoleLevel(guildID, levelID, role.getIdLong());
 									channel.sendMessage("I've assigned level: " + userLevelName + " to the role: " + role.getName()).queue();
 								} catch (SQLException e) {
-									// TODO Auto-generated catch block
 									e.printStackTrace();
 									channel.sendMessage("I had a booboo from setting roles, Mistress, fix me please!").queue();
 								}

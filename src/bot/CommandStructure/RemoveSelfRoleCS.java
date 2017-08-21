@@ -29,7 +29,6 @@ public class RemoveSelfRoleCS extends CommandStructure {
     public RemoveSelfRoleCS(SharedContainer container, String commandName, int commandID,
 			int commandDefaultLevel) {
 		super(container, commandName, commandID, commandDefaultLevel);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -90,7 +89,6 @@ public class RemoveSelfRoleCS extends CommandStructure {
 
 	@Override
 	public String help(Long guildID) {
-		// TODO Auto-generated method stub
 		return "set all a role as not self assignable: " + dbMan.getPrefix(guildID) + commandName + " [role name]";
 	}
 

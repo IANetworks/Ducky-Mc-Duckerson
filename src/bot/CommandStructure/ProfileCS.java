@@ -89,7 +89,6 @@ public class ProfileCS extends CommandStructure {
 			embed.setDescription(userLevelName);
 			channel.sendMessage(embed.build()).queue();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

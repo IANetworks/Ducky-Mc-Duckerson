@@ -40,8 +40,6 @@ public class DebugListener extends ListenerAdapter {
 	/**
 	 * We'll put all the debug output log here. As there's a lot of event to look at, we'll tuck it all here for a tidier code.
 	 * Here we'll define what level debug each event is.
-	 * 
-	 * TODO Finish off the debugs events
 	 */
 	private DebugLevel debugLevel;
 

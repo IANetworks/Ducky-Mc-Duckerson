@@ -17,6 +17,7 @@ import bot.database.manager.data.SelfRoles;
 import bot.database.manager.data.UserProfile;
 import net.dv8tion.jda.core.entities.Role;
 import werewolf.data.Theme;
+import werewolf.data.ThemeDesc;
 
 /**
  * The type Database manager.
@@ -1595,16 +1596,13 @@ public class DatabaseManager {
      *
      * @return the list
      */
-    public List<String> sqlGetThemeList()
+	public List<ThemeDesc> sqlGetThemeList()
 	{
 		//TODO Switch to a list of object
 		Statement dbState = null;
 		ResultSet dbRs = null;
-		
-		List<String> themeList = new ArrayList<String>();
-		
-		int themeNameID = 0;
-		String themeName = "";
+
+		List<ThemeDesc> themeList = new ArrayList<ThemeDesc>();
 		
 		try {
 			//db_state = db_cn.createStatement();
@@ -1614,13 +1612,19 @@ public class DatabaseManager {
 			
 			while(dbRs.next())
 			{
-				themeNameID = dbRs.getInt("id_key");
-				themeName = dbRs.getString("theme_name");
-				
-				themeList.add(themeName + "-" + themeNameID);
+				ThemeDesc newDec = new ThemeDesc(
+						dbRs.getInt("id_key"),
+						dbRs.getString("theme_name"),
+						dbRs.getString("theme_disc"),
+						dbRs.getString("theme_author"),
+						dbRs.getString("theme_created"),
+						dbRs.getString("theme_modifed"),
+						dbRs.getInt("played_count"),
+						dbRs.getString("avatar")
+				);
+				themeList.add(newDec);
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 				e.printStackTrace();
 		}
 		return themeList;

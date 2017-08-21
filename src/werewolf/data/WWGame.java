@@ -10,10 +10,10 @@ public class WWGame {
 	
 	//Curves setting for Nighttime 
 	private Integer nightTimeX = 190;
-	private Integer nightTimeY = 150;
-	private Double nightTimePow = 1.0;
-	
-	//Setting for Daytime
+    private Integer nightTimeY = 110;
+    private Double nightTimePow = 0.8;
+
+    //Setting for Daytime
 	private Integer maxDayTime = 120;
 	private Integer dayTimeX = 10;
 	
@@ -377,14 +377,6 @@ public class WWGame {
      */
     public void setHasBans(boolean hasBans) {
 		this.hasBans = hasBans;
-	}
-
-
-    /**
-     * Instantiates a new Ww game.
-     */
-    public WWGame() {
-		// TODO Auto-generated constructor stub
 	}
 
     /**
