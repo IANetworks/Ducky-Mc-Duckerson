@@ -6,6 +6,10 @@ import net.dv8tion.jda.core.managers.PermOverrideManagerUpdatable;
 import net.dv8tion.jda.core.requests.restaction.PermissionOverrideAction;
 import werewolf.data.*;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -825,10 +829,32 @@ public class Werewolf {
         }
 		
 		/* Return Theme Text */
-        //System.out.println(prefix + themeText + suffix);
-        if (avatarType != null) eBuilder.setThumbnail(getThemeText(guildID, avatarType));
+        if (avatarType != null) {
+            String url = getThemeText(guildID, avatarType);
+            if (url != null && isURL(url))
+                eBuilder.setThumbnail(url);
+        }
         eBuilder.addField("", themeText, false);
         return eBuilder;
+    }
+
+    private boolean isURL(String url) {
+        try {
+            URL path = new URL(url);
+            return isValidURL(path);
+        } catch (MalformedURLException e) {
+            return false;
+        }
+    }
+
+    private boolean isValidURL(URL url) {
+        InputStream i = null;
+        try {
+            i = url.openStream();
+        } catch (IOException e) {
+            //System.err.println("Invalid URL");
+        }
+        return i != null;
     }
 
     /**
