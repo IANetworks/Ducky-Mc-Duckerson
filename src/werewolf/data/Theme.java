@@ -250,6 +250,9 @@ public class Theme {
 			
 		} else if(themeDefault.containsKey(themeID)) {
 			textReturn = themeDefault.get(themeID) + " (Default " + themeID + " )";
+			if (themeID.equals("AVATAR")) {
+				textReturn = "";
+			}
 		} else {
 			textReturn = themeID + " is an Unknown ThemeID";
 		}

@@ -20,6 +20,7 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.requests.RestAction;
+import werewolf.GameState;
 import werewolf.Werewolf;
 
 
@@ -301,7 +302,12 @@ public class EventListener extends ListenerAdapter {
 						e.printStackTrace();
 					}
 				}
-			}
+
+                //Special case, looking for someone who has "dying voice during a game
+                if (!container.ww.getWerewolfGameState(guildID).equals(GameState.IDLE)) {
+                    container.ww.dyingVoice(guildID, author);
+                }
+            }
 		}
 	}
 
@@ -311,8 +317,8 @@ public class EventListener extends ListenerAdapter {
 		User author = event.getAuthor();
 		MessageChannel channel = event.getChannel();
 		Message message = event.getMessage(); //Message recieved
-		String msg = message.getContent().trim(); // String readable content of message
-		//Guild guild = event.getGuild(); //Get info about the server this message is recieved on
+        String msg = message.getContent().trim().toLowerCase(); // String readable content of message
+        //Guild guild = event.getGuild(); //Get info about the server this message is recieved on
 		//Long guildID = guild.getIdLong(); //guild unique id
 		if(msg.length() > 0) {
 			if (privCmdList.isEmpty()) {

@@ -210,7 +210,14 @@ public class Werewolf {
         setGameState(guildID, GameState.GAMESTART);
 
         //Clear Permissions
-        //TODO CLEAR PERMISSIONS
+        List<PermissionOverride> po = getTownChannel(guildID).getMemberPermissionOverrides();
+        for (PermissionOverride thisPO : po) {
+            thisPO.delete();
+        }
+        po = getWolfChannel(guildID).getMemberPermissionOverrides();
+        for (PermissionOverride thisPO : po) {
+            thisPO.delete();
+        }
 
         //reset roundNo
         resetRounds(guildID);
@@ -535,7 +542,7 @@ public class Werewolf {
             setChannelPermissions(getTownChannel(guildID), player, true);
 
             EmbedBuilder embed = getTheme("JOIN", MessType.GAME, guildID, player, gamesPlayerLists.get(guildID).getPlayerSize());
-            getTownChannel(guildID).sendMessage(getTheme("ADDED", MessType.NOTICE, guildID, player, null, null, embed).build());
+            getTownChannel(guildID).sendMessage(getTheme("ADDED", MessType.NOTICE, guildID, player, null, null, embed).build()).queue();
         } else {
             getTownChannel(guildID).sendMessage(player.getAsMention() + " You're already in game").queue();
         }
@@ -705,7 +712,7 @@ public class Werewolf {
         String prefix = "";
         String infoPrefix = "";
         String infoSuffix = "";
-        String avatarType;
+        String avatarType = "AVATAR";
         EmbedBuilder eBuilder;
         if (previousEmbed != null) {
             eBuilder = previousEmbed;
@@ -754,7 +761,6 @@ public class Werewolf {
         switch (type) {
             case NOTICE:
                 //No formatting
-                avatarType = "AVATAR_NOTICE";
                 break;
             case NARRATION:
                 //We Want this Itatic with player names bolded and underlined
@@ -762,7 +768,6 @@ public class Werewolf {
                 prefix = "";
                 infoPrefix = bold + underline;
                 infoSuffix = underline + bold; //make sure to mirror prefix
-                avatarType = "AVATAR_NARR";
                 break;
             case GAME:
                 //Game Text bold with names itatic and underlined
@@ -770,17 +775,15 @@ public class Werewolf {
                 prefix = "";
                 infoPrefix = italic + underline;
                 infoSuffix = underline + italic; //make sure to mirror prefix
-                avatarType = "AVATAR_GAME";
                 break;
 
             case CONTROL:
-                avatarType = null;
                 break;
 
             default:
-                avatarType = null;
                 break;
         }
+
         if (themeText == null) {
             return null;
         }
@@ -823,7 +826,7 @@ public class Werewolf {
 		
 		/* Return Theme Text */
         //System.out.println(prefix + themeText + suffix);
-        if (avatarType != null) eBuilder.setAuthor(null, null, getThemeText(guildID, avatarType));
+        if (avatarType != null) eBuilder.setThumbnail(getThemeText(guildID, avatarType));
         eBuilder.addField("", themeText, false);
         return eBuilder;
     }
@@ -1345,7 +1348,18 @@ public class Werewolf {
             removeTimer(guildID, taskID);
         }
 
-        setChannelPermissions(getTownChannel(guildID), gamesPlayerLists.get(guildID).getMemberList(), false);
+        TextChannel townChannel = getTownChannel(guildID);
+        for (PermissionOverride thisPO : townChannel.getMemberPermissionOverrides()) {
+            if (thisPO.isMemberOverride()) {
+                thisPO.delete().queue();
+            }
+        }
+        net.dv8tion.jda.core.entities.Role everyoneRole = townChannel.getGuild().getPublicRole();
+        PermissionOverride townChannelPO = townChannel.getPermissionOverride(everyoneRole);
+        PermOverrideManagerUpdatable poa = townChannelPO.getManagerUpdatable();
+        poa.clear(Permission.MESSAGE_WRITE);
+        poa.clear(Permission.MESSAGE_READ);
+        poa.update().queue();
 
         List<Player> playerList = gamesPlayerLists.get(guildID).getPlayerListByRole(Role.WOLF);
         List<Member> memberListWolves = new ArrayList<>();
@@ -1381,8 +1395,8 @@ public class Werewolf {
 
         if (wolfCount >= humanCount && wolfCount != 0) {
             if (wolfCount == 1) {
-                EmbedBuilder thisEmbed = getTheme("WOLF_WIN", MessType.NARRATION, guildID);
                 Player wolf = gamesPlayerLists.get(guildID).getPlayerListByRolePlayerState(Role.WOLF, PlayerState.ALIVE).get(0);
+                EmbedBuilder thisEmbed = getTheme("WOLF_WIN", MessType.NARRATION, guildID, wolf.getMember());
                 getTownChannel(guildID).sendMessage(getTheme("CONGR_WOLF", MessType.GAME, guildID, wolf.getMember(), null, null, thisEmbed).build()).queue();
             } else {
                 EmbedBuilder thisEmbed = getTheme("WOLVES_WIN", MessType.NARRATION, guildID);
@@ -1481,6 +1495,7 @@ public class Werewolf {
 
         EmbedBuilder newEmbed = new EmbedBuilder();
         newEmbed.setAuthor(themeDesc.getName(), null, themeDesc.getAvatar());
+        newEmbed.setThumbnail(themeDesc.getAvatar());
         newEmbed.setTitle("Author: " + themeDesc.getAuthor());
         newEmbed.setDescription(themeDesc.getDesc());
         newEmbed.addField("Created on: ", themeDesc.getDateCreated().toString(), true);
@@ -1857,6 +1872,15 @@ public class Werewolf {
 
     }
 
+    public void dyingVoice(Long guildID, Member author) {
+        Long userID = author.getUser().getIdLong();
+        if (gamesPlayerLists.get(guildID).hasPlayer(userID)) {
+            if (gamesPlayerLists.get(guildID).hasDyingVoice(userID)) {
+                setVoice(getTownChannel(guildID), author, false);
+            }
+        }
+    }
+
 
     private class TenSecWarning implements Runnable {
         private Long guildID;
@@ -1961,8 +1985,11 @@ public class Werewolf {
                         }
                         //Set gameState first to prevent people joining while roles are being sent out
                         setGameState(guildID, GameState.DAYTIME);
-
-                        getTownChannel(guildID).sendMessage("Sending Roles, please wait.").queue();
+                        TextChannel townChannel = getTownChannel(guildID);
+                        net.dv8tion.jda.core.entities.Role everyoneRole = townChannel.getGuild().getPublicRole();
+                        PermissionOverride townChannelPO = townChannel.getPermissionOverride(everyoneRole);
+                        townChannelPO.getManager().deny(Permission.MESSAGE_WRITE).queue();
+                        townChannel.sendMessage("Sending Roles, please wait.").queue();
 
                         setRoles(guildID); //Set everyone roles
                         dbMan.sqlIncThemeCount(themeList.get(guildID).getThemeID());
