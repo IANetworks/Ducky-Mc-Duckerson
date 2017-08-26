@@ -1,0 +1,6 @@
+/vendor/
+/logs/*
+!/logs/.notempty
+/tmp/*
+!/tmp/.notempty
+/src/settings.php
