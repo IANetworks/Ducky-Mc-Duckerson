@@ -78,7 +78,7 @@ public class HTMLParse
 
             int day = Integer.parseInt(monthFind[2].substring(0, monthFind[2].indexOf(' ')));
 
-            doc = Jsoup.connect("https://gunsoficarus.com/community/forum/index.php?action=calendar").get(); doc = Jsoup.connect("https://gunsoficarus.com/community/forum/index.php?action=calendar;year=2017;month=8").get();
+            doc = Jsoup.connect("https://gunsoficarus.com/community/forum/index.php?action=calendar").get();
 
             String calendar = doc.getElementById("calendar").text();
             String[] parsedCalendar = calendar.split("\\s+");
