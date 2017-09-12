@@ -1,5 +1,6 @@
 package bot;
 
+import net.dv8tion.jda.core.entities.MessageChannel;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import java.io.IOException;
@@ -7,9 +8,14 @@ import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class HTMLParse
 {
+    public static HTMLParse _instance;
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(5);
     private Document doc;
     String[] months = new String[12];
 
@@ -27,7 +33,16 @@ public class HTMLParse
         return retVal;
     }
 
-    public String GetTodayCalendarData()
+    public static HTMLParse get_instance()
+    {
+        if (_instance == null)
+        {
+            _instance = new HTMLParse();
+        }
+        return _instance;
+    }
+
+    public String GetTodayCalendarData(MessageChannel channel)
     {
         months[0] = "January";
         months[1] = "February";
@@ -115,13 +130,12 @@ public class HTMLParse
                 {
                     todaysEvents += thisDaysData[i] + " ";
                 }
-                System.out.println(todaysEvents);
+                channel.sendMessage(todaysEvents);
                 return todaysEvents;
             }
             else
             {
-
-                System.out.println("No Event Today");
+                channel.sendMessage("No events today!");
                 return "No Event Today";
             }
         }
@@ -132,9 +146,24 @@ public class HTMLParse
         }
     }
 
-    public static void main(String[] args)
+    public void ShutDown()
     {
-        HTMLParse parser = new HTMLParse();
-        parser.GetTodayCalendarData();
+        scheduler.shutdownNow();
+    }
+
+    public void StartScheduledUpdates(MessageChannel channel)
+    {
+        scheduler.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run()
+            {
+                HTMLParse.get_instance().GetTodayCalendarData(channel);
+            }
+        }, 0, 3L, TimeUnit.HOURS);
+    }
+
+    public void CalenderStart(MessageChannel channel)
+    {
+        HTMLParse.get_instance().StartScheduledUpdates(channel);
     }
 }

@@ -76,7 +76,7 @@ public class EventListener extends ListenerAdapter {
 	{
 		this.dbMan = dbMan;
 		this.botAdmin = botAdmin;
-		
+
 	}
 	
 	private void setupCommandList(ApplicationInfo info) 
@@ -87,6 +87,8 @@ public class EventListener extends ListenerAdapter {
 		container.botAdmin = botAdmin;
 		container.botOwner = botOwner;
 		container.ww = new Werewolf(dbMan, info.getJDA().getSelfUser());
+		//TODO HERE ABBY
+		//HTMLParse.get_instance().CalenderStart(dbMan.getEventChannel());
 
         String name = "set-prefix";
         cmdList.put(name, new SetPrefixCS(container, name, 1, 1));
@@ -354,35 +356,36 @@ public class EventListener extends ListenerAdapter {
      *          An event containing information about a {@link net.dv8tion.jda.core.entities.Message Message} that was
      *          sent in a channel.
      */
-	
+
 	//All Messages recieved, from Private channels (DM), Public Channels(server/guild), Groups (Client only, we're using bot account so we can't do groups)
     @Override
     public void onMessageReceived(MessageReceivedEvent event)
     {
         //These are provided with every event in JDA
         //JDA jda = event.getJDA();                       //JDA, the core of the api.
-        
-        
+
+
         //long responseNumber = event.getResponseNumber();//The amount of discord events that JDA has received since the last reconnect.
 
         //Event specific information
         User author = event.getAuthor();                //The user that sent the message
         Message message = event.getMessage();           //The message that was received.
-        
+
         String msg = message.getContent();              //This returns a human readable version of the Message. Similar to
                                                         // what you would see in the client.
         boolean isBotAdminOwner = isBotAdminOwner(author);
-        
+
         if (msg.equals("!!shutdown"))
         {
         	//Make sure we have permission
         	if(isBotAdminOwner) {
         		if(container.ww != null)
         			container.ww.shutDown();
-
+				if(HTMLParse.get_instance() != null)
+					HTMLParse.get_instance().ShutDown();
         		author.openPrivateChannel().queue((channel) -> sendChannelMessageAndShutdown(channel, "Bye bye, I'm closing down"));
         	}
-        }    
+        }
     }
 
 	private boolean isBotAdminOwner(User author) {
@@ -402,5 +405,5 @@ public class EventListener extends ListenerAdapter {
     	Consumer<Message> callback = (response) -> response.getJDA().shutdown();
     	channel.sendMessage(message).queue(callback);
     }
-    
+
 }
