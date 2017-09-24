@@ -27,9 +27,7 @@ public class DeleteCommandCS extends CommandStructure {
             Boolean delCmd = !dbMan.getDeleteCommand(guildID);
             try {
                 dbMan.setDeleteCommand(guildID, delCmd);
-                if (delCmd) {
-                    message.delete().reason("Clearing Command").queue();
-                } else {
+                if (!delCmd) {
                     message.addReaction("✔").queue();
                 }
             } catch (SQLException e) {

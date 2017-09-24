@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -1411,12 +1412,22 @@ public class Werewolf {
         int villCount = gamesPlayerLists.get(guildID).getNumberOfPlayerByRolePlayerState(Role.VILL, PlayerState.ALIVE);
         int humanCount = seerCount + villCount + masonCount;
 
+        List<Player> winnerAliveList = null;
+        List<Player> allWinner = null;
+
         boolean win = false;
-        //TODO Add score to player's profile, 10 for winning + 10 point for staying alive on the winning team
         if (wolfCount == 0 && humanCount != 0) {
             EmbedBuilder thisEmbed = getTheme("VILL_WIN", MessType.NARRATION, guildID);
             getTownChannel(guildID).sendMessage(getTheme("CONGR_VILL", MessType.GAME, guildID, null, null, null, thisEmbed).build()).queue();
             win = true;
+
+            winnerAliveList = gamesPlayerLists.get(guildID).getPlayerListByRolePlayerState(Role.SEER, PlayerState.ALIVE);
+            winnerAliveList.addAll(gamesPlayerLists.get(guildID).getPlayerListByRolePlayerState(Role.MASON, PlayerState.ALIVE));
+            winnerAliveList.addAll(gamesPlayerLists.get(guildID).getPlayerListByRolePlayerState(Role.VILL, PlayerState.ALIVE));
+
+            allWinner = gamesPlayerLists.get(guildID).getPlayerListByRole(Role.SEER);
+            allWinner.addAll(gamesPlayerLists.get(guildID).getPlayerListByRole(Role.MASON));
+            allWinner.addAll(gamesPlayerLists.get(guildID).getPlayerListByRole(Role.VILL));
         }
 
         if (wolfCount >= humanCount && wolfCount != 0) {
@@ -1428,6 +1439,8 @@ public class Werewolf {
                 EmbedBuilder thisEmbed = getTheme("WOLVES_WIN", MessType.NARRATION, guildID);
                 getTownChannel(guildID).sendMessage(getTheme("CONGR_WOLVES", MessType.GAME, guildID, null, null, null, thisEmbed).build()).queue();
             }
+            winnerAliveList = gamesPlayerLists.get(guildID).getPlayerListByRolePlayerState(Role.WOLF, PlayerState.ALIVE);
+            allWinner = gamesPlayerLists.get(guildID).getPlayerListByRole(Role.WOLF);
             win = true;
         }
 
@@ -1439,6 +1452,22 @@ public class Werewolf {
         if (win) {
             showRoles(guildID);
             stopGame(guildID);
+
+            for (Player thisPlayer : allWinner) {
+                try {
+                    dbMan.addUserPoints(guildID, thisPlayer.getUserID(), 10L); //10 points for winning
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            for (Player thisPlayer : winnerAliveList) {
+                try {
+                    dbMan.addUserPoints(guildID, thisPlayer.getUserID(), 10L); //10 extra points for staying alive
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
         gameList.get(guildID).setCheckingWin(false);
