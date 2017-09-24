@@ -69,7 +69,8 @@ public class DatabaseManager {
 				guildSetting.setPrefix(rs.getString("prefix"));
 				guildSetting.setWWOn(rs.getBoolean("werewolf_on"));
 				guildSetting.setGameChannel(rs.getString("game_channel"));
-				guildSetting.isStored = true;
+                guildSetting.setDeleteCommand(rs.getBoolean("delete_command"));
+                guildSetting.isStored = true;
 				
 				listGuildSettings.put(guildSetting.getGuildId(), guildSetting);
 			}
@@ -577,6 +578,16 @@ public class DatabaseManager {
 	}
 
     /**
+     * Get if Delete Command is set on/off
+     *
+     * @param guildID Long guild ID
+     * @return if the bot should delete any command requests
+     */
+    public boolean getDeleteCommand(Long guildID) {
+        return getGuildValues(guildID).getDeleteCommand();
+    }
+
+    /**
      * Gets prefix.
      *
      * @param guildID the guild id
@@ -1064,37 +1075,75 @@ public class DatabaseManager {
      * @throws SQLException the sql exception
      */
     public void setPrefix(String prefix, Long guildID) throws SQLException {
-		String sql = "SELECT COUNT(*) FROM variables WHERE guild_id = ?";
-		PreparedStatement pstmt = conn.prepareStatement(sql); 
-		pstmt.setLong(1, guildID);
-		ResultSet rs = pstmt.executeQuery();
-		Integer rowCount = 0;
-		
-		while(rs.next()) rowCount = rs.getInt(1);
-		if (rowCount > 0)
-		{
-			sql = "UPDATE variables SET prefix = ? WHERE guild_id = ?";	
-		} else {
-			 sql = "INSERT INTO variables (prefix, guild_id) VALUES (?, ?)"; 
-		}
-		
-		pstmt = conn.prepareStatement(sql);
-		pstmt.setLong(2, guildID);
-		pstmt.setString(1, prefix);
-		
-		pstmt.execute();
-		
-		//Check List
-		if(listGuildSettings.containsKey(guildID))
-		{	//if it does, fetch guildSetting from list, update values and store
-			listGuildSettings.get(guildID).setPrefix(prefix);
-		} else {
-			//If it doesn't exist, create new guildSetting for guildID, set value, update
-			GuildSetting guildSetting = new GuildSetting();
-			guildSetting.setPrefix(prefix);
-			listGuildSettings.put(guildID, guildSetting);
-		}
-	}
+        String sql = "SELECT COUNT(*) FROM variables WHERE guild_id = ?";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setLong(1, guildID);
+        ResultSet rs = pstmt.executeQuery();
+        Integer rowCount = 0;
+
+        while(rs.next()) rowCount = rs.getInt(1);
+        if (rowCount > 0) {
+            sql = "UPDATE variables SET prefix = ? WHERE guild_id = ?";
+        } else {
+            sql = "INSERT INTO variables (prefix, guild_id) VALUES (?, ?)";
+        }
+
+        pstmt = conn.prepareStatement(sql);
+        pstmt.setLong(2, guildID);
+        pstmt.setString(1, prefix);
+
+        pstmt.execute();
+
+        //Check List
+        if(listGuildSettings.containsKey(guildID)) {	//if it does, fetch guildSetting from list, update values and store
+            listGuildSettings.get(guildID).setPrefix(prefix);
+        } else {
+            //If it doesn't exist, create new guildSetting for guildID, set value, update
+            GuildSetting guildSetting = new GuildSetting();
+            guildSetting.setPrefix(prefix);
+            listGuildSettings.put(guildID, guildSetting);
+        }
+    }
+
+
+    /**
+     * setDeleteCommand set the wether the bot should delete commands or not. (Not all commands will be deleted)
+     *
+     * @param guildID guild ID
+     * @param onOff   on or off
+     * @throws SQLException
+     */
+    public void setDeleteCommand(Long guildID, boolean onOff) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM variables WHERE guild_id = ?";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setLong(1, guildID);
+        ResultSet rs = pstmt.executeQuery();
+        Integer rowCount = 0;
+
+        while (rs.next()) rowCount = rs.getInt(1);
+        if (rowCount > 0) {
+            sql = "UPDATE variables SET delete_command = ? WHERE guild_id = ?";
+        } else {
+            sql = "INSERT INTO variables (delete_command, guild_id) VALUES (?, ?)";
+        }
+
+        pstmt = conn.prepareStatement(sql);
+        pstmt.setLong(2, guildID);
+        pstmt.setBoolean(1, onOff);
+
+        pstmt.execute();
+
+        //Check List
+        if (listGuildSettings.containsKey(guildID)) {
+            //if it does, fetch guildSetting from list, update values and store
+            listGuildSettings.get(guildID).setDeleteCommand(onOff);
+        } else {
+            //If it doesn't exist, create new guildSetting for guildID, set value, update
+            GuildSetting guildSetting = new GuildSetting();
+            guildSetting.setDeleteCommand(onOff);
+            listGuildSettings.put(guildID, guildSetting);
+        }
+    }
 
     /**
      * Sets greeting.
@@ -1729,4 +1778,6 @@ public class DatabaseManager {
 		
 		return null;
 	}
+
+
 }

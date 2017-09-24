@@ -13,6 +13,7 @@ public class GuildSetting {
 	private Boolean greetOn = false;
 	private String gameChannel = null;
 	private Boolean wwOn = true;
+    private Boolean deleteCommand = false;
     /**
      * The Is stored.
      */
@@ -179,5 +180,12 @@ public class GuildSetting {
     public void setGuildId(Long guildId) {
 		this.guildId = guildId;
 	}
-	
+
+    public void setDeleteCommand(boolean deleteCommand) {
+        this.deleteCommand = deleteCommand;
+    }
+
+    public Boolean getDeleteCommand() {
+        return deleteCommand;
+    }
 }

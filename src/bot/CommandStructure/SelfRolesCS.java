@@ -7,12 +7,7 @@ import java.util.Map;
 
 import bot.SharedContainer;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.MessageChannel;
-import net.dv8tion.jda.core.entities.Role;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.exceptions.PermissionException;
 import net.dv8tion.jda.core.managers.GuildController;
 
@@ -56,10 +51,13 @@ public class SelfRolesCS extends CommandStructure {
 				if(searchList.isEmpty()) {
 					selfAssignRole = null;
 					channel.sendMessage("Cannot find any role by the name '" + roleName + "'").queue();
-				} else if(searchList.size() > 1) 
+                    message.addReaction("negative_squared_cross_mark").queue();
+                } else if(searchList.size() > 1)
 				{
 					selfAssignRole = null;
 					channel.sendMessage("I've found more than one role by the name: '" + roleName + "'. Try using the exact role name").queue();
+                    message.addReaction("negative_squared_cross_mark").queue();
+
 				} else if(searchList.size() == 1) {
 					selfAssignRole = searchList.get(0);
 				}
@@ -69,7 +67,8 @@ public class SelfRolesCS extends CommandStructure {
 				{
 					selfAssignRole = null;
 					channel.sendMessage("I cannot assign any roles due to lack of Manage Roles permission.").queue();
-				}
+                    message.addReaction("negative_squared_cross_mark").queue();
+                }
 
 				
 				if (selfAssignRole != null) {
@@ -104,18 +103,20 @@ public class SelfRolesCS extends CommandStructure {
 						}
 
 						if (!removeRoleList.isEmpty()) {
-
-							controller.modifyMemberRoles(author, addRoleList, removeRoleList).queue(
+                            message.addReaction("white_check_mark").queue();
+                            controller.modifyMemberRoles(author, addRoleList, removeRoleList).queue(
 									success -> successRoleChange(success, channel, author, addRoleList, removeRoleList),
 									failure -> errorRoleChange(failure, channel, author, addRoleList, removeRoleList));
 						} else {
-							controller.addRolesToMember(author, addRoleList).queue(
+                            message.addReaction("white_check_mark").queue();
+                            controller.addRolesToMember(author, addRoleList).queue(
 									success -> successRoleChange(success, channel, author, addRoleList),
 									failure -> errorRoleChange(failure, channel, author, addRoleList));
 						}
 					} else {
 						channel.sendMessage("Role: '" + roleName + "' cannot be self assigned.").queue();
-					} 
+                        message.addReaction("negative_squared_cross_mark").queue();
+                    }
 				}
 				
 			}
@@ -184,15 +185,6 @@ public class SelfRolesCS extends CommandStructure {
 				}
 			}
 		}
-		
-		if(listOfRolesRemoved != null)
-		{
-			//Removed <> and Added <> Role(s) to <name> 
-			channel.sendMessage("Removed: " + listOfRolesRemoved + " and Added: " + listOfRolesAdded+  " Roles to " + member.getEffectiveName()).queue();
-			return;
-		}
-		
-		channel.sendMessage("Added: " + listOfRolesAdded +  " Role to " + member.getEffectiveName()).queue();
 		
 	}
 

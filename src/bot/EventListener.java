@@ -174,6 +174,9 @@ public class EventListener extends ListenerAdapter {
         name = "tableflip";
         cmdList.put(name, new TableFlipCS(container, name, 29, 999));
 
+        name = "toggle_delete";
+        cmdList.put(name, new DeleteCommandCS(container, name, 30, 1));
+
 		//********* PrivateMessage Commands *********//
 		name = "see";
 		privCmdList.put(name, new WerewolfSeeCS(container, name, 19, 999));
@@ -289,7 +292,10 @@ public class EventListener extends ListenerAdapter {
 							String parameters = msg.substring(cmdCharCount);
 							
 							cmdList.get(commandName).execute(author, channel, message, parameters, cmdList);
-							break; //We found a matching command, let break out of the loop
+                            if (deleteCommand(guildID)) {
+                                message.delete().reason("Clearing commands").queue();
+                            }
+                            break; //We found a matching command, let break out of the loop
 						}
 					}
 				}
@@ -312,12 +318,18 @@ public class EventListener extends ListenerAdapter {
 				}
 
                 //Special case, looking for someone who has "dying voice during a game
-                if (!container.ww.getWerewolfGameState(guildID).equals(GameState.IDLE)) {
-                    container.ww.dyingVoice(guildID, author);
+                if (container != null && container.ww != null) {
+                    if (!container.ww.getWerewolfGameState(guildID).equals(GameState.IDLE)) {
+                        container.ww.dyingVoice(guildID, author);
+                    }
                 }
             }
 		}
 	}
+
+    private boolean deleteCommand(Long guildID) {
+        return dbMan.getDeleteCommand(guildID);
+    }
 
 	@Override
 	public void onPrivateMessageReceived(PrivateMessageReceivedEvent event) {
@@ -396,8 +408,11 @@ public class EventListener extends ListenerAdapter {
 
 	private boolean isBotAdminOwner(User author) {
 		String userwithDiscriminator = author.getName() + "#" + author.getDiscriminator(); //the libarey don't include a readily used readable username with descriminator
-		return (botAdmin != null && userwithDiscriminator.equals(botAdmin)) || (botOwner.getIdLong() == author.getIdLong());
-        //TODO in some rare case author is null
+        if (botOwner != null) {
+            return (botAdmin != null && userwithDiscriminator.equals(botAdmin)) || (botOwner.getIdLong() == author.getIdLong());
+        }
+
+        return false;
     }
 
 
