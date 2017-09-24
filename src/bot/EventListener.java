@@ -168,6 +168,12 @@ public class EventListener extends ListenerAdapter {
         name = "stop-ww";
         cmdList.put(name, new WerewolfStopCS(container, name, 27, 1));
 
+        name = "unflip";
+        cmdList.put(name, new UnflipCS(container, name, 28, 999));
+
+        name = "tableflip";
+        cmdList.put(name, new TableFlipCS(container, name, 29, 999));
+
 		//********* PrivateMessage Commands *********//
 		name = "see";
 		privCmdList.put(name, new WerewolfSeeCS(container, name, 19, 999));
@@ -196,9 +202,9 @@ public class EventListener extends ListenerAdapter {
 			e.printStackTrace();
 		}
 	}
-	
-	//We Want To See All Users Joinning the server(Called Guilds by Discord, why, I dunno)
-	@Override
+
+    //We Want To See All Users Joining the server(Called Guilds by Discord, why, I dunno)
+    @Override
 	public void onGuildMemberJoin(GuildMemberJoinEvent event)
 	{
 		Member member = event.getMember();
@@ -391,7 +397,8 @@ public class EventListener extends ListenerAdapter {
 	private boolean isBotAdminOwner(User author) {
 		String userwithDiscriminator = author.getName() + "#" + author.getDiscriminator(); //the libarey don't include a readily used readable username with descriminator
 		return (botAdmin != null && userwithDiscriminator.equals(botAdmin)) || (botOwner.getIdLong() == author.getIdLong());
-	}
+        //TODO in some rare case author is null
+    }
 
 
 	/**
