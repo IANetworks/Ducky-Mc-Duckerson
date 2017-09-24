@@ -69,9 +69,9 @@ public class ProfileCS extends CommandStructure {
 		EmbedBuilder embed = new EmbedBuilder();
 		Long guildID = member.getGuild().getIdLong();
 		Long userID = member.getUser().getIdLong();
-		UserProfile up = new UserProfile();
-		
-		try {
+        UserProfile up;
+
+        try {
 			up = dbMan.getUserProfile(guildID, userID);
 		
 		

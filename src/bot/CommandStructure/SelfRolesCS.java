@@ -51,12 +51,12 @@ public class SelfRolesCS extends CommandStructure {
 				if(searchList.isEmpty()) {
 					selfAssignRole = null;
 					channel.sendMessage("Cannot find any role by the name '" + roleName + "'").queue();
-                    message.addReaction("negative_squared_cross_mark").queue();
+                    message.addReaction("❌").queue();
                 } else if(searchList.size() > 1)
 				{
 					selfAssignRole = null;
 					channel.sendMessage("I've found more than one role by the name: '" + roleName + "'. Try using the exact role name").queue();
-                    message.addReaction("negative_squared_cross_mark").queue();
+                    message.addReaction("❌").queue();
 
 				} else if(searchList.size() == 1) {
 					selfAssignRole = searchList.get(0);
@@ -67,7 +67,7 @@ public class SelfRolesCS extends CommandStructure {
 				{
 					selfAssignRole = null;
 					channel.sendMessage("I cannot assign any roles due to lack of Manage Roles permission.").queue();
-                    message.addReaction("negative_squared_cross_mark").queue();
+                    message.addReaction("❌").queue();
                 }
 
 				
@@ -103,19 +103,19 @@ public class SelfRolesCS extends CommandStructure {
 						}
 
 						if (!removeRoleList.isEmpty()) {
-                            message.addReaction("white_check_mark").queue();
+                            message.addReaction("✅").queue();
                             controller.modifyMemberRoles(author, addRoleList, removeRoleList).queue(
 									success -> successRoleChange(success, channel, author, addRoleList, removeRoleList),
 									failure -> errorRoleChange(failure, channel, author, addRoleList, removeRoleList));
 						} else {
-                            message.addReaction("white_check_mark").queue();
+                            message.addReaction("✅").queue();
                             controller.addRolesToMember(author, addRoleList).queue(
 									success -> successRoleChange(success, channel, author, addRoleList),
 									failure -> errorRoleChange(failure, channel, author, addRoleList));
 						}
 					} else {
 						channel.sendMessage("Role: '" + roleName + "' cannot be self assigned.").queue();
-                        message.addReaction("negative_squared_cross_mark").queue();
+                        message.addReaction("❌").queue();
                     }
 				}
 				

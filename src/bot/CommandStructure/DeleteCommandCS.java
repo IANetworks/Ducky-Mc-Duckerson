@@ -30,12 +30,7 @@ public class DeleteCommandCS extends CommandStructure {
                 if (delCmd) {
                     message.delete().reason("Clearing Command").queue();
                 } else {
-                    message.addReaction("white_check_mark").queue();
-                    if (delCmd) {
-                        message.addReaction("white_circle").queue();
-                    } else {
-                        message.addReaction("red_circle").queue();
-                    }
+                    message.addReaction("✔").queue();
                 }
             } catch (SQLException e) {
                 channel.sendMessage("This hurts, ow").queue();
