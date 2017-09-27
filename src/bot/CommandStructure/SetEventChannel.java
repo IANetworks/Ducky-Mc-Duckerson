@@ -7,11 +7,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-/**
- * SetGameChannel, command to set game channel for server. Checks to see if the game channel has been already created,
- * before assigning the name into database.
- */
-public class SetGameChannelCS extends CommandStructure{
+public class SetEventChannel extends CommandStructure {
+
     /**
      * Instantiates a new Command structure.
      *
@@ -20,7 +17,7 @@ public class SetGameChannelCS extends CommandStructure{
      * @param commandID           the command id - unique ID.
      * @param commandDefaultLevel the command default level
      */
-    public SetGameChannelCS(SharedContainer container, String commandName, int commandID, int commandDefaultLevel) {
+    public SetEventChannel(SharedContainer container, String commandName, int commandID, int commandDefaultLevel) {
         super(container, commandName, commandID, commandDefaultLevel);
     }
 
@@ -30,26 +27,23 @@ public class SetGameChannelCS extends CommandStructure{
         Long guildID = guild.getIdLong();
 
         //First we check to see if we have a parameter
-        if(parameters.isEmpty())
-        {
+        if (parameters.isEmpty()) {
             channel.sendMessage("Missing a channel name").queue();
         } else {
             //check to see if we have an existing channel.
             parameters = parameters.trim();
             List<TextChannel> textChannelsByName = guild.getTextChannelsByName(parameters, true);
-            if(textChannelsByName.size() == 0)
-            {
+            if (textChannelsByName.size() == 0) {
                 channel.sendMessage("There's no channels by that name").queue();
-            } else if(textChannelsByName.size() > 1)
-            {
+            } else if (textChannelsByName.size() > 1) {
                 channel.sendMessage("There's many channels by that name, narrow the game channel.").queue();
             } else {
                 //store channel
                 try {
-                    dbMan.setGameChannel(guildID, parameters);
-                    channel.sendMessage(parameters + " has been set as " + guild.getName() + "'s Game Channel.").queue();
+                    dbMan.setEventChannel(guildID, parameters);
+                    channel.sendMessage(parameters + " has been set as " + guild.getName() + "'s Event Channel.").queue();
                 } catch (SQLException e) {
-                    channel.sendMessage("Unhandled booboo, contact Mistress").queue();
+                    channel.sendMessage("Unhandled booboobooo, contact Abby").queue();
                 }
             }
 
@@ -58,6 +52,6 @@ public class SetGameChannelCS extends CommandStructure{
 
     @Override
     public String help(Long guildID) {
-        return "Set a game channel for server. This need to be set before any games can run.";
+        return "Set Event Channel";
     }
 }

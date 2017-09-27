@@ -71,8 +71,10 @@ public class EventListener extends ListenerAdapter {
 	public EventListener(DatabaseManager dbMan, String botAdmin) {
 		selfStart(dbMan, botAdmin);
 	}
-	
-	private void selfStart(DatabaseManager dbMan, String botAdmin)
+
+    private Integer commandID = null;
+
+    private void selfStart(DatabaseManager dbMan, String botAdmin)
 	{
 		this.dbMan = dbMan;
 		this.botAdmin = botAdmin;
@@ -81,22 +83,21 @@ public class EventListener extends ListenerAdapter {
 	
 	private void setupCommandList(ApplicationInfo info) 
 	{
-		//TODO I think this could be improved fair better. 
 		botOwner = info.getOwner();
 		container.dbMan = dbMan;
 		container.botAdmin = botAdmin;
 		container.botOwner = botOwner;
 		container.ww = new Werewolf(dbMan, info.getJDA().getSelfUser());
-		//TODO HERE ABBY
-		//HTMLParse.get_instance().CalenderStart(dbMan.getEventChannel());
 
-        String name = "set-prefix";
+        //HTMLParse.get_instance().CalenderStart();
+
+        String name = "set_prefix";
         cmdList.put(name, new SetPrefixCS(container, name, 1, 1));
 
-        name = "set-level-for-user";
+        name = "set_level_for_user";
         cmdList.put(name, new SetPermissionByUserCS(container, name, 2, 1));
 
-        name = "set-command-level";
+        name = "set_command_level";
         cmdList.put(name, new SetCommandLevelCS(container, name, 3, 1));
 		
 		name = "profile";
@@ -105,7 +106,7 @@ public class EventListener extends ListenerAdapter {
 		name = "preload";
 		cmdList.put(name, new PreloadCS(container, name, 5, 1));
 
-        name = "set-level-for-role";
+        name = "set_level_for_role";
         cmdList.put(name, new SetPermissionsByRoleCS(container, name, 6, 1));
 		
 		name = "help";
@@ -114,28 +115,28 @@ public class EventListener extends ListenerAdapter {
 		name = "iam";
 		cmdList.put(name, new SelfRolesCS(container, name, 8, 999));
 
-        name = "self-assign-role";
+        name = "self_assign_role";
         cmdList.put(name, new SetSelfRoleCS(container, name, 9, 1));
 
-        name = "list-self-roles";
+        name = "list_self_roles";
         cmdList.put(name, new ListSelfRolesCS(container, name, 10, 999));
 
-        name = "remove-self-assign-role";
+        name = "remove_self_assign_role";
         cmdList.put(name, new RemoveSelfRoleCS(container, name, 11, 1));
 
-        name = "set-self-assign-group";
+        name = "set_self_assign_group";
         cmdList.put(name, new SetSelfRoleGroupCS(container, name, 12, 1));
 
-        name = "toggle-group-exclusive";
+        name = "toggle_group_exclusive";
         cmdList.put(name, new SetSelfRoleGroupExculsive(container, name, 13, 1));
 
-        name = "remove-self-assign-group";
+        name = "remove_self_assign_group";
         cmdList.put(name, new RemoveSelfRoleGroup(container, name, 14, 999));
 
 		name = "join";
 		cmdList.put(name, new WerewolfJoinCS(container, name, 15, 999));
 
-        name = "start-ww";
+        name = "start_ww";
         cmdList.put(name, new WerewolfStartCS(container, name, 16, 999));
 
 		name = "kill";
@@ -144,16 +145,16 @@ public class EventListener extends ListenerAdapter {
 		name = "vote";
 		cmdList.put(name, new WerewolfVoteCS(container, name, 18, 999));
 
-        name = "toggle-werewolf";
+        name = "toggle_werewolf";
         cmdList.put(name, new SetWerewolfOnOffCS(container, name, 20, 1));
 
-        name = "set-game-channel";
+        name = "set_game_channel";
         cmdList.put(name, new SetGameChannelCS(container, name, 21, 1));
 
         name = "alive";
         cmdList.put(name, new WerewolfAliveCS(container, name, 22, 1));
 
-        name = "kick-player";
+        name = "kick_player";
         cmdList.put(name, new WerewolfKickPlayerCS(container, name, 23, 1));
 
         name = "flee";
@@ -162,10 +163,10 @@ public class EventListener extends ListenerAdapter {
         name = "theme";
         cmdList.put(name, new WerewolfThemeDetailCS(container, name, 25, 999));
 
-        name = "list-theme";
+        name = "list_theme";
         cmdList.put(name, new WerewolfListThemeCS(container, name, 26, 999));
 
-        name = "stop-ww";
+        name = "stop_ww";
         cmdList.put(name, new WerewolfStopCS(container, name, 27, 1));
 
         name = "unflip";
@@ -176,6 +177,12 @@ public class EventListener extends ListenerAdapter {
 
         name = "toggle_delete";
         cmdList.put(name, new DeleteCommandCS(container, name, 30, 1));
+
+        name = "toggle_event";
+        cmdList.put(name, new ToggleEventCS(container, name, 31, 1));
+
+        name = "set_event";
+        cmdList.put(name, new SetEventChannel(container, name, 32, 1));
 
 		//********* PrivateMessage Commands *********//
 		name = "see";

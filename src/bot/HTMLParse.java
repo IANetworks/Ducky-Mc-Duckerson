@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 public class HTMLParse
 {
     public static HTMLParse _instance;
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(5);
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private Document doc;
     String[] months = new String[12];
 

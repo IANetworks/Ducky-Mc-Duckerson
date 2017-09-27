@@ -18,6 +18,8 @@ public class GuildSetting {
      * The Is stored.
      */
     public boolean isStored = false;
+    private Boolean eventOn = false;
+    private String eventChannel = null;
 
     /**
      * Is ww on boolean.
@@ -187,5 +189,21 @@ public class GuildSetting {
 
     public Boolean getDeleteCommand() {
         return deleteCommand;
+    }
+
+    public void setEventChannel(String eventChannel) {
+        this.eventChannel = eventChannel;
+    }
+
+    public void setEventOn(Boolean eventOn) {
+        this.eventOn = eventOn;
+    }
+
+    public String getEventChannel() {
+        return eventChannel;
+    }
+
+    public Boolean isEventOn() {
+        return eventOn;
     }
 }

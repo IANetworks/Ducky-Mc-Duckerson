@@ -70,6 +70,8 @@ public class DatabaseManager {
 				guildSetting.setWWOn(rs.getBoolean("werewolf_on"));
 				guildSetting.setGameChannel(rs.getString("game_channel"));
                 guildSetting.setDeleteCommand(rs.getBoolean("delete_command"));
+                guildSetting.setEventOn(rs.getBoolean("event_on"));
+                guildSetting.setEventChannel(rs.getString("event_channel"));
                 guildSetting.isStored = true;
 				
 				listGuildSettings.put(guildSetting.getGuildId(), guildSetting);
@@ -657,6 +659,10 @@ public class DatabaseManager {
 		return getGuildValues(guildID).isWWOn();
 	}
 
+    public Boolean isEventOn(Long guildID) {
+        return getGuildValues(guildID).isEventOn();
+    }
+
     /**
      * Gets game channel.
      *
@@ -666,6 +672,14 @@ public class DatabaseManager {
     public String getGameChannel(Long guildID) {
 		return getGuildValues(guildID).getgameChannel();
 	}
+
+    public Boolean getEventOn(Long guildID) {
+        return getGuildValues(guildID).isEventOn();
+    }
+
+    public String getEventChannel(Long guildID) {
+        return getGuildValues(guildID).getEventChannel();
+    }
 
     /**
      * Is stored boolean.
@@ -1025,6 +1039,83 @@ public class DatabaseManager {
 			listGuildSettings.put(guildID, guildSetting);
 		}
 	}
+
+    /**
+     * Sets event channel.
+     *
+     * @param eventChannel the logging channel
+     * @param guildID      the guild id
+     * @throws SQLException the sql exception
+     */
+    public void setEventChannel(Long guildID, String eventChannel) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM variables WHERE guild_id = ?";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setLong(1, guildID);
+        ResultSet rs = pstmt.executeQuery();
+        Integer rowCount = 0;
+
+        while (rs.next()) rowCount = rs.getInt(1);
+        if (rowCount > 0) {
+            sql = "UPDATE variables SET event_channel = ? WHERE guild_id = ?";
+        } else {
+            sql = "INSERT INTO variables (event_channel, guild_id) VALUES (?, ?)";
+        }
+
+        pstmt = conn.prepareStatement(sql);
+        pstmt.setString(1, eventChannel);
+        pstmt.setLong(2, guildID);
+
+        pstmt.execute();
+        //Check List
+        if (listGuildSettings.containsKey(guildID)) {
+            //if it does, fetch guildSetting from list, update values and store
+            listGuildSettings.get(guildID).setEventChannel(eventChannel);
+        } else {
+            //If it doesn't exist, create new guildSetting for guildID, set value, update
+            GuildSetting guildSetting = new GuildSetting();
+            guildSetting.setEventChannel(eventChannel);
+            listGuildSettings.put(guildID, guildSetting);
+        }
+    }
+
+    /**
+     * Sets greet on.
+     *
+     * @param eventOn the greet on
+     * @param guildID the guild id
+     * @throws SQLException the sql exception
+     */
+    public void setEventOn(Long guildID, Boolean eventOn) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM variables WHERE guild_id = ?";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setLong(1, guildID);
+        ResultSet rs = pstmt.executeQuery();
+        Integer rowCount = 0;
+
+        while (rs.next()) rowCount = rs.getInt(1);
+        if (rowCount > 0) {
+            sql = "UPDATE variables SET event_on = ? WHERE guild_id = ?";
+        } else {
+            sql = "INSERT INTO variables (event_on, guild_id) VALUES (?, ?)";
+        }
+
+        pstmt = conn.prepareStatement(sql);
+        pstmt.setLong(2, guildID);
+        pstmt.setBoolean(1, eventOn);
+
+        pstmt.execute();
+
+        //Check List
+        if (listGuildSettings.containsKey(guildID)) {
+            //if it does, fetch guildSetting from list, update values and store
+            listGuildSettings.get(guildID).setEventOn(eventOn);
+        } else {
+            //If it doesn't exist, create new guildSetting for guildID, set value, update
+            GuildSetting guildSetting = new GuildSetting();
+            guildSetting.setEventOn(eventOn);
+            listGuildSettings.put(guildID, guildSetting);
+        }
+    }
 
     /**
      * Sets greet on.
