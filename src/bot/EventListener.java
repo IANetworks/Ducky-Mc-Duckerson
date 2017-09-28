@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.function.Consumer;
 
 import bot.CommandStructure.*;
@@ -309,7 +310,8 @@ public class EventListener extends ListenerAdapter {
 				}
 			} else {
 				//No prefix found, we'll look for table flip/unflip and inc counts for that user
-				if(msg.contains("(╯°□°）╯︵ ┻━┻"))
+                //Commands are ignored for currency checks
+                if(msg.contains("(╯°□°）╯︵ ┻━┻"))
 				{
 					try {
 						dbMan.incUserFlipped(guildID, userID);
@@ -330,6 +332,16 @@ public class EventListener extends ListenerAdapter {
                     if (!container.ww.getWerewolfGameState(guildID).equals(GameState.IDLE)) {
                         container.ww.dyingVoice(guildID, author);
                     }
+                }
+
+                try {
+                    if (dbMan.isCooldownOver(guildID, userID)) {
+                        Random newRandom = new Random();
+                        Integer gained = newRandom.nextInt((40 - 10) + 1) + 10; //10 to 40
+                        dbMan.addUserBalance(guildID, userID, gained.longValue());
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
             }
 		}

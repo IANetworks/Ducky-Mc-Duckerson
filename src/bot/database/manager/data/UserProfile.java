@@ -1,5 +1,7 @@
 package bot.database.manager.data;
 
+import java.sql.Timestamp;
+
 /**
  * The type User profile.
  */
@@ -47,6 +49,10 @@ public class UserProfile {
      */
     private Long rankExp;
 
+    /**
+     * Cooldown for when the user next gain currency
+     */
+    private Timestamp cooldown;
 
     /**
      * Gets rank name.
@@ -200,5 +206,13 @@ public class UserProfile {
 
     public void setRankExp(Long rankExp) {
         this.rankExp = rankExp;
+    }
+
+    public Timestamp getCooldown() {
+        return cooldown;
+    }
+
+    public void setCooldown(Timestamp cooldown) {
+        this.cooldown = cooldown;
     }
 }

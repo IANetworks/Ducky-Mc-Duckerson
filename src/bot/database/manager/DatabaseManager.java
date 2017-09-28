@@ -1,10 +1,6 @@
 package bot.database.manager;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -212,26 +208,75 @@ public class DatabaseManager {
             up.setWerewolfGames(rs.getLong("werewolf_games"));
             up.setRankName(rs.getString("rank_name"));
             up.setRankExp(rs.getLong("rank_exp"));
+            up.setCooldown(rs.getTimestamp("cooldown"));
             rowCount++;
 		}
 		
 		if(rowCount == 0)
 		{
-			setUserProfile(guildID, userID);
-			return getUserProfile(guildID, userID);
+            newUserProfile(guildID, userID);
+            return getUserProfile(guildID, userID);
 		}
 		
 		return up;
 	}
-	
-	private void setUserProfile(Long guildID, Long userID) throws SQLException {
-		String sql = "INSERT INTO user_profile (user_id, guild_id) VALUES (?, ?)";
-		PreparedStatement pstmt = conn.prepareStatement(sql);
-		pstmt.setLong(1, userID);
+
+    public Boolean isCooldownOver(Long guildID, Long userID) throws SQLException {
+        String sql = "SELECT cooldown FROM user_profile WHERE user_id = ? AND guild_id = ? ";
+        PreparedStatement prstmt = this.conn.prepareStatement(sql);
+        prstmt.setLong(1, userID);
+        prstmt.setLong(2, guildID);
+        ResultSet rs = prstmt.executeQuery();
+        Timestamp ts = null;
+        Integer rowCount = 0;
+        while (rs.next()) {
+            ts = rs.getTimestamp("cooldown");
+            rowCount++;
+        }
+
+        if (rowCount == 0) {
+            newUserProfile(guildID, userID);
+            return true;
+        } else if (rowCount == 1) {
+            Timestamp now = new Timestamp(System.currentTimeMillis());
+            if (now.after(ts)) {
+                setNextCooldown(guildID, userID);
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            //Error
+            return null;
+        }
+    }
+
+    private void setNextCooldown(Long guildID, Long userID) throws SQLException {
+        String sql = "UPDATE user_profile SET cooldown = ? WHERE guild_id = ? AND user_id = ?";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setTimestamp(1, returnNextCooldown());
+        pstmt.setLong(2, guildID);
+        pstmt.setLong(3, userID);
+        pstmt.execute();
+    }
+
+    private void newUserProfile(Long guildID, Long userID) throws SQLException {
+        String sql = "INSERT INTO user_profile (user_id, guild_id, cooldown) VALUES (?, ?, ?)";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        Timestamp nextCooldown = returnNextCooldown();
+        pstmt.setLong(1, userID);
 		pstmt.setLong(2, guildID);
-		pstmt.execute();
+        pstmt.setTimestamp(3, nextCooldown);
+        pstmt.execute();
 		
 	}
+
+    private Timestamp returnNextCooldown() {
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        Long tmpTime = now.getTime();
+        Long tmpDelay = 60000L; //One Minute
+        return new Timestamp(tmpTime + tmpDelay);
+    }
 
     /**
      * Inc user flipped.
@@ -246,7 +291,7 @@ public class DatabaseManager {
 		Long newFlipTotal = up.getFlipped();
 		newFlipTotal++;
 
-        String sql = "UPDATE user_profile SET flipped = ? WHERE guild_id = ? AND user_id = ?"; //TODO I'm sure there's a SQL query that can inc the count for us. (question is, does sqlite3 has this function?)
+        String sql = "UPDATE user_profile SET flipped = ? WHERE guild_id = ? AND user_id = ?";
         PreparedStatement pstmt = conn.prepareStatement(sql);
         pstmt.setLong(1, newFlipTotal);
 		pstmt.setLong(2, guildID);
