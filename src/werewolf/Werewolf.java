@@ -1447,6 +1447,7 @@ public class Werewolf {
 
             for (Player thisPlayer : gamesPlayerLists.get(guildID).getPlayerList()) {
                 try {
+                    dbMan.incWerewolfGames(guildID, thisPlayer.getUserID());
                     if (thisPlayer.getPlayerState() != PlayerState.FLED) {
                         dbMan.addUserExp(guildID, thisPlayer.getUserID(), 1L);
                     }
@@ -1460,6 +1461,7 @@ public class Werewolf {
                         case VILL:
                             if (winner == Role.VILL) {
                                 point = point + 10L;
+                                dbMan.incWerewolfWins(guildID, thisPlayer.getUserID());
                                 if (thisPlayer.getPlayerState() == PlayerState.ALIVE) {
                                     point = point + 10L;
                                 }
@@ -1469,6 +1471,7 @@ public class Werewolf {
                         case WOLF:
                             if (winner == Role.WOLF) {
                                 point = point + 10L;
+                                dbMan.incWerewolfWins(guildID, thisPlayer.getUserID());
                                 if (thisPlayer.getPlayerState() == PlayerState.ALIVE) {
                                     point = point + 10L;
                                 }
@@ -1478,6 +1481,7 @@ public class Werewolf {
                         case SEER:
                             if (winner == Role.VILL) {
                                 point = point + 10L;
+                                dbMan.incWerewolfWins(guildID, thisPlayer.getUserID());
                                 if (thisPlayer.getPlayerState() == PlayerState.ALIVE) {
                                     point = point + 10L;
                                 }
@@ -1487,6 +1491,7 @@ public class Werewolf {
                         case MASON:
                             if (winner == Role.VILL) {
                                 point = point + 10L;
+                                dbMan.incWerewolfWins(guildID, thisPlayer.getUserID());
                                 if (thisPlayer.getPlayerState() == PlayerState.ALIVE) {
                                     point = point + 10L;
                                 }

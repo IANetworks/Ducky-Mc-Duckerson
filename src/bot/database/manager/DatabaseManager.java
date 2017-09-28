@@ -194,8 +194,8 @@ public class DatabaseManager {
     public UserProfile getUserProfile(Long guildID, Long userID) throws SQLException
 	{
 		UserProfile up = new UserProfile();
-		String sql = "SELECT * FROM user_profile WHERE user_id = ? AND guild_id = ?"; 
-		PreparedStatement prstmt = this.conn.prepareStatement(sql);
+        String sql = "SELECT * FROM user_profile INNER JOIN rank_titles ON user_profile.rank = rank_titles.rank WHERE user_id = ? AND guild_id = ? ";
+        PreparedStatement prstmt = this.conn.prepareStatement(sql);
 		prstmt.setLong(1, userID);
 		prstmt.setLong(2, guildID);
 		ResultSet rs = prstmt.executeQuery();
@@ -204,11 +204,15 @@ public class DatabaseManager {
 		{
 			up.setBalance(rs.getLong("balance"));
 			up.setPoints(rs.getLong("points"));
-			up.setRank(rs.getInt("rank")); //TODO fetch Rank name from database use sql query JOIN
-			up.setFlipped(rs.getLong("flipped"));
+            up.setRank(rs.getInt("rank"));
+            up.setFlipped(rs.getLong("flipped"));
 			up.setUnflipped(rs.getLong("unflipped"));
 			up.setLevel(rs.getLong("level"));
-			rowCount++;
+            up.setWerewolfWins(rs.getLong("werewolf_wins"));
+            up.setWerewolfGames(rs.getLong("werewolf_games"));
+            up.setRankName(rs.getString("rank_name"));
+            up.setRankExp(rs.getLong("rank_exp"));
+            rowCount++;
 		}
 		
 		if(rowCount == 0)
@@ -354,6 +358,63 @@ public class DatabaseManager {
 		pstmt.setLong(3, userID);
 		pstmt.execute();
 	}
+
+    /**
+     * Add Werewolf Wins points.
+     *
+     * @param guildID the guild id
+     * @param userID  the user id
+     * @param value   the value
+     * @throws SQLException the sql exception
+     */
+    public void addWerewolfWins(Long guildID, Long userID, Long value) throws SQLException {
+        UserProfile up = getUserProfile(guildID, userID);
+        Long newTotal = up.getWerewolfWins() + value;
+
+        String sql = "UPDATE user_profile SET werewolf_win = ? WHERE guild_id = ? AND user_id = ?";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setLong(1, newTotal);
+        pstmt.setLong(2, guildID);
+        pstmt.setLong(3, userID);
+        pstmt.execute();
+    }
+
+    /**
+     * @param guildID
+     * @param userID
+     * @throws SQLException
+     */
+
+    public void incWerewolfWins(Long guildID, Long userID) throws SQLException {
+        UserProfile up = getUserProfile(guildID, userID);
+        Long newTotal = up.getWerewolfWins();
+        newTotal++;
+
+        String sql = "UPDATE user_profile SET werewolf_wins = ? WHERE guild_id = ? AND user_id = ?";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setLong(1, newTotal);
+        pstmt.setLong(2, guildID);
+        pstmt.setLong(3, userID);
+        pstmt.execute();
+    }
+
+    /**
+     * @param guildID
+     * @param userID
+     * @throws SQLException
+     */
+    public void incWerewolfGames(Long guildID, Long userID) throws SQLException {
+        UserProfile up = getUserProfile(guildID, userID);
+        Long newTotal = up.getWerewolfGames();
+        newTotal++;
+
+        String sql = "UPDATE user_profile SET werewolf_games = ? WHERE guild_id = ? AND user_id = ?";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setLong(1, newTotal);
+        pstmt.setLong(2, guildID);
+        pstmt.setLong(3, userID);
+        pstmt.execute();
+    }
 
     /**
      * Rem user rank.

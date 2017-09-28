@@ -77,13 +77,16 @@ public class ProfileCS extends CommandStructure {
 		
 			embed.setColor(color);
 			embed.setAuthor("Profile of " + member.getEffectiveName(), null, member.getUser().getAvatarUrl());
-            embed.addField("Experience", up.getLevel().toString(), true);
-            embed.addField("Rank:", up.getRank().toString(), true);
+            embed.addField("Rank:", up.getRankName(), false);
+            embed.addField("Experiences:", up.getLevel().toString(), true);
+            embed.addField("Experiences Needed:", up.getRankExp().toString(), true);
             embed.addField("Points:", up.getPoints().toString(), true);
 			embed.addField("Gold:" , up.getBalance().toString() + " :moneybag:", true);
 			embed.addField("Table Flipped:", up.getFlipped().toString(), true);
 			embed.addField("Table Unflipped:", up.getUnflipped().toString(), true);
-			embed.setFooter("To see your profile, use " + prefix + "profile", null);
+            embed.addField("Werewolf Games:", up.getWerewolfGames().toString(), true);
+            embed.addField("Werewolf Wins:", up.getWerewolfWins().toString(), true);
+            embed.setFooter("To see your profile, use " + prefix + "profile", null);
 		
 			embed.setThumbnail(member.getUser().getAvatarUrl());
 			embed.setDescription(userLevelName);

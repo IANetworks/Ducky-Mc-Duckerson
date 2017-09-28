@@ -262,7 +262,8 @@ public class EventListener extends ListenerAdapter {
 	public void onGuildMessageReceived(GuildMessageReceivedEvent event)
 	{
 		Member author = event.getMember(); //User who sent message, member of guild
-		Long userID = author.getUser().getIdLong();
+        if (author == null) return; //We ignore messages without any authors, most likely from webhooks
+        Long userID = author.getUser().getIdLong();
 		MessageChannel channel = event.getChannel();
 		Message message = event.getMessage(); //Message recieved
 		String msg = message.getContent(); // String readable content of message

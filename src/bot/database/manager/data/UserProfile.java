@@ -8,31 +8,45 @@ public class UserProfile {
     /**
      * The Balance.
      */
-    Long balance;
+    private Long balance;
     /**
      * The Points.
      */
-    Long points;
+    private Long points;
     /**
      * The Flipped.
      */
-    Long flipped;
+    private Long flipped;
     /**
      * The Unflipped.
      */
-    Long unflipped;
+    private Long unflipped;
     /**
      * The Level.
      */
-    Long level;
+    private Long level;
     /**
      * The Rank.
      */
-    Integer rank;
+    private Integer rank;
     /**
      * The Rank name.
      */
-    String rankName;
+    private String rankName;
+    /**
+     * Number of Wins in a game of Werewolf
+     */
+    private Long werewolfWins;
+    /**
+     * Number of werewolf games played
+     */
+    private Long werewolfGames;
+
+    /**
+     * Experience needed to rank up
+     */
+    private Long rankExp;
+
 
     /**
      * Gets rank name.
@@ -164,4 +178,27 @@ public class UserProfile {
 		this.rank = rank;
 	}
 
+    public Long getWerewolfWins() {
+        return werewolfWins;
+    }
+
+    public void setWerewolfWins(long werewolfWins) {
+        this.werewolfWins = werewolfWins;
+    }
+
+    public Long getWerewolfGames() {
+        return werewolfGames;
+    }
+
+    public void setWerewolfGames(Long werewolfGames) {
+        this.werewolfGames = werewolfGames;
+    }
+
+    public Long getRankExp() {
+        return rankExp;
+    }
+
+    public void setRankExp(Long rankExp) {
+        this.rankExp = rankExp;
+    }
 }
