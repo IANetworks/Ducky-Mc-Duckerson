@@ -77,9 +77,9 @@ public class ProfileCS extends CommandStructure {
 		
 			embed.setColor(color);
 			embed.setAuthor("Profile of " + member.getEffectiveName(), null, member.getUser().getAvatarUrl());
-			embed.addField("Rank:", up.getRank().toString(), true);
-			embed.addField("Level:", up.getLevel().toString(), true);
-			embed.addField("Points:", up.getPoints().toString(), true);
+            embed.addField("Experience", up.getLevel().toString(), true);
+            embed.addField("Rank:", up.getRank().toString(), true);
+            embed.addField("Points:", up.getPoints().toString(), true);
 			embed.addField("Gold:" , up.getBalance().toString() + " :moneybag:", true);
 			embed.addField("Table Flipped:", up.getFlipped().toString(), true);
 			embed.addField("Table Unflipped:", up.getUnflipped().toString(), true);

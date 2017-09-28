@@ -1412,22 +1412,15 @@ public class Werewolf {
         int villCount = gamesPlayerLists.get(guildID).getNumberOfPlayerByRolePlayerState(Role.VILL, PlayerState.ALIVE);
         int humanCount = seerCount + villCount + masonCount;
 
-        List<Player> winnerAliveList = null;
-        List<Player> allWinner = null;
+        //Role winner
+        Role winner = null;
 
         boolean win = false;
         if (wolfCount == 0 && humanCount != 0) {
             EmbedBuilder thisEmbed = getTheme("VILL_WIN", MessType.NARRATION, guildID);
             getTownChannel(guildID).sendMessage(getTheme("CONGR_VILL", MessType.GAME, guildID, null, null, null, thisEmbed).build()).queue();
+            winner = Role.VILL;
             win = true;
-
-            winnerAliveList = gamesPlayerLists.get(guildID).getPlayerListByRolePlayerState(Role.SEER, PlayerState.ALIVE);
-            winnerAliveList.addAll(gamesPlayerLists.get(guildID).getPlayerListByRolePlayerState(Role.MASON, PlayerState.ALIVE));
-            winnerAliveList.addAll(gamesPlayerLists.get(guildID).getPlayerListByRolePlayerState(Role.VILL, PlayerState.ALIVE));
-
-            allWinner = gamesPlayerLists.get(guildID).getPlayerListByRole(Role.SEER);
-            allWinner.addAll(gamesPlayerLists.get(guildID).getPlayerListByRole(Role.MASON));
-            allWinner.addAll(gamesPlayerLists.get(guildID).getPlayerListByRole(Role.VILL));
         }
 
         if (wolfCount >= humanCount && wolfCount != 0) {
@@ -1439,34 +1432,75 @@ public class Werewolf {
                 EmbedBuilder thisEmbed = getTheme("WOLVES_WIN", MessType.NARRATION, guildID);
                 getTownChannel(guildID).sendMessage(getTheme("CONGR_WOLVES", MessType.GAME, guildID, null, null, null, thisEmbed).build()).queue();
             }
-            winnerAliveList = gamesPlayerLists.get(guildID).getPlayerListByRolePlayerState(Role.WOLF, PlayerState.ALIVE);
-            allWinner = gamesPlayerLists.get(guildID).getPlayerListByRole(Role.WOLF);
+            winner = Role.WOLF;
             win = true;
         }
 
         if (wolfCount == 0 && humanCount == 0) {
             getTownChannel(guildID).sendMessage(getTheme("TIE_GAME", MessType.GAME, guildID).build()).queue();
+            winner = Role.NOROLE; //Using NOROLE to denote a tie
             win = true;
         }
 
         if (win) {
             showRoles(guildID);
-            stopGame(guildID);
 
-            for (Player thisPlayer : allWinner) {
+            for (Player thisPlayer : gamesPlayerLists.get(guildID).getPlayerList()) {
                 try {
-                    dbMan.addUserPoints(guildID, thisPlayer.getUserID(), 10L); //10 points for winning
+                    if (thisPlayer.getPlayerState() != PlayerState.FLED) {
+                        dbMan.addUserExp(guildID, thisPlayer.getUserID(), 1L);
+                    }
+                    //players only get exp if they have not fled but they may get points for being on the winning team
+                    Long point = 0L;
+                    switch (thisPlayer.getRole()) {
+                        case ERR:
+                            break;
+                        case NOROLE:
+                            break;
+                        case VILL:
+                            if (winner == Role.VILL) {
+                                point = point + 10L;
+                                if (thisPlayer.getPlayerState() == PlayerState.ALIVE) {
+                                    point = point + 10L;
+                                }
+                                dbMan.addUserPoints(guildID, thisPlayer.getUserID(), point);
+                            }
+                            break;
+                        case WOLF:
+                            if (winner == Role.WOLF) {
+                                point = point + 10L;
+                                if (thisPlayer.getPlayerState() == PlayerState.ALIVE) {
+                                    point = point + 10L;
+                                }
+                                dbMan.addUserPoints(guildID, thisPlayer.getUserID(), point);
+                            }
+                            break;
+                        case SEER:
+                            if (winner == Role.VILL) {
+                                point = point + 10L;
+                                if (thisPlayer.getPlayerState() == PlayerState.ALIVE) {
+                                    point = point + 10L;
+                                }
+                                dbMan.addUserPoints(guildID, thisPlayer.getUserID(), point);
+                            }
+                            break;
+                        case MASON:
+                            if (winner == Role.VILL) {
+                                point = point + 10L;
+                                if (thisPlayer.getPlayerState() == PlayerState.ALIVE) {
+                                    point = point + 10L;
+                                }
+                                dbMan.addUserPoints(guildID, thisPlayer.getUserID(), point);
+                            }
+                            break;
+                        case NOLYNCH:
+                            break;
+                    }
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-            }
 
-            for (Player thisPlayer : winnerAliveList) {
-                try {
-                    dbMan.addUserPoints(guildID, thisPlayer.getUserID(), 10L); //10 extra points for staying alive
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                stopGame(guildID);
             }
         }
 

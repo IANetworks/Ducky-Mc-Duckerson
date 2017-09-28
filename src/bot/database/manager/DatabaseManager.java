@@ -300,8 +300,7 @@ public class DatabaseManager {
      * @param value   the value
      * @throws SQLException the sql exception
      */
-    public void addUserLevel(Long guildID, Long userID, Long value) throws SQLException
-	{
+    public void addUserExp(Long guildID, Long userID, Long value) throws SQLException {
 		UserProfile up = getUserProfile(guildID, userID);
 		Long newTotal = up.getLevel() + value;
 		
@@ -311,7 +310,8 @@ public class DatabaseManager {
 		pstmt.setLong(2, guildID);
 		pstmt.setLong(3, userID);
 		pstmt.execute();
-	}
+        //TODO Check experience amount and if it reach a certain amount, add 1 to Rank, remove rank amount of exp, check again to make sure user hasn't ranked up more than one rank
+    }
 
     /**
      * Add user balance.
