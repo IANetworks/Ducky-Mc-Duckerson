@@ -185,6 +185,9 @@ public class EventListener extends ListenerAdapter {
         name = "set_event";
         cmdList.put(name, new SetEventChannel(container, name, 32, 1));
 
+        name = "buy";
+        cmdList.put(name, new StoreCS(container, name, 33, 999));
+
 		//********* PrivateMessage Commands *********//
 		name = "see";
 		privCmdList.put(name, new WerewolfSeeCS(container, name, 19, 999));

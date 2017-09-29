@@ -1,11 +1,7 @@
 package bot.database.manager;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import bot.database.manager.data.GuildSetting;
 import bot.database.manager.data.Permissions;
@@ -190,7 +186,7 @@ public class DatabaseManager {
     public UserProfile getUserProfile(Long guildID, Long userID) throws SQLException
 	{
 		UserProfile up = new UserProfile();
-        String sql = "SELECT * FROM user_profile INNER JOIN rank_titles ON user_profile.rank = rank_titles.rank WHERE user_id = ? AND guild_id = ? ";
+        String sql = "SELECT * FROM user_profile LEFT JOIN rank_titles ON user_profile.rank = rank_titles.rank WHERE user_id = ? AND guild_id = ? ";
         PreparedStatement prstmt = this.conn.prepareStatement(sql);
 		prstmt.setLong(1, userID);
 		prstmt.setLong(2, guildID);
@@ -208,6 +204,9 @@ public class DatabaseManager {
             up.setWerewolfGames(rs.getLong("werewolf_games"));
             up.setRankName(rs.getString("rank_name"));
             up.setRankExp(rs.getLong("rank_exp"));
+            if (rs.wasNull()) {
+                up.setRankExp(null);
+            }
             up.setCooldown(rs.getTimestamp("cooldown"));
             rowCount++;
 		}
@@ -327,18 +326,34 @@ public class DatabaseManager {
      * @param userID  the user id
      * @param value   the value
      * @throws SQLException the sql exception
+     * @return new expereince required to level up
      */
-    public void addUserRank(Long guildID, Long userID, Integer value) throws SQLException
-	{
+    public RankUp addUserRank(Long guildID, Long userID, Integer value) throws SQLException {
 		UserProfile up = getUserProfile(guildID, userID);
-		Integer newTotal = up.getRank() + value;
-		
-		String sql = "UPDATE user_profile SET rank = ? WHERE guild_id = ? AND user_id = ?";
+        RankUp newRank = new RankUp();
+        Integer newTotal = up.getRank() + value;
+
+        String sql = "UPDATE user_profile SET rank = ? WHERE guild_id = ? AND user_id = ?";
 		PreparedStatement pstmt = conn.prepareStatement(sql);
 		pstmt.setInt(1, newTotal);
 		pstmt.setLong(2, guildID);
 		pstmt.setLong(3, userID);
 		pstmt.execute();
+
+        sql = "SELECT * FROM rank_titles WHERE rank = ?";
+        pstmt = conn.prepareStatement(sql);
+        pstmt.setInt(1, newTotal);
+        ResultSet rs = pstmt.executeQuery();
+        while (rs.next()) {
+            newRank.rank = newTotal;
+            newRank.expRequired = rs.getLong("rank_exp");
+            if (rs.wasNull())
+                newRank.expRequired = null;
+            newRank.rankName = rs.getString("rank_name");
+        }
+
+        return newRank;
+
 	}
 
     /**
@@ -349,17 +364,29 @@ public class DatabaseManager {
      * @param value   the value
      * @throws SQLException the sql exception
      */
-    public void addUserExp(Long guildID, Long userID, Long value) throws SQLException {
-		UserProfile up = getUserProfile(guildID, userID);
+    public LinkedList<RankUp> addUserExp(Long guildID, Long userID, Long value) throws SQLException {
+        UserProfile up = getUserProfile(guildID, userID);
 		Long newTotal = up.getLevel() + value;
-		
-		String sql = "UPDATE user_profile SET level = ? WHERE guild_id = ? AND user_id = ?";
+        Long expNeeded = up.getRankExp();
+        LinkedList<RankUp> newRanks = new LinkedList<RankUp>();
+
+        while (newTotal >= expNeeded) {
+            newTotal = newTotal - expNeeded;
+            RankUp newRank = addUserRank(guildID, userID, 1);
+            expNeeded = newRank.expRequired;
+            newRanks.add(newRank);
+            if (newRank.expRequired == null) //Max rank, no more rank can be obstained
+                break;
+        }
+
+        String sql = "UPDATE user_profile SET level = ? WHERE guild_id = ? AND user_id = ?";
 		PreparedStatement pstmt = conn.prepareStatement(sql);
 		pstmt.setLong(1, newTotal);
 		pstmt.setLong(2, guildID);
 		pstmt.setLong(3, userID);
 		pstmt.execute();
-        //TODO Check experience amount and if it reach a certain amount, add 1 to Rank, remove rank amount of exp, check again to make sure user hasn't ranked up more than one rank
+
+        return newRanks;
     }
 
     /**

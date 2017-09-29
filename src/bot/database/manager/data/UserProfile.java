@@ -60,7 +60,9 @@ public class UserProfile {
      * @return the rank name
      */
     public String getRankName() {
-		return rankName;
+        if (rankName == null)
+            return "**This Rank is Not Defined**";
+        return rankName;
 	}
 
     /**

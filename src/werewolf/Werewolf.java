@@ -1,17 +1,20 @@
 package werewolf;
 
+import bot.database.manager.RankUp;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.managers.PermOverrideManagerUpdatable;
 import net.dv8tion.jda.core.requests.restaction.PermissionOverrideAction;
 import werewolf.data.*;
 
+import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -1449,7 +1452,25 @@ public class Werewolf {
                 try {
                     dbMan.incWerewolfGames(guildID, thisPlayer.getUserID());
                     if (thisPlayer.getPlayerState() != PlayerState.FLED) {
-                        dbMan.addUserExp(guildID, thisPlayer.getUserID(), 1L);
+                        LinkedList<RankUp> rankUps = dbMan.addUserExp(guildID, thisPlayer.getUserID(), 1L);
+
+                        if (!rankUps.isEmpty()) {
+                            for (RankUp newRank : rankUps) {
+                                //TODO refactor
+                                EmbedBuilder newEmbed = new EmbedBuilder();
+                                Color color = new Color(50, 255, 50);
+                                newEmbed.setColor(color);
+                                newEmbed.setAuthor(thisPlayer.getMember().getEffectiveName(), null, thisPlayer.getMember().getUser().getAvatarUrl());
+                                newEmbed.setTitle("\uD83D\uDD3C RANK UP \uD83D\uDD3C");
+                                if (newRank.expRequired != null) {
+                                    newEmbed.setFooter("They need " + newRank.expRequired + " to rank reach the next rank", null);
+                                } else {
+                                    newEmbed.setFooter("Reached max rank defined. Way to go!", null);
+                                }
+                                newEmbed.setDescription(thisPlayer.getMember().getEffectiveName() + " has ranked up to " + newRank.rankName);
+                                getGameChannel(guildID).sendMessage(newEmbed.build()).queue();
+                            }
+                        }
                     }
                     //players only get exp if they have not fled but they may get points for being on the winning team
                     Long point = 0L;

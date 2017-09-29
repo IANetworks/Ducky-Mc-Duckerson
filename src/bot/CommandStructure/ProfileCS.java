@@ -46,8 +46,8 @@ public class ProfileCS extends CommandStructure {
 			{
 				Integer userLevel = getPermissionLevel(author);
 				String userLevelName = dbMan.getLevelName(guildID, userLevel);
-				Color color = new Color(255, 40, 40);
-				sendProfile(author, channel, prefix, userLevelName, color);
+                Color color = new Color(200, 100, 100);
+                sendProfile(author, channel, prefix, userLevelName, color);
 			} else {
 				//We can't loop through the whole list of mentioned users, so we only going to grab the first mentioned user and ignored the rest
 				User user = mentionedUsers.get(0); 
@@ -78,8 +78,11 @@ public class ProfileCS extends CommandStructure {
 			embed.setColor(color);
 			embed.setAuthor("Profile of " + member.getEffectiveName(), null, member.getUser().getAvatarUrl());
             embed.addField("Rank:", up.getRankName(), false);
-            embed.addField("Experiences:", up.getLevel().toString(), true);
-            embed.addField("Experiences Needed:", up.getRankExp().toString(), true);
+            embed.addField("Current Exp:", up.getLevel().toString(), true);
+            if (up.getRankExp() != null)
+                embed.addField("Exp Required:", up.getRankExp().toString(), true);
+            else
+                embed.addField("Exp Required:", "\uD83D\uDCAF Max Rank \uD83D\uDCAF", true);
             embed.addField("Points:", up.getPoints().toString(), true);
 			embed.addField("Gold:" , up.getBalance().toString() + " :moneybag:", true);
 			embed.addField("Table Flipped:", up.getFlipped().toString(), true);
