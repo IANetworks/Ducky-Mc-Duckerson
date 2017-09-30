@@ -49,12 +49,12 @@ public class StoreCS extends CommandStructure {
             }
             //TODO remove Hardcode here
             if (item == 1) {
-                Integer itemCost = 100;
+                Integer itemCost = 1000;
                 Integer totalCost = quantity * itemCost;
                 if (totalCost > up.getBalance()) {
                     channel.sendMessage("\uD83D\uDCB8 Sorry you don't have enough gold to get this. \uD83D\uDCB8").queue();
                 } else {
-                    Integer expGain = 10;
+                    Integer expGain = 50;
                     Integer totalExpGain = expGain * quantity;
                     channel.sendMessage("You have gained " + totalExpGain + " exp").queue();
                     try {

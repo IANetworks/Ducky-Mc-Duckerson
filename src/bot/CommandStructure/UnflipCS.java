@@ -27,7 +27,7 @@ public class UnflipCS extends CommandStructure {
     public void execute(Member author, User authorUser, MessageChannel channel, Message message, String parameters, Map<String, CommandStructure> commandList) {
         Long guildID = author.getGuild().getIdLong();
         if (hasPermission(author)) {
-            channel.sendMessage("┬─┬\uFEFF ノ( ゜-゜ノ)").queue();
+            channel.sendMessage(author.getEffectiveName() + ": ┬─┬\uFEFF ノ( ゜-゜ノ)").queue();
             try {
                 dbMan.incUserUnflipped(guildID, author.getUser().getIdLong());
             } catch (SQLException e) {

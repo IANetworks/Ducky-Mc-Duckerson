@@ -27,7 +27,7 @@ public class TableFlipCS extends CommandStructure {
     public void execute(Member author, User authorUser, MessageChannel channel, Message message, String parameters, Map<String, CommandStructure> commandList) {
         Long guildID = author.getGuild().getIdLong();
         if (hasPermission(author)) {
-            channel.sendMessage("(╯°□°）╯︵ ┻━┻").queue();
+            channel.sendMessage(author.getEffectiveName() + ": (╯°□°）╯︵ ┻━┻").queue();
             try {
                 dbMan.incUserFlipped(guildID, author.getUser().getIdLong());
             } catch (SQLException e) {

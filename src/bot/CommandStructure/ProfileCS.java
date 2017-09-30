@@ -1,5 +1,6 @@
 package bot.CommandStructure;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
@@ -59,14 +60,18 @@ public class ProfileCS extends CommandStructure {
 				} else {
 					Integer userLevel = getPermissionLevel(userMember);
 					String userLevelName = dbMan.getLevelName(guildID, userLevel);
-					sendProfile(userMember, channel, prefix, userLevelName, color);
-				}
+                    sendProfile(userMember, channel, prefix, userLevelName, color, author);
+                }
 			}
 		}
 	}
-	
-	private void sendProfile(Member member, MessageChannel channel, String prefix, String userLevelName, Color color) {
-		EmbedBuilder embed = new EmbedBuilder();
+
+    private void sendProfile(Member member, MessageChannel channel, String prefix, String userLevelName, Color color) {
+        sendProfile(member, channel, prefix, userLevelName, color, null);
+    }
+
+    private void sendProfile(Member member, MessageChannel channel, String prefix, String userLevelName, Color color, Member requestedBy) {
+        EmbedBuilder embed = new EmbedBuilder();
 		Long guildID = member.getGuild().getIdLong();
 		Long userID = member.getUser().getIdLong();
         UserProfile up;
@@ -89,9 +94,12 @@ public class ProfileCS extends CommandStructure {
 			embed.addField("Table Unflipped:", up.getUnflipped().toString(), true);
             embed.addField("Werewolf Games:", up.getWerewolfGames().toString(), true);
             embed.addField("Werewolf Wins:", up.getWerewolfWins().toString(), true);
+            if (requestedBy != null)
+                embed.addField("", "Profile requested by: " + requestedBy.getEffectiveName(), false);
             embed.setFooter("To see your profile, use " + prefix + "profile", null);
-		
-			embed.setThumbnail(member.getUser().getAvatarUrl());
+            embed.setTimestamp(Instant.now());
+
+            embed.setThumbnail(member.getUser().getAvatarUrl());
 			embed.setDescription(userLevelName);
 			channel.sendMessage(embed.build()).queue();
 		} catch (SQLException e) {

@@ -2,6 +2,8 @@ package werewolf.data;
 
 import werewolf.GameState;
 
+import java.time.Instant;
+
 /**
  * The type Ww game.
  */
@@ -35,6 +37,8 @@ public class WWGame {
 
 	private boolean checkingWin = false; //boolean to make sure we're not already tallying votes when game switch GameState
 	private boolean hasBans = false; //boolean to check to see if someone been banned from the game.
+
+    private Instant gameStart = null;
 
 
     /**
@@ -385,4 +389,12 @@ public class WWGame {
     public void incGameRound() {
 		this.roundNo++;
 	}
+
+    public Instant getGameStart() {
+        return gameStart;
+    }
+
+    public void setGameStart(Instant gameStart) {
+        this.gameStart = gameStart;
+    }
 }

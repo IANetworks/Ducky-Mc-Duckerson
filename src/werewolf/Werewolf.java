@@ -13,6 +13,8 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -1452,7 +1454,13 @@ public class Werewolf {
                 try {
                     dbMan.incWerewolfGames(guildID, thisPlayer.getUserID());
                     if (thisPlayer.getPlayerState() != PlayerState.FLED) {
-                        LinkedList<RankUp> rankUps = dbMan.addUserExp(guildID, thisPlayer.getUserID(), 1L);
+                        Instant gameStarted = gameList.get(guildID).getGameStart();
+                        Instant gameFinished = Instant.now();
+
+                        Long diffAsMinutes = ChronoUnit.MINUTES.between(gameStarted, gameFinished);
+                        Long totalExpGained = diffAsMinutes * 5;
+                        gameChannelList.get(guildID).sendMessage("Players have gained " + totalExpGained.toString()).queue();
+                        LinkedList<RankUp> rankUps = dbMan.addUserExp(guildID, thisPlayer.getUserID(), totalExpGained);
 
                         if (!rankUps.isEmpty()) {
                             for (RankUp newRank : rankUps) {
@@ -2100,6 +2108,8 @@ public class Werewolf {
                         }
                         //Set gameState first to prevent people joining while roles are being sent out
                         setGameState(guildID, GameState.DAYTIME);
+                        //Mark time of game start
+                        gameList.get(guildID).setGameStart(Instant.now());
                         TextChannel townChannel = getTownChannel(guildID);
                         net.dv8tion.jda.core.entities.Role everyoneRole = townChannel.getGuild().getPublicRole();
                         PermissionOverride townChannelPO = townChannel.getPermissionOverride(everyoneRole);
