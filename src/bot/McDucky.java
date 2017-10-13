@@ -2,7 +2,9 @@ package bot;
 
 //JDA Imports
 import net.dv8tion.jda.core.AccountType;
+import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
+import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
 
 import javax.security.auth.login.LoginException;
@@ -19,12 +21,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.util.List;
 import java.util.Properties;
 
 //Database Imports
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Scanner;
 //import java.sql.Statement;
 
 // Use UserID to store unquie ID of each enitity
@@ -50,6 +54,7 @@ public class McDucky
 	//Contains private keys, for bot Tokens, Database and other configs
 	private File configFile = new File("config.properties");
 	private Properties configProps;
+    private EventListener eventListener;
     /**
      * The Conn.
      */
@@ -153,19 +158,19 @@ public class McDucky
 		String databaseName = configProps.getProperty("database_name", "default"); //Database Name
 		String botAdmin = configProps.getProperty("bot_admin"); //In case Bot Owner is different from the creator of the bot token, this is rare but in the program creator situation this has happened. 
 		DatabaseManager dbMan = null;
-		
-		int debugLevel;
-		try {
-			 debugLevel = Integer.parseInt(configProps.getProperty("debug_level"));
-		} catch (NumberFormatException e)
-		{
-			System.out.printf("debug_level is not a valid number. switching to debug off\n");
-			debugLevel = 0;
-		}
-		DebugLevel dbug = DebugLevel.getDebugLevel(debugLevel);
-		
-		
-		//Let make sure we don't have an empty value
+
+//		int debugLevel;
+//		try {
+//			 debugLevel = Integer.parseInt(configProps.getProperty("debug_level"));
+//		} catch (NumberFormatException e)
+//		{
+//			System.out.printf("debug_level is not a valid number. switching to debug off\n");
+//			debugLevel = 0;
+//		}
+//		DebugLevel dbug = DebugLevel.getDebugLevel(debugLevel);
+
+
+        //Let make sure we don't have an empty value
 		if (botToken.isEmpty())
 		{
 			//We GOT to have this value
@@ -216,11 +221,28 @@ public class McDucky
         // we would use AccountType.CLIENT
         try
         {
-            new JDABuilder(AccountType.BOT)
+            //debugListener = new DebugListener(dbug);
+            eventListener = new EventListener(dbMan, botAdmin);
+            JDA jda = new JDABuilder(AccountType.BOT)
                 .setToken(botToken)  //The token of the account that is logging in.
-                .addEventListener(new DebugListener(dbug)) //An instance of a class to handle verbose event logging
-                .addEventListener(new EventListener(dbMan, botAdmin))  //An instance of a class that will handle events.
+                //.addEventListener(debugListener) //An instance of a class to handle verbose event logging
+                .addEventListener(eventListener)  //An instance of a class that will handle events.
                 .buildBlocking();  //There are 2 ways to login, blocking vs async. Blocking guarantees that JDA will be completely loaded.
+
+            Scanner scanner = new Scanner(System.in);
+
+            while (jda.getStatus() != JDA.Status.SHUTDOWN) {
+                String line = scanner.nextLine();
+                while ((line != null)) {
+                    List<TextChannel> listTextChannel = jda.getTextChannelsByName("bot-programming-geek", false);
+                    if (!listTextChannel.isEmpty()) {
+                        TextChannel channel = listTextChannel.get(0);
+                        eventListener.onLineIn(channel, line);
+                    }
+
+                    line = scanner.nextLine();
+                }
+            }
         }
         catch (LoginException e)
         {
@@ -242,7 +264,10 @@ public class McDucky
             //As a note: It is highly unlikely that you will ever see the exception here due to how infrequent login is.
             e.printStackTrace();
         }
-	}
+
+
+    }
+
 
     /**
      * This is the method where the program starts.

@@ -9,9 +9,11 @@ import java.util.function.Consumer;
 
 import bot.CommandStructure.*;
 import bot.database.manager.DatabaseManager;
+import bot.eventmanager.EventManager;
 import net.dv8tion.jda.bot.entities.ApplicationInfo;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.events.Event;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
@@ -193,6 +195,12 @@ public class EventListener extends ListenerAdapter {
 		privCmdList.put(name, new WerewolfSeeCS(container, name, 19, 999));
 
 	}
+
+    public void onGenericEvent(Event event) {
+        EventManager thisEvent = new EventManager();
+        thisEvent.onJDAEvent(event);
+    }
+
 
 	
 	@Override
@@ -451,4 +459,11 @@ public class EventListener extends ListenerAdapter {
     	channel.sendMessage(message).queue(callback);
     }
 
+
+    public void onLineIn(TextChannel channel, String message) {
+        if (!message.isEmpty()) {
+            channel.sendMessage(message).queue();
+        }
+
+    }
 }

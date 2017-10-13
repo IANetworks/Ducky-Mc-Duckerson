@@ -45,7 +45,7 @@ public class StoreCS extends CommandStructure {
                 item = Integer.valueOf(paraList[0]);
                 quantity = Integer.valueOf(paraList[1]);
             } else {
-                channel.sendMessage("This syntax looks wrong, Syntax: " + dbMan.getPrefix(guildID) + commandName + " [item id] [quantity]").queue();
+                channel.sendMessage("This syntax looks wrong, Syntax: " + dbMan.getPrefix(guildID) + commandName + " [items id] [quantity]").queue();
             }
             //TODO remove Hardcode here
             if (item == 1) {
@@ -92,6 +92,6 @@ public class StoreCS extends CommandStructure {
 
     @Override
     public String help(Long guildID) {
-        return "Buy Items with gold. Syntax: " + dbMan.getPrefix(guildID) + commandName + " [item id] [quantity]";
+        return "Buy Items with gold. Syntax: " + dbMan.getPrefix(guildID) + commandName + " [items id] [quantity]";
     }
 }

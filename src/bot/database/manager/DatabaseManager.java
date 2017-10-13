@@ -208,6 +208,7 @@ public class DatabaseManager {
                 up.setRankExp(null);
             }
             up.setCooldown(rs.getTimestamp("cooldown"));
+
             rowCount++;
 		}
 		
