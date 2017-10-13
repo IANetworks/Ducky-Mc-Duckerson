@@ -7,12 +7,10 @@ package werewolf.data;
  * @author AdTheRat
  */
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
 
 /**
  * The type Theme.
@@ -57,6 +55,24 @@ public class ThemeDesc {
      */
     private String themeAvatar = null;
 
+
+    public ThemeDesc(Integer id, String name, String desc, String author, String created, String modified, Integer playCount, String avatar) {
+        String dateFormat = "yyyy-MM-dd HH:mm:ss";
+        themeNameID = id;
+        themeName = name;
+        themeDesc = desc;
+        themeAuthor = author;
+        themePlayedCount = playCount;
+        themeAvatar = avatar;
+
+        DateFormat df = new SimpleDateFormat(dateFormat);
+        try {
+            themeCreated = df.parse(created);
+            themeModified = df.parse(modified);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Gets played count.
@@ -119,24 +135,6 @@ public class ThemeDesc {
      */
     public int getThemeID() {
         return themeNameID;
-    }
-
-    public ThemeDesc(Integer id, String name, String desc, String author, String created, String modified, Integer playCount, String avatar) {
-        String dateFormat = "yyyy-MM-dd HH:mm:ss";
-        themeNameID = id;
-        themeName = name;
-        themeDesc = desc;
-        themeAuthor = author;
-        themePlayedCount = playCount;
-        themeAvatar = avatar;
-
-        DateFormat df = new SimpleDateFormat(dateFormat);
-        try {
-            themeCreated = df.parse(created);
-            themeModified = df.parse(modified);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
     }
 
     public String getAvatar() {

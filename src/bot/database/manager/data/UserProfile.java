@@ -63,61 +63,7 @@ public class UserProfile {
         if (rankName == null)
             return "**This Rank is Not Defined**";
         return rankName;
-	}
-
-    /**
-     * Gets balance.
-     *
-     * @return the balance
-     */
-    public Long getBalance() {
-		return balance;
-	}
-
-    /**
-     * Gets points.
-     *
-     * @return the points
-     */
-    public Long getPoints() {
-		return points;
-	}
-
-    /**
-     * Gets flipped.
-     *
-     * @return the flipped
-     */
-    public Long getFlipped() {
-		return flipped;
-	}
-
-    /**
-     * Gets unflipped.
-     *
-     * @return the unflipped
-     */
-    public Long getUnflipped() {
-		return unflipped;
-	}
-
-    /**
-     * Gets level.
-     *
-     * @return the level
-     */
-    public Long getLevel() {
-		return level;
-	}
-
-    /**
-     * Gets rank.
-     *
-     * @return the rank
-     */
-    public Integer getRank() {
-		return rank;
-	}
+    }
 
     /**
      * Sets rank name.
@@ -125,8 +71,17 @@ public class UserProfile {
      * @param rankName the rank name
      */
     public void setRankName(String rankName) {
-		this.rankName = rankName;
-	}
+        this.rankName = rankName;
+    }
+
+    /**
+     * Gets balance.
+     *
+     * @return the balance
+     */
+    public Long getBalance() {
+        return balance;
+    }
 
     /**
      * Sets balance.
@@ -134,9 +89,18 @@ public class UserProfile {
      * @param balance the balance
      */
     public void setBalance(long balance) {
-		this.balance = balance;
-		
-	}
+        this.balance = balance;
+
+    }
+
+    /**
+     * Gets points.
+     *
+     * @return the points
+     */
+    public Long getPoints() {
+        return points;
+    }
 
     /**
      * Sets points.
@@ -144,9 +108,18 @@ public class UserProfile {
      * @param points the points
      */
     public void setPoints(Long points) {
-		this.points = points;
-		
-	}
+        this.points = points;
+
+    }
+
+    /**
+     * Gets flipped.
+     *
+     * @return the flipped
+     */
+    public Long getFlipped() {
+        return flipped;
+    }
 
     /**
      * Sets flipped.
@@ -154,9 +127,18 @@ public class UserProfile {
      * @param flipped the flipped
      */
     public void setFlipped(long flipped) {
-		this.flipped = flipped;
-		
-	}
+        this.flipped = flipped;
+
+    }
+
+    /**
+     * Gets unflipped.
+     *
+     * @return the unflipped
+     */
+    public Long getUnflipped() {
+        return unflipped;
+    }
 
     /**
      * Sets unflipped.
@@ -164,9 +146,18 @@ public class UserProfile {
      * @param unflipped the unflipped
      */
     public void setUnflipped(long unflipped) {
-		this.unflipped = unflipped;
-		
-	}
+        this.unflipped = unflipped;
+
+    }
+
+    /**
+     * Gets level.
+     *
+     * @return the level
+     */
+    public Long getLevel() {
+        return level;
+    }
 
     /**
      * Sets level.
@@ -174,8 +165,17 @@ public class UserProfile {
      * @param level the level
      */
     public void setLevel(long level) {
-		this.level = level;
-	}
+        this.level = level;
+    }
+
+    /**
+     * Gets rank.
+     *
+     * @return the rank
+     */
+    public Integer getRank() {
+        return rank;
+    }
 
     /**
      * Sets rank.
@@ -183,8 +183,8 @@ public class UserProfile {
      * @param rank the rank
      */
     public void setRank(int rank) {
-		this.rank = rank;
-	}
+        this.rank = rank;
+    }
 
     public Long getWerewolfWins() {
         return werewolfWins;

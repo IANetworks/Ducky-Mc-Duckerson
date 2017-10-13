@@ -1,7 +1,10 @@
 package bot.CommandStructure;
 
 import bot.SharedContainer;
-import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.MessageChannel;
+import net.dv8tion.jda.core.entities.User;
 
 import java.sql.SQLException;
 import java.util.Map;

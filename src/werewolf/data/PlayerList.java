@@ -16,8 +16,7 @@ import net.dv8tion.jda.core.entities.Member;
 /**
  * Class for managing Players objects. Key is based on Nickname
  */
-public class PlayerList
-{
+public class PlayerList {
     /**
      * Creates a new instance of PlayerList
      */
@@ -53,11 +52,10 @@ public class PlayerList
      *
      * @param playerID the player id
      */
-    public void setSeerViewing(Long playerID)
-    {
-    	if(playerList.containsKey(playerID)) {
-    		toSee = playerList.get(playerID);
-    	}
+    public void setSeerViewing(Long playerID) {
+        if (playerList.containsKey(playerID)) {
+            toSee = playerList.get(playerID);
+        }
     }
 
     /**
@@ -65,12 +63,10 @@ public class PlayerList
      *
      * @param playerID the player id
      */
-    public void setDyingVoice(Long playerID)
-    {
-    	if(playerList.containsKey(playerID)) 
-    	{
-    		dyingVoice = playerList.get(playerID);
-    	}    	
+    public void setDyingVoice(Long playerID) {
+        if (playerList.containsKey(playerID)) {
+            dyingVoice = playerList.get(playerID);
+        }
     }
 
     /**
@@ -79,8 +75,7 @@ public class PlayerList
      * @param playerID the player id
      * @return boolean
      */
-    public boolean hasDyingVoice(Long playerID)
-    {
+    public boolean hasDyingVoice(Long playerID) {
 
         return dyingVoice != null && dyingVoice.getUserID().equals(playerID);
     }
@@ -90,8 +85,7 @@ public class PlayerList
      *
      * @return boolean
      */
-    public boolean isSeerViewEmpty()
-    {
+    public boolean isSeerViewEmpty() {
         return toSee == null;
     }
 
@@ -100,8 +94,7 @@ public class PlayerList
      *
      * @return boolean
      */
-    public boolean isDyingVoiceEmpty()
-    {
+    public boolean isDyingVoiceEmpty() {
         return dyingVoice == null;
     }
 
@@ -110,9 +103,8 @@ public class PlayerList
      *
      * @return the dying voice
      */
-    public Player getDyingVoice()
-    {
-    	return dyingVoice;
+    public Player getDyingVoice() {
+        return dyingVoice;
     }
 
     /**
@@ -120,25 +112,22 @@ public class PlayerList
      *
      * @return seer view
      */
-    public Player getSeerView()
-    {
+    public Player getSeerView() {
         return toSee;
     }
 
     /**
      * Clear seer view.
      */
-    public void clearSeerView()
-    {
-    	toSee = null;
+    public void clearSeerView() {
+        toSee = null;
     }
 
     /**
      * Clear dying voice.
      */
-    public void clearDyingVoice()
-    {
-    	dyingVoice = null;
+    public void clearDyingVoice() {
+        dyingVoice = null;
     }
 
     /**
@@ -146,24 +135,22 @@ public class PlayerList
      *
      * @return player votes list
      */
-    public List<PlayerVote> getPlayerVotesList()
-    {
-    	return playerVoteList;
+    public List<PlayerVote> getPlayerVotesList() {
+        return playerVoteList;
     }
 
     /**
      * Add no lynch.
      */
-    public void addNoLynch()
-    {
-    	Player noLynch = new Player(null, 0);
-    	
-    	noLynch.setRole(Role.NOLYNCH);
-    	noLynch.setPlayerState(PlayerState.NOLYNCH);
-    	//noLynch.setId(0); //Special NOLYNCH Id
+    public void addNoLynch() {
+        Player noLynch = new Player(null, 0);
+
+        noLynch.setRole(Role.NOLYNCH);
+        noLynch.setPlayerState(PlayerState.NOLYNCH);
+        //noLynch.setId(0); //Special NOLYNCH Id
         noLynch.setRoleRecieved(true);
-    	
-    	playerList.put((long) 0, noLynch);
+
+        playerList.put((long) 0, noLynch);
     }
 
     /**
@@ -172,15 +159,14 @@ public class PlayerList
      * @param playerID the player id
      * @return player
      */
-    public Player getPlayer(Long playerID)
-    {
-    	Player player = null;
-    	
-    	if(playerList.containsKey(playerID)) {
-    		player = playerList.get(playerID);
-    	}
-    	
-    	return player;
+    public Player getPlayer(Long playerID) {
+        Player player = null;
+
+        if (playerList.containsKey(playerID)) {
+            player = playerList.get(playerID);
+        }
+
+        return player;
     }
 
     /**
@@ -189,13 +175,12 @@ public class PlayerList
      * @param user the user
      * @return the player
      */
-    public Player addPlayer(Member user)
-    {
-    	Player player = new Player(user, playerCount);
+    public Player addPlayer(Member user) {
+        Player player = new Player(user, playerCount);
         //Get Player ID
         //player.setId(db.sql_getPlayerID(name, hostname));
         playerList.put(player.getUserID(), player);
-        playerCount ++;
+        playerCount++;
         return player;
 
     }
@@ -220,12 +205,11 @@ public class PlayerList
      * @param playerID    the player id
      * @param playerState the player state
      */
-    public void setPlayerState(Long playerID, PlayerState playerState)
-    {
-    	if(playerList.containsKey(playerID)) {
-    		Player player = playerList.get(playerID);
-    		player.setPlayerState(playerState);
-    	}
+    public void setPlayerState(Long playerID, PlayerState playerState) {
+        if (playerList.containsKey(playerID)) {
+            Player player = playerList.get(playerID);
+            player.setPlayerState(playerState);
+        }
     }
 
     /**
@@ -234,12 +218,11 @@ public class PlayerList
      * @param playerID the player id
      * @param isBanned the is banned
      */
-    public void setPlayerBanned(Long playerID, boolean isBanned)
-    {
-    	if(playerList.containsKey(playerID)) {
-    		Player player = playerList.get(playerID);
-    		player.setIsBanned(isBanned);
-    	}
+    public void setPlayerBanned(Long playerID, boolean isBanned) {
+        if (playerList.containsKey(playerID)) {
+            Player player = playerList.get(playerID);
+            player.setIsBanned(isBanned);
+        }
     }
 
     /**
@@ -248,17 +231,14 @@ public class PlayerList
      * @param playerNo the player no
      * @return player name by player id
      */
-    public Player getPlayerByPlayerID(int playerNo)
-    {
-    	for(Player player : playerList.values())
-    	{
-    		if (player.getPlayerNo() == playerNo)
-    		{
-    			return player;
-    		}
-    	}
-    	
-    	return null;
+    public Player getPlayerByPlayerID(int playerNo) {
+        for (Player player : playerList.values()) {
+            if (player.getPlayerNo() == playerNo) {
+                return player;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -267,14 +247,13 @@ public class PlayerList
      * @param playerID the player id
      * @return player no
      */
-    public int getPlayerNo(Long playerID)
-    {
-    	if(playerList.containsKey(playerID)) {
-    		Player player = playerList.get(playerID);
-    		return player.getPlayerNo();
-    	}
-    	
-    	return -1;
+    public int getPlayerNo(Long playerID) {
+        if (playerList.containsKey(playerID)) {
+            Player player = playerList.get(playerID);
+            return player.getPlayerNo();
+        }
+
+        return -1;
     }
 
     /**
@@ -283,12 +262,11 @@ public class PlayerList
      * @param playerID the player id
      * @param role     the role
      */
-    public void setPlayerRole(Long playerID, Role role)
-    {
-    	if(playerList.containsKey(playerID)) {
-    		Player player = playerList.get(playerID);
-    		player.setRole(role);
-    	}
+    public void setPlayerRole(Long playerID, Role role) {
+        if (playerList.containsKey(playerID)) {
+            Player player = playerList.get(playerID);
+            player.setRole(role);
+        }
     }
 
     /**
@@ -297,18 +275,16 @@ public class PlayerList
      * @param playerID  the player id
      * @param voteForID the vote for id
      */
-    public void setPlayerVote(Long playerID, Long voteForID)
-    {
-    	if(playerList.containsKey(playerID)){
-    		Player voter = playerList.get(playerID);
-    		if(playerList.containsKey(voteForID))
-    		{
-    			voter.setVoteFor(playerList.get(voteForID));
-    		}
-    			
-    	}	
+    public void setPlayerVote(Long playerID, Long voteForID) {
+        if (playerList.containsKey(playerID)) {
+            Player voter = playerList.get(playerID);
+            if (playerList.containsKey(voteForID)) {
+                voter.setVoteFor(playerList.get(voteForID));
+            }
+
+        }
     }
-    
+
     /**
      * 
      * @param playerID
@@ -329,12 +305,11 @@ public class PlayerList
      * @param playerID the player id
      * @return player member
      */
-    public Member getPlayerMember(Long playerID)
-    {
-        if(playerList.containsKey(playerID)) {
-        	return playerList.get(playerID).getMember();
+    public Member getPlayerMember(Long playerID) {
+        if (playerList.containsKey(playerID)) {
+            return playerList.get(playerID).getMember();
         }
-        
+
         return null;
     }
 
@@ -344,15 +319,14 @@ public class PlayerList
      * @param playerID the player id
      * @return the player nick count
      */
-    public int getPlayerNickCount(Long playerID)
-    {
-        if(playerList.containsKey(playerID)) {
-        	return playerList.get(playerID).getNickCount();
+    public int getPlayerNickCount(Long playerID) {
+        if (playerList.containsKey(playerID)) {
+            return playerList.get(playerID).getNickCount();
         }
-        
+
         return 0;
     }
-    
+
     /**
      * 
      * @param playerID
@@ -373,12 +347,11 @@ public class PlayerList
      * @param playerID     the player id
      * @param nonVoteCount the non vote count
      */
-    public void setPlayerNonVoteCount(Long playerID, int nonVoteCount)
-    {
-    	if(playerList.containsKey(playerID)) {
-    		Player player = playerList.get(playerID);
-    		player.setNonVoteCount(nonVoteCount);
-    	}
+    public void setPlayerNonVoteCount(Long playerID, int nonVoteCount) {
+        if (playerList.containsKey(playerID)) {
+            Player player = playerList.get(playerID);
+            player.setNonVoteCount(nonVoteCount);
+        }
     }
 
     /**
@@ -386,8 +359,7 @@ public class PlayerList
      *
      * @param userID the name
      */
-    public void removePlayer(Long userID)
-    {
+    public void removePlayer(Long userID) {
         if (playerList.containsKey(userID)) {
             playerList.remove(userID);
         }
@@ -399,9 +371,8 @@ public class PlayerList
      * @param playerID the player id
      * @return boolean
      */
-    public boolean hasPlayer(long playerID)
-    {
-    	return playerList.containsKey(playerID);
+    public boolean hasPlayer(long playerID) {
+        return playerList.containsKey(playerID);
     }
 
     /**
@@ -409,9 +380,8 @@ public class PlayerList
      *
      * @return player size
      */
-    public int getPlayerSize()
-    {
-    	//Take one off, as NoLynch is not a player, just a pretend one
+    public int getPlayerSize() {
+        //Take one off, as NoLynch is not a player, just a pretend one
         return playerList.size() - 1;
     }
 
@@ -421,13 +391,12 @@ public class PlayerList
      * @return player list
      */
 // getPlayerList ->
-    public List<Player> getPlayerList()
-    {
-    	Map<Long, Player> removeNoLynch = new HashMap<Long, Player>(playerList);
-    	removeNoLynch.remove((long) 0);
-    	
-    	List<Player> playerNames = new ArrayList<Player>(removeNoLynch.values());
-    	return playerNames;
+    public List<Player> getPlayerList() {
+        Map<Long, Player> removeNoLynch = new HashMap<Long, Player>(playerList);
+        removeNoLynch.remove((long) 0);
+
+        List<Player> playerNames = new ArrayList<Player>(removeNoLynch.values());
+        return playerNames;
     }
 
     public List<Member> getMemberList() {
@@ -448,12 +417,11 @@ public class PlayerList
      * @param playerID the player id
      * @return player role
      */
-    public Role getPlayerRole(Long playerID)
-    {
-        if(playerList.containsKey(playerID)) {
-        	return playerList.get(playerID).getRole();
+    public Role getPlayerRole(Long playerID) {
+        if (playerList.containsKey(playerID)) {
+            return playerList.get(playerID).getRole();
         }
-        
+
         return Role.ERR; // Return ERR for Error
     }
 
@@ -463,12 +431,11 @@ public class PlayerList
      * @param playerID the player id
      * @return player non vote count
      */
-    public int getPlayerNonVoteCount(Long playerID)
-    {
-        if(playerList.containsKey(playerID)) {
-        	return playerList.get(playerID).getNonVoteCount();
+    public int getPlayerNonVoteCount(Long playerID) {
+        if (playerList.containsKey(playerID)) {
+            return playerList.get(playerID).getNonVoteCount();
         }
-        
+
         return -1; // Return -1 for Error
     }
 
@@ -478,17 +445,15 @@ public class PlayerList
      * @param playerID the player id
      * @return player votee
      */
-    public Player getPlayerVotee(Long playerID)
-    {
-        if(playerList.containsKey(playerID)) {
-        	if(playerList.get(playerID).getVoteFor() == null)
-        	{
-        		return null;
-        	} else {
-        		return playerList.get(playerID).getVoteFor();
-        	}
+    public Player getPlayerVotee(Long playerID) {
+        if (playerList.containsKey(playerID)) {
+            if (playerList.get(playerID).getVoteFor() == null) {
+                return null;
+            } else {
+                return playerList.get(playerID).getVoteFor();
+            }
         }
-        
+
         return null;
     }
 
@@ -498,12 +463,11 @@ public class PlayerList
      * @param playerID the player id
      * @return player state
      */
-    public PlayerState getPlayerState(Long playerID)
-    {
-        if(playerList.containsKey(playerID)) {
-        	return playerList.get(playerID).getPlayerState();
+    public PlayerState getPlayerState(Long playerID) {
+        if (playerList.containsKey(playerID)) {
+            return playerList.get(playerID).getPlayerState();
         }
-        
+
         return PlayerState.ERR;
     }
 
@@ -513,16 +477,15 @@ public class PlayerList
      * @param role the role
      * @return player list by role
      */
-    public List<Player> getPlayerListByRole(Role role)
-    {
-    	List<Player> byRole = new ArrayList<Player>();
-    	
-        for(Player player : playerList.values()) {
-        	if(player.getRole() == role) {
-        		byRole.add(player);
-        	}
+    public List<Player> getPlayerListByRole(Role role) {
+        List<Player> byRole = new ArrayList<Player>();
+
+        for (Player player : playerList.values()) {
+            if (player.getRole() == role) {
+                byRole.add(player);
+            }
         }
-        
+
         return byRole;
     }
 
@@ -531,16 +494,15 @@ public class PlayerList
      *
      * @return banned list
      */
-    public List<Player> getBannedList()
-    {
-    	List<Player> isBanned = new ArrayList<Player>();
-    	
-        for(Player player : playerList.values()) {
-        	if(player.getIsBanned()) {
-        		isBanned.add(player);
-        	}
+    public List<Player> getBannedList() {
+        List<Player> isBanned = new ArrayList<Player>();
+
+        for (Player player : playerList.values()) {
+            if (player.getIsBanned()) {
+                isBanned.add(player);
+            }
         }
-        
+
         return isBanned;
     }
 
@@ -550,16 +512,15 @@ public class PlayerList
      * @param nonVoteCount the non vote count
      * @return player list by non vote count
      */
-    public List<Player> getPlayerListByNonVoteCount(int nonVoteCount)
-    {
-    	List<Player> byNonVoteCount = new ArrayList<Player>();
-    	
-        for(Player player : playerList.values()) {
-        	if(player.getNonVoteCount() == nonVoteCount && player.getPlayerState() == PlayerState.ALIVE) {
-        		byNonVoteCount.add(player);
-        	}
+    public List<Player> getPlayerListByNonVoteCount(int nonVoteCount) {
+        List<Player> byNonVoteCount = new ArrayList<Player>();
+
+        for (Player player : playerList.values()) {
+            if (player.getNonVoteCount() == nonVoteCount && player.getPlayerState() == PlayerState.ALIVE) {
+                byNonVoteCount.add(player);
+            }
         }
-        
+
         return byNonVoteCount;
     }
 
@@ -569,9 +530,8 @@ public class PlayerList
      * @param playerState the player state
      * @return the player list by state
      */
-    public List<Player> getPlayerListByState(PlayerState playerState)
-    {
-    	return getPlayerListByState(playerState, playerState);
+    public List<Player> getPlayerListByState(PlayerState playerState) {
+        return getPlayerListByState(playerState, playerState);
     }
 
     /**
@@ -581,18 +541,17 @@ public class PlayerList
      * @param playerState2 the player state 2
      * @return player list by state
      */
-    public List<Player> getPlayerListByState(PlayerState playerState, PlayerState playerState2)
-    {
-    	List<Player> byAlive = new ArrayList<Player>();
-    	List<Player> ourPlayerList = new ArrayList<Player>(this.playerList.values());
-    	Collections.sort(ourPlayerList, new PlayerNoComparator());
-    	
-        for(Player player : ourPlayerList) {
-        	if(player.getPlayerState() == playerState || player.getPlayerState() == playerState2) {
-        		byAlive.add(player);
-        	}
+    public List<Player> getPlayerListByState(PlayerState playerState, PlayerState playerState2) {
+        List<Player> byAlive = new ArrayList<Player>();
+        List<Player> ourPlayerList = new ArrayList<Player>(this.playerList.values());
+        Collections.sort(ourPlayerList, new PlayerNoComparator());
+
+        for (Player player : ourPlayerList) {
+            if (player.getPlayerState() == playerState || player.getPlayerState() == playerState2) {
+                byAlive.add(player);
+            }
         }
-        
+
         return byAlive;
     }
 
@@ -602,9 +561,8 @@ public class PlayerList
      * @param playerState the player state
      * @return number of player by state
      */
-    public int getNumberOfPlayerByState(PlayerState playerState)
-    {
-    	return getPlayerListByState(playerState).size();
+    public int getNumberOfPlayerByState(PlayerState playerState) {
+        return getPlayerListByState(playerState).size();
     }
 
     /**
@@ -613,9 +571,8 @@ public class PlayerList
      * @param nonVoteCount the non vote count
      * @return number of player by non vote count
      */
-    public int getNumberOfPlayerByNonVoteCount(int nonVoteCount)
-    {
-	   return getPlayerListByNonVoteCount(nonVoteCount).size();
+    public int getNumberOfPlayerByNonVoteCount(int nonVoteCount) {
+        return getPlayerListByNonVoteCount(nonVoteCount).size();
     }
 
     /**
@@ -624,9 +581,8 @@ public class PlayerList
      * @param role the role
      * @return number of player by role
      */
-    public int getNumberOfPlayerByRole(Role role)
-    {
-    	return getPlayerListByRole(role).size();
+    public int getNumberOfPlayerByRole(Role role) {
+        return getPlayerListByRole(role).size();
     }
 
     /**
@@ -634,9 +590,8 @@ public class PlayerList
      *
      * @return list
      */
-    public List<Player> randomOrder()
-    {
-    	List<Player> shuffleMe = getPlayerList();
+    public List<Player> randomOrder() {
+        List<Player> shuffleMe = getPlayerList();
         Collections.shuffle(shuffleMe);
         Collections.shuffle(shuffleMe);// Double Shuffle - FOR THE WIN!!!
         return shuffleMe;
@@ -649,16 +604,15 @@ public class PlayerList
      * @param playerState the player state
      * @return number of player by role player state
      */
-    public int getNumberOfPlayerByRolePlayerState(Role role, PlayerState playerState)
-    {
-    	int count = 0;
-    	
-        for(Player player : playerList.values()) {
-        	if(player.getRole() == role && player.getPlayerState() == playerState) {
-        		count ++;
-        	}
+    public int getNumberOfPlayerByRolePlayerState(Role role, PlayerState playerState) {
+        int count = 0;
+
+        for (Player player : playerList.values()) {
+            if (player.getRole() == role && player.getPlayerState() == playerState) {
+                count++;
+            }
         }
-        
+
         return count;
     }
 
@@ -669,19 +623,18 @@ public class PlayerList
      * @param playerState the player state
      * @return player list by role player state
      */
-    public List<Player> getPlayerListByRolePlayerState(Role role, PlayerState playerState)
-    {
-    	
-    	List<Player> byRoleAlive = new ArrayList<Player>();
-    	
-        for(Player player : playerList.values()) {
-        	if(player.getRole() == role && player.getPlayerState() == playerState) {
-        		byRoleAlive.add(player);
-        	}
+    public List<Player> getPlayerListByRolePlayerState(Role role, PlayerState playerState) {
+
+        List<Player> byRoleAlive = new ArrayList<Player>();
+
+        for (Player player : playerList.values()) {
+            if (player.getRole() == role && player.getPlayerState() == playerState) {
+                byRoleAlive.add(player);
+            }
         }
-        
+
         return byRoleAlive;
-    
+
     }
 
     /**
@@ -689,20 +642,17 @@ public class PlayerList
      *
      * @param playerID the player id
      */
-    public void playerFled(Long playerID)
-    {
-    	this.setPlayerState(playerID, PlayerState.FLED);
-    	//Check and removes player from all votes
-    	
-    	for(Player player : this.getPlayerListByState(PlayerState.ALIVE))
-    	{
-    		if(playerList.get(player.getUserID()).getVoteFor() != null && playerList.get(player.getUserID()).getVoteFor().getUserID() == playerID )
-    		{
-    			playerList.get(player.getUserID()).setVoteFor(null);
-    		}
-    	}
+    public void playerFled(Long playerID) {
+        this.setPlayerState(playerID, PlayerState.FLED);
+        //Check and removes player from all votes
+
+        for (Player player : this.getPlayerListByState(PlayerState.ALIVE)) {
+            if (playerList.get(player.getUserID()).getVoteFor() != null && playerList.get(player.getUserID()).getVoteFor().getUserID() == playerID) {
+                playerList.get(player.getUserID()).setVoteFor(null);
+            }
+        }
     }
-    
+
     /**
      * Call this after tallyingVotes up to add the number of times the player has been voted for to the player Object
      */
@@ -713,7 +663,7 @@ public class PlayerList
 //    		playerList.get(name).addNoVoted(playerList.get(name).getVoteCount());
 //    	}
 //    }
-    
+
     /**
      * 
      */
@@ -732,54 +682,48 @@ public class PlayerList
      * @param voteTheadhold the vote theadhold
      * @return list
      */
-    public List<Player> voteCount(boolean tally, int voteTheadhold)
-    {	
-    	//Reset VoteCount
-    	this.resetVoteCount();
-    	
-    	for (Player player : this.getPlayerListByState(PlayerState.ALIVE, PlayerState.NOLYNCH))
-    	{
-    		if(player.getVoteFor() != null)
-    		{
-    			player.getVoteFor().addVoteCount();
-    			if(tally)
-    			{
-    				//reset NonVoteCount
-    				this.setPlayerNonVoteCount(player.getUserID(), 0);
+    public List<Player> voteCount(boolean tally, int voteTheadhold) {
+        //Reset VoteCount
+        this.resetVoteCount();
 
-    				//Add Vote record
-    				PlayerVote playerVote = new PlayerVote(player.getPlayerNo(), player.getVoteFor().getPlayerNo());
-    				playerVoteList.add(playerVote);
+        for (Player player : this.getPlayerListByState(PlayerState.ALIVE, PlayerState.NOLYNCH)) {
+            if (player.getVoteFor() != null) {
+                player.getVoteFor().addVoteCount();
+                if (tally) {
+                    //reset NonVoteCount
+                    this.setPlayerNonVoteCount(player.getUserID(), 0);
 
-    			}
-    		} else if(tally && player.getPlayerState() != PlayerState.NOLYNCH) {
-    			int nonVoteCountAdd = this.getPlayerNonVoteCount(player.getUserID());
-    			nonVoteCountAdd ++;
-    			this.setPlayerNonVoteCount(player.getUserID(), nonVoteCountAdd);
-    		}	
-    	}
-    	
+                    //Add Vote record
+                    PlayerVote playerVote = new PlayerVote(player.getPlayerNo(), player.getVoteFor().getPlayerNo());
+                    playerVoteList.add(playerVote);
+
+                }
+            } else if (tally && player.getPlayerState() != PlayerState.NOLYNCH) {
+                int nonVoteCountAdd = this.getPlayerNonVoteCount(player.getUserID());
+                nonVoteCountAdd++;
+                this.setPlayerNonVoteCount(player.getUserID(), nonVoteCountAdd);
+            }
+        }
+
 //		if(tally)
 //		{
 //			this.playerVoteCount();
 //		}   
-		
-    	List<Player> ourPlayerList = new ArrayList<Player>(this.playerList.values());
-    	Collections.sort(ourPlayerList, new VoteComparator());
-    	List<Player> strPlayerList = new ArrayList<Player>();
-    	
-    	for(Player player : ourPlayerList)
-    	{
-    		if((player.getPlayerState() == PlayerState.ALIVE || player.getPlayerState() == PlayerState.NOLYNCH) && player.getVoteCount() >= voteTheadhold)
-    		{
-    			strPlayerList.add(player);
-    		}
-    	}
-    	
-    	return strPlayerList;
+
+        List<Player> ourPlayerList = new ArrayList<Player>(this.playerList.values());
+        Collections.sort(ourPlayerList, new VoteComparator());
+        List<Player> strPlayerList = new ArrayList<Player>();
+
+        for (Player player : ourPlayerList) {
+            if ((player.getPlayerState() == PlayerState.ALIVE || player.getPlayerState() == PlayerState.NOLYNCH) && player.getVoteCount() >= voteTheadhold) {
+                strPlayerList.add(player);
+            }
+        }
+
+        return strPlayerList;
     }
-     
-    
+
+
     /**
      * Check to see we have player, ignoring case
      * @param name
@@ -805,12 +749,11 @@ public class PlayerList
      * @param playerID the player id
      * @return player vote count
      */
-    public int getPlayerVoteCount(Long playerID)
-    {
-        if(playerList.containsKey(playerID)) {
-        	return playerList.get(playerID).getVoteCount();
+    public int getPlayerVoteCount(Long playerID) {
+        if (playerList.containsKey(playerID)) {
+            return playerList.get(playerID).getVoteCount();
         }
-        
+
         return -1;
     }
 
@@ -820,48 +763,41 @@ public class PlayerList
      * @param playerID the player id
      * @return boolean
      */
-    public boolean playerHasVoted(Long playerID)
-    {
-    	if(playerList.containsKey(playerID))
-    	{
+    public boolean playerHasVoted(Long playerID) {
+        if (playerList.containsKey(playerID)) {
             return playerList.get(playerID).getVoteFor() != null;
-    	}
-    	
-    	return false;
+        }
+
+        return false;
     }
 
     /**
      * Reset vote count.
      */
-    public void resetVoteCount()
-	{
-    	for(Player players : playerList.values())
-    	{
-    		players.resetVoteCount();
-    	}
-		
-	}
+    public void resetVoteCount() {
+        for (Player players : playerList.values()) {
+            players.resetVoteCount();
+        }
+
+    }
 
     /**
      * Reset votes.
      */
-    public void resetVotes()
-    {
-    	for(Player players : playerList.values())
-    	{
-    		players.resetVote();
-    	}
+    public void resetVotes() {
+        for (Player players : playerList.values()) {
+            players.resetVote();
+        }
     }
 
     /**
      * Reset list.
      */
-    public void resetList()
-    {
-    	playerList.clear();
-    	playerVoteList.clear();
-    	playerCount = 1;
-    	addNoLynch();
+    public void resetList() {
+        playerList.clear();
+        playerVoteList.clear();
+        playerCount = 1;
+        addNoLynch();
     }
 
     /**
@@ -870,10 +806,8 @@ public class PlayerList
      * @return the boolean
      */
     public boolean hasAllPlayerReceivedRoles() {
-        for(Player player : playerList.values())
-        {
-            if(!player.isRoleRecieved())
-            {
+        for (Player player : playerList.values()) {
+            if (!player.isRoleRecieved()) {
                 return false;
             }
         }

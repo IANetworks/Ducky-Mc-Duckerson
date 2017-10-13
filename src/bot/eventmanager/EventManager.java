@@ -1,16 +1,28 @@
 package bot.eventmanager;
 
-import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.Event;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The type Event manager.
  */
 public class EventManager {
+
+    /**
+     * Is getter boolean.
+     *
+     * @param method the method
+     * @return the boolean
+     */
+    public static boolean isGetter(Method method) {
+        return method.getName().startsWith("get") && method.getParameterTypes().length == 0 && !void.class.equals(method.getReturnType());
+    }
 
     /**
      * On jda event. Parse JDA Events and print a JSON format to stdout
@@ -162,16 +174,6 @@ public class EventManager {
         }
 
         System.out.println(dataMap);
-    }
-
-    /**
-     * Is getter boolean.
-     *
-     * @param method the method
-     * @return the boolean
-     */
-    public static boolean isGetter(Method method) {
-        return method.getName().startsWith("get") && method.getParameterTypes().length == 0 && !void.class.equals(method.getReturnType());
     }
 
 //    public static boolean isSetter(Method method) {

@@ -1,6 +1,7 @@
 package bot;
 
 //Input/Output Imports
+
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Reader;
@@ -20,7 +21,7 @@ public class ScriptRunner {
     /**
      * Constructor
      *
-     * @param aConnection SQL connection
+     * @param aConnection  SQL connection
      * @param aStopOnError Whether or not to stop when an error occurs
      */
     public ScriptRunner(Connection aConnection, boolean aStopOnError) {
@@ -30,9 +31,9 @@ public class ScriptRunner {
     /**
      * Constructor
      *
-     * @param aConnection SQL connection
+     * @param aConnection  SQL connection
      * @param aStopOnError Whether or not to stop when an error occurs
-     * @param aDelimiter SQL statement delimiter char
+     * @param aDelimiter   SQL statement delimiter char
      */
     public ScriptRunner(Connection aConnection, boolean aStopOnError, String aDelimiter) {
         initScriptRunner(aConnection, aStopOnError, aDelimiter, false);
@@ -41,9 +42,9 @@ public class ScriptRunner {
     /**
      * Constructor
      *
-     * @param aConnection SQL connection
-     * @param aStopOnError Whether or not to stop when an error occurs
-     * @param aDelimiter SQL statement delimiter char
+     * @param aConnection        SQL connection
+     * @param aStopOnError       Whether or not to stop when an error occurs
+     * @param aDelimiter         SQL statement delimiter char
      * @param aFullLineDelimiter Whether the delimiter ends the full line (true), or only the statement preceding it (false)
      */
     public ScriptRunner(Connection aConnection, boolean aStopOnError, String aDelimiter, boolean aFullLineDelimiter) {
@@ -53,9 +54,9 @@ public class ScriptRunner {
     /**
      * Script runner initialization method
      *
-     * @param aConnection SQL connection
-     * @param aStopOnError Whether or not to stop when an error occurs
-     * @param aDelimiter SQL statement delimiter char
+     * @param aConnection        SQL connection
+     * @param aStopOnError       Whether or not to stop when an error occurs
+     * @param aDelimiter         SQL statement delimiter char
      * @param aFullLineDelimiter Whether the delimiter ends the full line (true), or only the statement preceding it (false)
      */
     private void initScriptRunner(Connection aConnection, boolean aStopOnError, String aDelimiter, boolean aFullLineDelimiter) {
@@ -63,15 +64,6 @@ public class ScriptRunner {
         stopOnError = aStopOnError;
         delimiter = aDelimiter;
         fullLineDelimiter = aFullLineDelimiter;
-    }
-
-    /**
-     * Change the SQL statement delimiter
-     *
-     * @param aDelimiter SQL statement delimiter char
-     */
-    public void setDelimiter(String aDelimiter) {
-        delimiter = aDelimiter;
     }
 
     /**
@@ -93,6 +85,15 @@ public class ScriptRunner {
     }
 
     /**
+     * Change the SQL statement delimiter
+     *
+     * @param aDelimiter SQL statement delimiter char
+     */
+    public void setDelimiter(String aDelimiter) {
+        delimiter = aDelimiter;
+    }
+
+    /**
      * Runs an SQL script (read in using the Reader parameter)
      *
      * @param reader File reader that holds the script file
@@ -106,7 +107,7 @@ public class ScriptRunner {
     /**
      * Runs an SQL script (read in using the Reader parameter) using the connection passed in
      *
-     * @param conn SQL connection
+     * @param conn   SQL connection
      * @param reader File reader that holds the script file
      * @throws IOException
      * @throws SQLException
@@ -127,8 +128,8 @@ public class ScriptRunner {
                 if (trimmedLine.length() < 1 || trimmedLine.startsWith("//") || trimmedLine.startsWith("--")) {
                     // Do nothing
                 } else if (!fullLineDelimiter && trimmedLine.endsWith(getDelimiter())
-                           || fullLineDelimiter && trimmedLine.equals(getDelimiter())) {
-                    command.append(line.substring(0, line .lastIndexOf(getDelimiter())));
+                    || fullLineDelimiter && trimmedLine.equals(getDelimiter())) {
+                    command.append(line.substring(0, line.lastIndexOf(getDelimiter())));
                     command.append(" ");
                     Statement statement = conn.createStatement();
                     boolean hasResults = false;

@@ -29,18 +29,15 @@ public class WerewolfJoinCS extends CommandStructure {
     public void execute(Member author, User authorUser, MessageChannel channel, Message message, String parameters, Map<String, CommandStructure> commandList) {
         Long guildID = author.getGuild().getIdLong();
 
-        if(!dbMan.isWerewolfOn(guildID))
-        {
+        if (!dbMan.isWerewolfOn(guildID)) {
             //Werewolf is turned off for this guild, so ignore the command
             return;
         }
 
-        if(hasPermission(author))
-        {
+        if (hasPermission(author)) {
             //check to make sure that we're in a gamestarted state
             GameState gs = ww.getWerewolfGameState(guildID);
-            if(gs != null && gs == GameState.GAMESTART)
-            {
+            if (gs != null && gs == GameState.GAMESTART) {
                 ww.joinGame(guildID, author);
             }
         }

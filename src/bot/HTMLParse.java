@@ -3,47 +3,40 @@ package bot;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+
 import java.io.IOException;
-import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class HTMLParse
-{
+public class HTMLParse {
     public static HTMLParse _instance;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-    private Document doc;
     String[] months = new String[12];
+    private Document doc;
 
-    public static Integer tryParse(String str)
-    {
+    public static Integer tryParse(String str) {
         Integer retVal;
-        try
-        {
+        try {
             retVal = Integer.parseInt(str);
-        }
-        catch (NumberFormatException nfe)
-        {
+        } catch (NumberFormatException nfe) {
             retVal = 0; // or null if that is your preference
         }
         return retVal;
     }
 
-    public static HTMLParse get_instance()
-    {
-        if (_instance == null)
-        {
+    public static HTMLParse get_instance() {
+        if (_instance == null) {
             _instance = new HTMLParse();
         }
         return _instance;
     }
 
-    public String GetTodayCalendarData(MessageChannel channel)
-    {
+    public String GetTodayCalendarData(MessageChannel channel) {
         months[0] = "January";
         months[1] = "February";
         months[2] = "March";
@@ -56,8 +49,7 @@ public class HTMLParse
         months[9] = "October";
         months[10] = "November";
         months[11] = "December";
-        try
-        {
+        try {
             DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd hh:mm");
             Date date = new Date();
 
@@ -67,12 +59,9 @@ public class HTMLParse
             int indexOfMonth = Integer.parseInt(monthFind[1]);
             int nextMonthIndex = 0;
 
-            if (indexOfMonth < 11)
-            {
+            if (indexOfMonth < 11) {
                 nextMonthIndex = indexOfMonth++;
-            }
-            else
-            {
+            } else {
                 nextMonthIndex = 0;
             }
 
@@ -86,14 +75,10 @@ public class HTMLParse
             int monthIndex = 0;
             int monthAfterIndex = 0;
 
-            for (int i = 0; i < parsedCalendar.length; i++)
-            {
-                if (parsedCalendar[i] == months[indexOfMonth])
-                {
+            for (int i = 0; i < parsedCalendar.length; i++) {
+                if (parsedCalendar[i] == months[indexOfMonth]) {
                     monthIndex = i;
-                }
-                else if (parsedCalendar[i] == months[nextMonthIndex])
-                {
+                } else if (parsedCalendar[i] == months[nextMonthIndex]) {
                     monthAfterIndex = i;
                 }
             }
@@ -103,10 +88,8 @@ public class HTMLParse
             int dayIndex = 0;
             int dayAfterIndex = 0;
 
-            for (int i = 0; i < thisMonthsData.length; i++)
-            {
-                if (HTMLParse.tryParse(thisMonthsData[i]) == day)
-                {
+            for (int i = 0; i < thisMonthsData.length; i++) {
+                if (HTMLParse.tryParse(thisMonthsData[i]) == day) {
                     dayIndex = i;
                     dayAfterIndex = i++;
                 }
@@ -115,55 +98,43 @@ public class HTMLParse
             String[] thisDaysData = Arrays.copyOfRange(thisMonthsData, dayIndex, dayAfterIndex);
             Boolean todayHasEvent = false;
 
-            for (int i = 0; i < thisDaysData.length; i++)
-            {
-                if (thisDaysData[i].contains("Events"))
-                {
+            for (int i = 0; i < thisDaysData.length; i++) {
+                if (thisDaysData[i].contains("Events")) {
                     todayHasEvent = true;
                 }
             }
 
-            if (todayHasEvent)
-            {
+            if (todayHasEvent) {
                 String todaysEvents = "";
-                for (int i = 0; i < thisDaysData.length; i++)
-                {
+                for (int i = 0; i < thisDaysData.length; i++) {
                     todaysEvents += thisDaysData[i] + " ";
                 }
                 channel.sendMessage(todaysEvents);
                 return todaysEvents;
-            }
-            else
-            {
+            } else {
                 channel.sendMessage("No events today!");
                 return "No Event Today";
             }
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
             return "Error";
         }
     }
 
-    public void ShutDown()
-    {
+    public void ShutDown() {
         scheduler.shutdownNow();
     }
 
-    public void StartScheduledUpdates(MessageChannel channel)
-    {
+    public void StartScheduledUpdates(MessageChannel channel) {
         scheduler.scheduleAtFixedRate(new Runnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 HTMLParse.get_instance().GetTodayCalendarData(channel);
             }
         }, 0, 3L, TimeUnit.HOURS);
     }
 
-    public void CalenderStart(MessageChannel channel)
-    {
+    public void CalenderStart(MessageChannel channel) {
         HTMLParse.get_instance().StartScheduledUpdates(channel);
     }
 }

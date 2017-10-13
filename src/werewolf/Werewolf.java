@@ -1,11 +1,17 @@
 package werewolf;
 
+import bot.database.manager.DatabaseManager;
 import bot.database.manager.RankUp;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.MessageBuilder;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.managers.GuildController;
 import net.dv8tion.jda.core.managers.PermOverrideManagerUpdatable;
+import net.dv8tion.jda.core.requests.restaction.ChannelAction;
 import net.dv8tion.jda.core.requests.restaction.PermissionOverrideAction;
 import werewolf.data.*;
+import werewolf.data.Role;
 
 import java.awt.*;
 import java.io.IOException;
@@ -21,13 +27,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-
-import bot.database.manager.DatabaseManager;
-import net.dv8tion.jda.core.MessageBuilder;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.managers.GuildController;
-import net.dv8tion.jda.core.requests.restaction.ChannelAction;
-import werewolf.data.Role;
 
 /*
     * priority, more = higher,
@@ -52,6 +51,11 @@ import werewolf.data.Role;
  * The type Werewolf.
  */
 public class Werewolf {
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(5);
+    /**
+     * The Db man.
+     */
+    DatabaseManager dbMan = null;
     private Map<Long, WWGame> gameList = new HashMap<Long, WWGame>();
     private Map<Long, Theme> themeList = new HashMap<Long, Theme>();
     private Map<Long, Boolean> isRuleSentList = new HashMap<Long, Boolean>();
@@ -66,12 +70,15 @@ public class Werewolf {
     private User thisBot;
 
     /**
-     * The Db man.
+     * Instantiates a new Werewolf.
+     *
+     * @param dbMan   the db man
+     * @param thisBot the this bot
      */
-    DatabaseManager dbMan = null;
-
-
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(5);
+    public Werewolf(DatabaseManager dbMan, User thisBot) {
+        this.dbMan = dbMan;
+        this.thisBot = thisBot;
+    }
 
     /**
      * Gets town channel.
@@ -121,17 +128,6 @@ public class Werewolf {
 
             gameList.put(guildID, newWWGame);
         }
-    }
-
-    /**
-     * Instantiates a new Werewolf.
-     *
-     * @param dbMan   the db man
-     * @param thisBot the this bot
-     */
-    public Werewolf(DatabaseManager dbMan, User thisBot) {
-        this.dbMan = dbMan;
-        this.thisBot = thisBot;
     }
 
     /**
@@ -833,7 +829,7 @@ public class Werewolf {
         } else {
             themeText = themeText.replaceAll("WOLFPLURAL", suffix + infoPrefix + getThemeText(guildID, "MANY_WOLVES") + infoSuffix + prefix);
         }
-		
+
 		/* Return Theme Text */
         if (avatarType != null) {
             String url = getThemeText(guildID, avatarType);
@@ -1548,7 +1544,7 @@ public class Werewolf {
         embedRoleList.setAuthor("Role list", null, null);
         for (Player player : gamesPlayerLists.get(guildID).getPlayerList()) {
             embedRoleList.addField(player.getEffectiveName(), getRoleString(guildID, player.getRole())
-                    + System.lineSeparator() + getPlayerStateString(player.getPlayerState(), guildID), true);
+                + System.lineSeparator() + getPlayerStateString(player.getPlayerState(), guildID), true);
         }
         getTownChannel(guildID).sendMessage(embedRoleList.build()).queue();
     }
@@ -1609,8 +1605,7 @@ public class Werewolf {
      */
     public MessageEmbed displayTheme(Integer themeID) {
 
-        if (themeID == null || themeID <= 0)
-        {
+        if (themeID == null || themeID <= 0) {
             return null;
         }
 
@@ -1906,7 +1901,7 @@ public class Werewolf {
         Integer numberWolvesAlive = gamesPlayerLists.get(guildID).getNumberOfPlayerByRolePlayerState(Role.WOLF, PlayerState.ALIVE);
         if (numberWolvesAlive > 1) {
             embedRoleList.addField("", "There are " + numberWolvesAlive + " " +
-                    getThemeText(guildID, "MANY_WOLVES") + ".", false);
+                getThemeText(guildID, "MANY_WOLVES") + ".", false);
         } else {
             embedRoleList.addField("There is just one ", getThemeText(guildID, "ONEWOLF"), false);
         }
@@ -2069,6 +2064,7 @@ public class Werewolf {
         public RulesRefresh(Long guildID) {
             this.guildID = guildID;
         }
+
         @Override
         public void run() {
             isRuleSentList.put(guildID, false);

@@ -3,7 +3,7 @@ package werewolf.data;
 /**
  * The enum Role.
  */
-public enum Role{
+public enum Role {
     /**
      * Err role.
      */

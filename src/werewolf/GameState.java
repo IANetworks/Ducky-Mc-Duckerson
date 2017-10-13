@@ -3,11 +3,11 @@ package werewolf;
 /**
  * The enum Game state.
  */
-public enum GameState{
+public enum GameState {
     /**
      * Idle game state.
      */
-    IDLE , /**
+    IDLE, /**
      * Gamestart game state.
      */
     GAMESTART, /**

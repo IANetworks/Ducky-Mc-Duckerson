@@ -6,10 +6,10 @@ import java.util.HashSet;
  * The type List of permissions.
  */
 public class ListOfPermissions {
-	private Integer permissionLevel;
-	private String permissionLevelName;
-	private HashSet<Long> userID = new HashSet<Long>();
-	private HashSet<Long> roleID = new HashSet<Long>();
+    private Integer permissionLevel;
+    private String permissionLevelName;
+    private HashSet<Long> userID = new HashSet<Long>();
+    private HashSet<Long> roleID = new HashSet<Long>();
 
     /**
      * Gets permission level name.
@@ -17,8 +17,8 @@ public class ListOfPermissions {
      * @return the permission level name
      */
     public String getPermissionLevelName() {
-		return permissionLevelName;
-	}
+        return permissionLevelName;
+    }
 
     /**
      * Sets permission level name.
@@ -26,8 +26,8 @@ public class ListOfPermissions {
      * @param permissionLevelName the permission level name
      */
     public void setPermissionLevelName(String permissionLevelName) {
-		this.permissionLevelName = permissionLevelName;
-	}
+        this.permissionLevelName = permissionLevelName;
+    }
 
     /**
      * Has user id boolean.
@@ -36,18 +36,17 @@ public class ListOfPermissions {
      * @return the boolean
      */
     public boolean hasUserID(Long userID) {
-		return this.userID.contains(userID);
-	}
+        return this.userID.contains(userID);
+    }
 
     /**
      * Remove user id.
      *
      * @param userID the user id
      */
-    public void removeUserID(Long userID)
-	{
-		this.userID.remove(userID);
-	}
+    public void removeUserID(Long userID) {
+        this.userID.remove(userID);
+    }
 
     /**
      * Sets user id.
@@ -55,18 +54,17 @@ public class ListOfPermissions {
      * @param userID the user id
      */
     public void setUserID(Long userID) {
-		this.userID.add(userID);
-	}
+        this.userID.add(userID);
+    }
 
     /**
      * Remove role id.
      *
      * @param roleID the role id
      */
-    public void removeRoleID(Long roleID)
-	{
-		this.roleID.remove(roleID);
-	}
+    public void removeRoleID(Long roleID) {
+        this.roleID.remove(roleID);
+    }
 
     /**
      * Has role id boolean.
@@ -75,8 +73,8 @@ public class ListOfPermissions {
      * @return the boolean
      */
     public boolean hasRoleID(Long roleID) {
-		return this.roleID.contains(roleID);
-	}
+        return this.roleID.contains(roleID);
+    }
 
     /**
      * Sets role id.
@@ -84,8 +82,8 @@ public class ListOfPermissions {
      * @param roleID the role id
      */
     public void setRoleID(Long roleID) {
-		this.roleID.add(roleID);
-	}
+        this.roleID.add(roleID);
+    }
 
     /**
      * Gets permission level.
@@ -93,8 +91,8 @@ public class ListOfPermissions {
      * @return the permission level
      */
     public Integer getPermissionLevel() {
-		return permissionLevel;
-	}
+        return permissionLevel;
+    }
 
     /**
      * Sets permission level.
@@ -102,8 +100,8 @@ public class ListOfPermissions {
      * @param permissionLevel the permission level
      */
     public void setPermissionLevel(Integer permissionLevel) {
-		this.permissionLevel = permissionLevel;
-	}
-	
-	
+        this.permissionLevel = permissionLevel;
+    }
+
+
 }

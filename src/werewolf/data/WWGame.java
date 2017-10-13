@@ -8,35 +8,35 @@ import java.time.Instant;
  * The type Ww game.
  */
 public class WWGame {
-	private GameState gameState = GameState.IDLE;
-	
-	//Curves setting for Nighttime 
-	private Integer nightTimeX = 190;
+    private GameState gameState = GameState.IDLE;
+
+    //Curves setting for Nighttime
+    private Integer nightTimeX = 190;
     private Integer nightTimeY = 110;
     private Double nightTimePow = 0.8;
 
     //Setting for Daytime
-	private Integer maxDayTime = 120;
-	private Integer dayTimeX = 12;
-	
-	//setting for vote time
-	private Integer voteTimeX = 10;
-	private Integer maxVoteTime = 240;
-	private Integer minVoteTime = 120;
+    private Integer maxDayTime = 120;
+    private Integer dayTimeX = 12;
 
-	private int joinTime = 120; //time (in seconds) for join up
-	private int minPlayers = 5; // min players
-	private int noVoteRounds = 3; // number of rounds in a row a player can skip voting, may change this to vary depending on number of people
-	private int nickLimt = 2; // Number of times a player can change nickname
-	private int upperNickLimit = 4; //Number of times a player can change nickname before being removed from the game
-	
-	
-	private Integer roundNo = 0;
-	private boolean tieGame = true; //boolean to determine if there is a random selection during a tied votes
-	private boolean voteChange = false; //boolean to show if the bot should allow vote changes during voting
+    //setting for vote time
+    private Integer voteTimeX = 10;
+    private Integer maxVoteTime = 240;
+    private Integer minVoteTime = 120;
 
-	private boolean checkingWin = false; //boolean to make sure we're not already tallying votes when game switch GameState
-	private boolean hasBans = false; //boolean to check to see if someone been banned from the game.
+    private int joinTime = 120; //time (in seconds) for join up
+    private int minPlayers = 5; // min players
+    private int noVoteRounds = 3; // number of rounds in a row a player can skip voting, may change this to vary depending on number of people
+    private int nickLimt = 2; // Number of times a player can change nickname
+    private int upperNickLimit = 4; //Number of times a player can change nickname before being removed from the game
+
+
+    private Integer roundNo = 0;
+    private boolean tieGame = true; //boolean to determine if there is a random selection during a tied votes
+    private boolean voteChange = false; //boolean to show if the bot should allow vote changes during voting
+
+    private boolean checkingWin = false; //boolean to make sure we're not already tallying votes when game switch GameState
+    private boolean hasBans = false; //boolean to check to see if someone been banned from the game.
 
     private Instant gameStart = null;
 
@@ -47,8 +47,8 @@ public class WWGame {
      * @return the gameState
      */
     public GameState getGameState() {
-		return gameState;
-	}
+        return gameState;
+    }
 
     /**
      * Sets game state.
@@ -56,8 +56,8 @@ public class WWGame {
      * @param gameState the gameState to set
      */
     public void setGameState(GameState gameState) {
-		this.gameState = gameState;
-	}
+        this.gameState = gameState;
+    }
 
     /**
      * Gets night time x.
@@ -65,8 +65,8 @@ public class WWGame {
      * @return the nightTimeX
      */
     public Integer getNightTimeX() {
-		return nightTimeX;
-	}
+        return nightTimeX;
+    }
 
     /**
      * Sets night time x.
@@ -74,8 +74,8 @@ public class WWGame {
      * @param nightTimeX the nightTimeX to set
      */
     public void setNightTimeX(Integer nightTimeX) {
-		this.nightTimeX = nightTimeX;
-	}
+        this.nightTimeX = nightTimeX;
+    }
 
     /**
      * Gets night time y.
@@ -83,8 +83,8 @@ public class WWGame {
      * @return the nightTimeY
      */
     public Integer getNightTimeY() {
-		return nightTimeY;
-	}
+        return nightTimeY;
+    }
 
     /**
      * Sets night time y.
@@ -92,8 +92,8 @@ public class WWGame {
      * @param nightTimeY the nightTimeY to set
      */
     public void setNightTimeY(Integer nightTimeY) {
-		this.nightTimeY = nightTimeY;
-	}
+        this.nightTimeY = nightTimeY;
+    }
 
     /**
      * Gets night time pow.
@@ -101,8 +101,8 @@ public class WWGame {
      * @return the nightTimePow
      */
     public Double getNightTimePow() {
-		return nightTimePow;
-	}
+        return nightTimePow;
+    }
 
     /**
      * Sets night time pow.
@@ -110,8 +110,8 @@ public class WWGame {
      * @param nightTimePow the nightTimePow to set
      */
     public void setNightTimePow(Double nightTimePow) {
-		this.nightTimePow = nightTimePow;
-	}
+        this.nightTimePow = nightTimePow;
+    }
 
     /**
      * Gets max day time.
@@ -119,8 +119,8 @@ public class WWGame {
      * @return the maxDayTime
      */
     public Integer getMaxDayTime() {
-		return maxDayTime;
-	}
+        return maxDayTime;
+    }
 
     /**
      * Sets max day time.
@@ -128,8 +128,8 @@ public class WWGame {
      * @param maxDayTime the maxDayTime to set
      */
     public void setMaxDayTime(Integer maxDayTime) {
-		this.maxDayTime = maxDayTime;
-	}
+        this.maxDayTime = maxDayTime;
+    }
 
     /**
      * Gets day time x.
@@ -137,8 +137,8 @@ public class WWGame {
      * @return the dayTimeX
      */
     public Integer getDayTimeX() {
-		return dayTimeX;
-	}
+        return dayTimeX;
+    }
 
     /**
      * Sets day time x.
@@ -146,8 +146,8 @@ public class WWGame {
      * @param dayTimeX the dayTimeX to set
      */
     public void setDayTimeX(Integer dayTimeX) {
-		this.dayTimeX = dayTimeX;
-	}
+        this.dayTimeX = dayTimeX;
+    }
 
     /**
      * Gets vote time x.
@@ -155,8 +155,8 @@ public class WWGame {
      * @return the voteTimeX
      */
     public Integer getVoteTimeX() {
-		return voteTimeX;
-	}
+        return voteTimeX;
+    }
 
     /**
      * Sets vote time x.
@@ -164,8 +164,8 @@ public class WWGame {
      * @param voteTimeX the voteTimeX to set
      */
     public void setVoteTimeX(Integer voteTimeX) {
-		this.voteTimeX = voteTimeX;
-	}
+        this.voteTimeX = voteTimeX;
+    }
 
     /**
      * Gets max vote time.
@@ -173,8 +173,8 @@ public class WWGame {
      * @return the maxVoteTime
      */
     public Integer getMaxVoteTime() {
-		return maxVoteTime;
-	}
+        return maxVoteTime;
+    }
 
     /**
      * Sets max vote time.
@@ -182,8 +182,8 @@ public class WWGame {
      * @param maxVoteTime the maxVoteTime to set
      */
     public void setMaxVoteTime(Integer maxVoteTime) {
-		this.maxVoteTime = maxVoteTime;
-	}
+        this.maxVoteTime = maxVoteTime;
+    }
 
     /**
      * Gets min vote time.
@@ -191,8 +191,8 @@ public class WWGame {
      * @return the minVoteTime
      */
     public Integer getMinVoteTime() {
-		return minVoteTime;
-	}
+        return minVoteTime;
+    }
 
     /**
      * Sets min vote time.
@@ -200,8 +200,8 @@ public class WWGame {
      * @param minVoteTime the minVoteTime to set
      */
     public void setMinVoteTime(Integer minVoteTime) {
-		this.minVoteTime = minVoteTime;
-	}
+        this.minVoteTime = minVoteTime;
+    }
 
     /**
      * Gets join time.
@@ -209,8 +209,8 @@ public class WWGame {
      * @return the joinTime
      */
     public int getJoinTime() {
-		return joinTime;
-	}
+        return joinTime;
+    }
 
     /**
      * Sets join time.
@@ -218,8 +218,8 @@ public class WWGame {
      * @param joinTime the joinTime to set
      */
     public void setJoinTime(int joinTime) {
-		this.joinTime = joinTime;
-	}
+        this.joinTime = joinTime;
+    }
 
     /**
      * Gets min players.
@@ -227,8 +227,8 @@ public class WWGame {
      * @return the minPlayers
      */
     public int getMinPlayers() {
-		return minPlayers;
-	}
+        return minPlayers;
+    }
 
     /**
      * Sets min players.
@@ -236,8 +236,8 @@ public class WWGame {
      * @param minPlayers the minPlayers to set
      */
     public void setMinPlayers(int minPlayers) {
-		this.minPlayers = minPlayers;
-	}
+        this.minPlayers = minPlayers;
+    }
 
     /**
      * Gets no vote rounds.
@@ -245,8 +245,8 @@ public class WWGame {
      * @return the noVoteRounds
      */
     public int getNoVoteRounds() {
-		return noVoteRounds;
-	}
+        return noVoteRounds;
+    }
 
     /**
      * Sets no vote rounds.
@@ -254,8 +254,8 @@ public class WWGame {
      * @param noVoteRounds the noVoteRounds to set
      */
     public void setNoVoteRounds(int noVoteRounds) {
-		this.noVoteRounds = noVoteRounds;
-	}
+        this.noVoteRounds = noVoteRounds;
+    }
 
     /**
      * Gets nick limt.
@@ -263,8 +263,8 @@ public class WWGame {
      * @return the nickLimt
      */
     public int getNickLimt() {
-		return nickLimt;
-	}
+        return nickLimt;
+    }
 
     /**
      * Sets nick limt.
@@ -272,8 +272,8 @@ public class WWGame {
      * @param nickLimt the nickLimt to set
      */
     public void setNickLimt(int nickLimt) {
-		this.nickLimt = nickLimt;
-	}
+        this.nickLimt = nickLimt;
+    }
 
     /**
      * Gets upper nick limit.
@@ -281,8 +281,8 @@ public class WWGame {
      * @return the upperNickLimit
      */
     public int getUpperNickLimit() {
-		return upperNickLimit;
-	}
+        return upperNickLimit;
+    }
 
     /**
      * Sets upper nick limit.
@@ -290,8 +290,8 @@ public class WWGame {
      * @param upperNickLimit the upperNickLimit to set
      */
     public void setUpperNickLimit(int upperNickLimit) {
-		this.upperNickLimit = upperNickLimit;
-	}
+        this.upperNickLimit = upperNickLimit;
+    }
 
     /**
      * Gets round no.
@@ -299,8 +299,8 @@ public class WWGame {
      * @return the roundNo
      */
     public Integer getRoundNo() {
-		return roundNo;
-	}
+        return roundNo;
+    }
 
     /**
      * Sets round no.
@@ -308,8 +308,8 @@ public class WWGame {
      * @param roundNo the roundNo to set
      */
     public void setRoundNo(Integer roundNo) {
-		this.roundNo = roundNo;
-	}
+        this.roundNo = roundNo;
+    }
 
     /**
      * Is tie game boolean.
@@ -317,8 +317,8 @@ public class WWGame {
      * @return the tieGame
      */
     public boolean isTieGame() {
-		return tieGame;
-	}
+        return tieGame;
+    }
 
     /**
      * Sets tie game.
@@ -326,8 +326,8 @@ public class WWGame {
      * @param tieGame the tieGame to set
      */
     public void setTieGame(boolean tieGame) {
-		this.tieGame = tieGame;
-	}
+        this.tieGame = tieGame;
+    }
 
     /**
      * Is vote change boolean.
@@ -335,8 +335,8 @@ public class WWGame {
      * @return the voteChange
      */
     public boolean isVoteChange() {
-		return voteChange;
-	}
+        return voteChange;
+    }
 
     /**
      * Sets vote change.
@@ -344,8 +344,8 @@ public class WWGame {
      * @param voteChange the voteChange to set
      */
     public void setVoteChange(boolean voteChange) {
-		this.voteChange = voteChange;
-	}
+        this.voteChange = voteChange;
+    }
 
     /**
      * Is checking win boolean.
@@ -353,8 +353,8 @@ public class WWGame {
      * @return the checkingWin
      */
     public boolean isCheckingWin() {
-		return checkingWin;
-	}
+        return checkingWin;
+    }
 
     /**
      * Sets checking win.
@@ -362,8 +362,8 @@ public class WWGame {
      * @param checkingWin the checkingWin to set
      */
     public void setCheckingWin(boolean checkingWin) {
-		this.checkingWin = checkingWin;
-	}
+        this.checkingWin = checkingWin;
+    }
 
     /**
      * Has bans boolean.
@@ -371,8 +371,8 @@ public class WWGame {
      * @return the hasBans
      */
     public boolean hasBans() {
-		return hasBans;
-	}
+        return hasBans;
+    }
 
     /**
      * Sets has bans.
@@ -380,15 +380,15 @@ public class WWGame {
      * @param hasBans the hasBans to set
      */
     public void setHasBans(boolean hasBans) {
-		this.hasBans = hasBans;
-	}
+        this.hasBans = hasBans;
+    }
 
     /**
      * Inc game round.
      */
     public void incGameRound() {
-		this.roundNo++;
-	}
+        this.roundNo++;
+    }
 
     public Instant getGameStart() {
         return gameStart;

@@ -11,7 +11,7 @@ import java.util.Map;
  * SetGameChannel, command to set game channel for server. Checks to see if the game channel has been already created,
  * before assigning the name into database.
  */
-public class SetGameChannelCS extends CommandStructure{
+public class SetGameChannelCS extends CommandStructure {
     /**
      * Instantiates a new Command structure.
      *
@@ -30,18 +30,15 @@ public class SetGameChannelCS extends CommandStructure{
         Long guildID = guild.getIdLong();
 
         //First we check to see if we have a parameter
-        if(parameters.isEmpty())
-        {
+        if (parameters.isEmpty()) {
             channel.sendMessage("Missing a channel name").queue();
         } else {
             //check to see if we have an existing channel.
             parameters = parameters.trim();
             List<TextChannel> textChannelsByName = guild.getTextChannelsByName(parameters, true);
-            if(textChannelsByName.size() == 0)
-            {
+            if (textChannelsByName.size() == 0) {
                 channel.sendMessage("There's no channels by that name").queue();
-            } else if(textChannelsByName.size() > 1)
-            {
+            } else if (textChannelsByName.size() > 1) {
                 channel.sendMessage("There's many channels by that name, narrow the game channel.").queue();
             } else {
                 //store channel

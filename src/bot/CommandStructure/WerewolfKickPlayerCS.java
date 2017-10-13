@@ -2,7 +2,6 @@ package bot.CommandStructure;
 
 import bot.SharedContainer;
 import net.dv8tion.jda.core.entities.*;
-import werewolf.GameState;
 
 import java.util.List;
 import java.util.Map;

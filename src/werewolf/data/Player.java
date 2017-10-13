@@ -16,310 +16,294 @@ import net.dv8tion.jda.core.entities.Member;
  * The type Player.
  */
 public class Player {
-	/**
-	 * The Player.
-	 */
-	Member player = null; //Hold the User object from Discord.
+    /**
+     * The Player.
+     */
+    Member player = null; //Hold the User object from Discord.
 
-	/**
-	 * The Vote for.
-	 */
-	Player voteFor = null;
-	/**
-	 * The Role.
-	 */
-	Role role = Role.NOROLE; // Contain an int for Role
-	/**
-	 * The Player state.
-	 */
-	PlayerState playerState = PlayerState.ALIVE; // Contain an int for playerState, 1 playerState, 2 dead, 3 fled
+    /**
+     * The Vote for.
+     */
+    Player voteFor = null;
+    /**
+     * The Role.
+     */
+    Role role = Role.NOROLE; // Contain an int for Role
+    /**
+     * The Player state.
+     */
+    PlayerState playerState = PlayerState.ALIVE; // Contain an int for playerState, 1 playerState, 2 dead, 3 fled
 
-	/**
-	 * The Nick count.
-	 */
-	int nickCount = 0;
-	/**
-	 * The Non vote count.
-	 */
-	int nonVoteCount = 0; // Number of times a Player has not voted for someone
-	/**
-	 * The Player no.
-	 */
+    /**
+     * The Nick count.
+     */
+    int nickCount = 0;
+    /**
+     * The Non vote count.
+     */
+    int nonVoteCount = 0; // Number of times a Player has not voted for someone
+    /**
+     * The Player no.
+     */
 //int playerID = -1; // PlayerID Number, for easier reference for players ID in Database
-	int playerNo = 0;  //Player Number, for giving the player a number to identify with
-	/**
-	 * The Vote count.
-	 */
-	int voteCount = 0;
+    int playerNo = 0;  //Player Number, for giving the player a number to identify with
+    /**
+     * The Vote count.
+     */
+    int voteCount = 0;
 
-	/**
-	 * The Is banned.
-	 */
-	boolean isBanned = false;
-	/**
-	 * The Role recieved.
-	 */
-	boolean roleRecieved = false;
+    /**
+     * The Is banned.
+     */
+    boolean isBanned = false;
+    /**
+     * The Role recieved.
+     */
+    boolean roleRecieved = false;
 
-	/**
-	 * Is role recieved boolean.
-	 *
-	 * @return the boolean
-	 */
-	public boolean isRoleRecieved() {
-		return roleRecieved;
-	}
+    /**
+     * Instantiates a new Player.
+     *
+     * @param player   the player
+     * @param playerNo the player no
+     */
+    public Player(Member player, int playerNo) {
+        setPlayer(player);
+        setPlayerNo(playerNo);
+        setRole(Role.NOROLE);
+        setPlayerState(PlayerState.ALIVE);
+        setNonVoteCount(0);
+    }
 
-	/**
-	 * Sets role recieved.
-	 *
-	 * @param roleRecieved the role recieved
-	 */
-	public void setRoleRecieved(boolean roleRecieved) {
-		this.roleRecieved = roleRecieved;
-	}
-
-
-	
-	/** Creates a new instance of Player */
-	/**
-	 * Instantiates a new Player.
-	 *
-	 * @param player   the player
-	 * @param playerNo the player no
-	 */
-	public Player(Member player, int playerNo) {
-		setPlayer(player);
-		setPlayerNo(playerNo);
-		setRole(Role.NOROLE);
-		setPlayerState(PlayerState.ALIVE);
-		setNonVoteCount(0);
-	}
-	
-	
-	private void setPlayer(Member player) {
-		this.player = player;
-		
-	}
-
-	/**
-	 * Gets effective name.
-	 *
-	 * @return the effective name
-	 */
-	public String getEffectiveName() {
-		if(player != null)
-			return player.getEffectiveName();
-		else
-			return "-";
-	}
-
-	/**
-	 * Gets user id.
-	 *
-	 * @return the user id
-	 */
-	public Long getUserID() {
-		if(player == null)
-		{
-			return 0L;
-		}
-		return player.getUser().getIdLong();
-	}
-
-	/**
-	 * Gets member.
-	 *
-	 * @return the member
-	 */
-	public Member getMember() {
-		return player;
-	}
+    /**
+     * Is role recieved boolean.
+     *
+     * @return the boolean
+     */
+    public boolean isRoleRecieved() {
+        return roleRecieved;
+    }
 
 
-	/**
-	 * Sets is banned.
-	 *
-	 * @param isBanned the is banned
-	 */
-	public void setIsBanned(boolean isBanned)
-	{
-		this.isBanned = isBanned;
-	}
+    /** Creates a new instance of Player */
 
-	/**
-	 * Gets is banned.
-	 *
-	 * @return the is banned
-	 */
-	public boolean getIsBanned()
-	{
-		return isBanned;
-	}
+    /**
+     * Sets role recieved.
+     *
+     * @param roleRecieved the role recieved
+     */
+    public void setRoleRecieved(boolean roleRecieved) {
+        this.roleRecieved = roleRecieved;
+    }
 
-	/**
-	 * Gets nick count.
-	 *
-	 * @return nick count
-	 */
-	public int getNickCount()
-	{
-		return nickCount; 
-	}
+    private void setPlayer(Member player) {
+        this.player = player;
 
+    }
 
-	/**
-	 * Sets player no.
-	 *
-	 * @param playerNo the player no
-	 */
-	public void setPlayerNo(int playerNo)
-	{
-		this.playerNo = playerNo;
-	}
+    /**
+     * Gets effective name.
+     *
+     * @return the effective name
+     */
+    public String getEffectiveName() {
+        if (player != null)
+            return player.getEffectiveName();
+        else
+            return "-";
+    }
 
-	/**
-	 * Gets player no.
-	 *
-	 * @return player no
-	 */
-	public int getPlayerNo()
-	{
-		return this.playerNo;
-	}
+    /**
+     * Gets user id.
+     *
+     * @return the user id
+     */
+    public Long getUserID() {
+        if (player == null) {
+            return 0L;
+        }
+        return player.getUser().getIdLong();
+    }
 
-	/**
-	 * Sets vote for.
-	 *
-	 * @param name the name
-	 */
-	public void setVoteFor(Player name)
-	{
-		this.voteFor = name;
-	}
+    /**
+     * Gets member.
+     *
+     * @return the member
+     */
+    public Member getMember() {
+        return player;
+    }
 
-	/**
-	 * Gets vote for.
-	 *
-	 * @return vote for
-	 */
-	public Player getVoteFor()
-	{
-		return this.voteFor;
+    /**
+     * Gets is banned.
+     *
+     * @return the is banned
+     */
+    public boolean getIsBanned() {
+        return isBanned;
+    }
 
-	}
+    /**
+     * Sets is banned.
+     *
+     * @param isBanned the is banned
+     */
+    public void setIsBanned(boolean isBanned) {
+        this.isBanned = isBanned;
+    }
 
-	/**
-	 * Gets vote count.
-	 *
-	 * @return the vote count
-	 */
-	public Integer getVoteCount()
-	{
-		return this.voteCount;
-	}
+    /**
+     * Gets nick count.
+     *
+     * @return nick count
+     */
+    public int getNickCount() {
+        return nickCount;
+    }
 
-	/**
-	 * Add vote count.
-	 */
-	public void addVoteCount()
-	{
-		this.voteCount ++;
-	}
+    /**
+     * Gets player no.
+     *
+     * @return player no
+     */
+    public int getPlayerNo() {
+        return this.playerNo;
+    }
 
-	/**
-	 * Reset vote.
-	 */
-	public void resetVote()
-	{
-		this.voteFor = null;
-		this.voteCount = 0;
-	}
+    /**
+     * Sets player no.
+     *
+     * @param playerNo the player no
+     */
+    public void setPlayerNo(int playerNo) {
+        this.playerNo = playerNo;
+    }
 
-	/**
-	 * Reset vote count.
-	 */
-	public void resetVoteCount()
-	{
-		this.voteCount = 0;
-	}
+    /**
+     * Gets vote for.
+     *
+     * @return vote for
+     */
+    public Player getVoteFor() {
+        return this.voteFor;
 
-	/**
-	 * Sets non vote count.
-	 *
-	 * @param nonVoteCount the non vote count
-	 */
-	public void setNonVoteCount(int nonVoteCount) {
-		this.nonVoteCount = nonVoteCount;
-	}
+    }
 
-	/**
-	 * Sets role.
-	 *
-	 * @param role the role
-	 */
-	public void setRole(Role role) {
-		this.role = role;
+    /**
+     * Sets vote for.
+     *
+     * @param name the name
+     */
+    public void setVoteFor(Player name) {
+        this.voteFor = name;
+    }
 
-	}
+    /**
+     * Gets vote count.
+     *
+     * @return the vote count
+     */
+    public Integer getVoteCount() {
+        return this.voteCount;
+    }
 
-	/**
-	 * Sets player state.
-	 *
-	 * @param playerState the player state
-	 */
-	public void setPlayerState(PlayerState playerState) {
-		this.playerState = playerState;
+    /**
+     * Add vote count.
+     */
+    public void addVoteCount() {
+        this.voteCount++;
+    }
+
+    /**
+     * Reset vote.
+     */
+    public void resetVote() {
+        this.voteFor = null;
+        this.voteCount = 0;
+    }
+
+    /**
+     * Reset vote count.
+     */
+    public void resetVoteCount() {
+        this.voteCount = 0;
+    }
+
+    /**
+     * Gets player state.
+     *
+     * @return player state
+     */
+    public PlayerState getPlayerState() {
+        return playerState;
+    }
+
+    /**
+     * Sets player state.
+     *
+     * @param playerState the player state
+     */
+    public void setPlayerState(PlayerState playerState) {
+        this.playerState = playerState;
 //		if(playerState == PlayerState.FLED) {
 //			this.addNoFled(1);
 //		}
-	}
+    }
 
-	/**
-	 * Gets player state.
-	 *
-	 * @return player state
-	 */
-	public PlayerState getPlayerState() {
-		return playerState;
-	}
-	
-	/**
-	 * 
-	 * @param playerID
-	 */
+    /**
+     * Gets non vote count.
+     *
+     * @return non vote count
+     */
+    public int getNonVoteCount() {
+        return nonVoteCount;
+    }
+
+    /**
+     * Sets non vote count.
+     *
+     * @param nonVoteCount the non vote count
+     */
+    public void setNonVoteCount(int nonVoteCount) {
+        this.nonVoteCount = nonVoteCount;
+    }
+
+    /**
+     *
+     * @param playerID
+     */
 //	public void setId(int playerID) {
 //		this.playerID = playerID;
 //	}
-	
-	/**
-	 * 
-	 * @return
-	 */
+
+    /**
+     *
+     * @return
+     */
 //	public int getPlayerId()
 //	{
 //		return playerID;
 //	}
 
-	/**
-	 * Gets non vote count.
-	 *
-	 * @return non vote count
-	 */
-	public int getNonVoteCount() {
-		return nonVoteCount;
-	}
+    /**
+     * Gets role.
+     *
+     * @return role
+     */
+    public Role getRole() {
+        return role;
+    }
 
-	/**
-	 * Gets role.
-	 *
-	 * @return role
-	 */
-	public Role getRole() {
-		return role;
-	}
+    /**
+     * Sets role.
+     *
+     * @param role the role
+     */
+    public void setRole(Role role) {
+        this.role = role;
 
-	 
+    }
+
 
 //	/**
 //	 * 

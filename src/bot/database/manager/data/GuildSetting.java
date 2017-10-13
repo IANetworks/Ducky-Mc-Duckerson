@@ -4,15 +4,15 @@ package bot.database.manager.data;
  * The type Guild setting.
  */
 public class GuildSetting {
-	private Long guildId = null;
-	private String prefix = null;
-	private String greeting = null;
-	private String greetingChannel = null;
-	private String loggingChannel = null;
-	private Boolean loggingOn = false;
-	private Boolean greetOn = false;
-	private String gameChannel = null;
-	private Boolean wwOn = true;
+    private Long guildId = null;
+    private String prefix = null;
+    private String greeting = null;
+    private String greetingChannel = null;
+    private String loggingChannel = null;
+    private Boolean loggingOn = false;
+    private Boolean greetOn = false;
+    private String gameChannel = null;
+    private Boolean wwOn = true;
     private Boolean deleteCommand = false;
     /**
      * The Is stored.
@@ -26,18 +26,18 @@ public class GuildSetting {
      *
      * @return the boolean
      */
-    public Boolean isWWOn(){
-		return wwOn;
-	}
+    public Boolean isWWOn() {
+        return wwOn;
+    }
 
     /**
      * Set ww on.
      *
      * @param wwOn the ww on
      */
-    public void setWWOn(Boolean wwOn){
-		this.wwOn = wwOn;
-	}
+    public void setWWOn(Boolean wwOn) {
+        this.wwOn = wwOn;
+    }
 
     /**
      * Gets channel.
@@ -45,8 +45,8 @@ public class GuildSetting {
      * @return the channel
      */
     public String getgameChannel() {
-		return gameChannel;
-	}
+        return gameChannel;
+    }
 
     /**
      * Sets game channel.
@@ -54,8 +54,8 @@ public class GuildSetting {
      * @param gameChannel the game channel
      */
     public void setGameChannel(String gameChannel) {
-		this.gameChannel = gameChannel;
-	}
+        this.gameChannel = gameChannel;
+    }
 
     /**
      * Is logging on boolean.
@@ -63,8 +63,8 @@ public class GuildSetting {
      * @return the boolean
      */
     public Boolean isLoggingOn() {
-		return loggingOn;
-	}
+        return loggingOn;
+    }
 
     /**
      * Sets logging on.
@@ -72,8 +72,8 @@ public class GuildSetting {
      * @param loggingOn the logging on
      */
     public void setLoggingOn(Boolean loggingOn) {
-		this.loggingOn = loggingOn;
-	}
+        this.loggingOn = loggingOn;
+    }
 
     /**
      * Is greet on boolean.
@@ -81,8 +81,8 @@ public class GuildSetting {
      * @return the boolean
      */
     public Boolean isGreetOn() {
-		return greetOn;
-	}
+        return greetOn;
+    }
 
     /**
      * Sets greet on.
@@ -90,8 +90,8 @@ public class GuildSetting {
      * @param greetOn the greet on
      */
     public void setGreetOn(Boolean greetOn) {
-		this.greetOn = greetOn;
-	}
+        this.greetOn = greetOn;
+    }
 
     /**
      * Gets prefix.
@@ -99,8 +99,8 @@ public class GuildSetting {
      * @return the prefix
      */
     public String getPrefix() {
-		return prefix;
-	}
+        return prefix;
+    }
 
     /**
      * Sets prefix.
@@ -108,8 +108,8 @@ public class GuildSetting {
      * @param prefix the prefix
      */
     public void setPrefix(String prefix) {
-		this.prefix = prefix;
-	}
+        this.prefix = prefix;
+    }
 
     /**
      * Gets greeting.
@@ -117,8 +117,8 @@ public class GuildSetting {
      * @return the greeting
      */
     public String getGreeting() {
-		return greeting;
-	}
+        return greeting;
+    }
 
     /**
      * Sets greeting.
@@ -126,8 +126,8 @@ public class GuildSetting {
      * @param greeting the greeting
      */
     public void setGreeting(String greeting) {
-		this.greeting = greeting;
-	}
+        this.greeting = greeting;
+    }
 
     /**
      * Gets greeting channel.
@@ -135,8 +135,8 @@ public class GuildSetting {
      * @return the greeting channel
      */
     public String getGreetingChannel() {
-		return greetingChannel;
-	}
+        return greetingChannel;
+    }
 
     /**
      * Sets greeting channel.
@@ -144,8 +144,8 @@ public class GuildSetting {
      * @param greetingChannel the greeting channel
      */
     public void setGreetingChannel(String greetingChannel) {
-		this.greetingChannel = greetingChannel;
-	}
+        this.greetingChannel = greetingChannel;
+    }
 
     /**
      * Gets logging channel.
@@ -153,8 +153,8 @@ public class GuildSetting {
      * @return the logging channel
      */
     public String getLoggingChannel() {
-		return loggingChannel;
-	}
+        return loggingChannel;
+    }
 
     /**
      * Sets logging channel.
@@ -162,8 +162,8 @@ public class GuildSetting {
      * @param loggingChannel the logging channel
      */
     public void setLoggingChannel(String loggingChannel) {
-		this.loggingChannel = loggingChannel;
-	}
+        this.loggingChannel = loggingChannel;
+    }
 
     /**
      * Gets guild id.
@@ -171,8 +171,8 @@ public class GuildSetting {
      * @return the guild id
      */
     public Long getGuildId() {
-		return guildId;
-	}
+        return guildId;
+    }
 
     /**
      * Sets guild id.
@@ -180,8 +180,8 @@ public class GuildSetting {
      * @param guildId the guild id
      */
     public void setGuildId(Long guildId) {
-		this.guildId = guildId;
-	}
+        this.guildId = guildId;
+    }
 
     public void setDeleteCommand(boolean deleteCommand) {
         this.deleteCommand = deleteCommand;
