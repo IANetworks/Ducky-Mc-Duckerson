@@ -224,7 +224,7 @@ public class McDucky {
 
         // Try to open the file into a fileStream (Reader in Java).
         try {
-            fileReader = new FileReader("duckyDB_Rev3.sql");
+            fileReader = new FileReader("duckyDB.sql");
         } catch (Exception ex) {
             ex.fillInStackTrace();
             ex.printStackTrace();

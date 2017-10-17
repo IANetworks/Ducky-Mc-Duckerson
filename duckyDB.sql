@@ -1,7 +1,7 @@
 --
--- File generated with SQLiteStudio v3.1.1 on Thu Sep 28 16:08:41 2017
+-- File generated with SQLiteStudio v3.1.1 on Tue Oct 17 01:37:20 2017
 --
--- Text encoding used: System
+-- Text encoding used: UTF-8
 --
 PRAGMA foreign_keys = off;
 BEGIN TRANSACTION;
@@ -16,28 +16,6 @@ CREATE TABLE permission_commands (
     level_id   INTEGER NOT NULL
 );
 
-INSERT INTO permission_commands (
-                                    command_id,
-                                    guild_id,
-                                    level_id
-                                )
-                                VALUES (
-                                    1,
-                                    99903812700999680,
-                                    2
-                                );
-
-INSERT INTO permission_commands (
-                                    command_id,
-                                    guild_id,
-                                    level_id
-                                )
-                                VALUES (
-                                    2,
-                                    99903812700999680,
-                                    11
-                                );
-
 
 -- Table: permission_group
 DROP TABLE IF EXISTS permission_group;
@@ -51,21 +29,6 @@ CREATE TABLE permission_group (
     is_user      INTEGER NOT NULL
 );
 
-INSERT INTO permission_group (
-                                 id,
-                                 guild_id,
-                                 level_id,
-                                 user_role_id,
-                                 is_user
-                             )
-                             VALUES (
-                                 1,
-                                 99903812700999680,
-                                 1,
-                                 98788817586110464,
-                                 1
-                             );
-
 
 -- Table: permission_level
 DROP TABLE IF EXISTS permission_level;
@@ -76,160 +39,6 @@ CREATE TABLE permission_level (
     level_name STRING  NOT NULL
 );
 
-INSERT INTO permission_level (
-                                 level_id,
-                                 guild_id,
-                                 level_name
-                             )
-                             VALUES (
-                                 0,
-                                 99903812700999680,
-                                 'Bot Adminstrator'
-                             );
-
-INSERT INTO permission_level (
-                                 level_id,
-                                 guild_id,
-                                 level_name
-                             )
-                             VALUES (
-                                 1,
-                                 99903812700999680,
-                                 'Server Owner'
-                             );
-
-INSERT INTO permission_level (
-                                 level_id,
-                                 guild_id,
-                                 level_name
-                             )
-                             VALUES (
-                                 2,
-                                 99903812700999680,
-                                 'Assigned Adminstrator'
-                             );
-
-INSERT INTO permission_level (
-                                 level_id,
-                                 guild_id,
-                                 level_name
-                             )
-                             VALUES (
-                                 3,
-                                 99903812700999680,
-                                 'Assigned Moderator'
-                             );
-
-INSERT INTO permission_level (
-                                 level_id,
-                                 guild_id,
-                                 level_name
-                             )
-                             VALUES (
-                                 4,
-                                 99903812700999680,
-                                 'Assigned Operator'
-                             );
-
-INSERT INTO permission_level (
-                                 level_id,
-                                 guild_id,
-                                 level_name
-                             )
-                             VALUES (
-                                 999,
-                                 99903812700999680,
-                                 'User'
-                             );
-
-INSERT INTO permission_level (
-                                 level_id,
-                                 guild_id,
-                                 level_name
-                             )
-                             VALUES (
-                                 9999,
-                                 99903812700999680,
-                                 'Banned'
-                             );
-
-INSERT INTO permission_level (
-                                 level_id,
-                                 guild_id,
-                                 level_name
-                             )
-                             VALUES (
-                                 0,
-                                 244081335931502592,
-                                 'Bot Adminstrator'
-                             );
-
-INSERT INTO permission_level (
-                                 level_id,
-                                 guild_id,
-                                 level_name
-                             )
-                             VALUES (
-                                 1,
-                                 244081335931502592,
-                                 'Server Owner'
-                             );
-
-INSERT INTO permission_level (
-                                 level_id,
-                                 guild_id,
-                                 level_name
-                             )
-                             VALUES (
-                                 2,
-                                 244081335931502592,
-                                 'Assigned Adminstrator'
-                             );
-
-INSERT INTO permission_level (
-                                 level_id,
-                                 guild_id,
-                                 level_name
-                             )
-                             VALUES (
-                                 3,
-                                 244081335931502592,
-                                 'Assigned Moderator'
-                             );
-
-INSERT INTO permission_level (
-                                 level_id,
-                                 guild_id,
-                                 level_name
-                             )
-                             VALUES (
-                                 4,
-                                 244081335931502592,
-                                 'Assigned Operator'
-                             );
-
-INSERT INTO permission_level (
-                                 level_id,
-                                 guild_id,
-                                 level_name
-                             )
-                             VALUES (
-                                 999,
-                                 244081335931502592,
-                                 'User'
-                             );
-
-INSERT INTO permission_level (
-                                 level_id,
-                                 guild_id,
-                                 level_name
-                             )
-                             VALUES (
-                                 9999,
-                                 244081335931502592,
-                                 'Banned'
-                             );
-
 
 -- Table: rank_titles
 DROP TABLE IF EXISTS rank_titles;
@@ -237,8 +46,8 @@ DROP TABLE IF EXISTS rank_titles;
 CREATE TABLE rank_titles (
     rank      INTEGER PRIMARY KEY
                       NOT NULL,
-    rank_name STRING,
-    rank_exp  INTEGER NOT NULL
+    rank_name STRING  NOT NULL,
+    rank_exp  INTEGER
 );
 
 INSERT INTO rank_titles (
@@ -248,8 +57,8 @@ INSERT INTO rank_titles (
                         )
                         VALUES (
                             0,
-                            'Newbie',
-                            10
+                            'Landlubber',
+                            20
                         );
 
 INSERT INTO rank_titles (
@@ -259,7 +68,7 @@ INSERT INTO rank_titles (
                         )
                         VALUES (
                             1,
-                            'Novice',
+                            'Stowaway',
                             20
                         );
 
@@ -270,8 +79,1075 @@ INSERT INTO rank_titles (
                         )
                         VALUES (
                             2,
-                            'Private',
+                            'Cabin Person',
+                            20
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            3,
+                            'Scrub Lord',
+                            20
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            4,
+                            'Scrub',
+                            20
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            5,
+                            'Mascot',
+                            20
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            6,
+                            'Junior Apprentice',
                             40
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            7,
+                            'Senior Apprentice',
+                            40
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            8,
+                            'Swabbie',
+                            40
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            9,
+                            'Crewman',
+                            40
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            10,
+                            'Able Crewman',
+                            44
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            11,
+                            'Senior Crewman',
+                            49
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            12,
+                            'Gunner',
+                            54
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            13,
+                            'Engineer',
+                            60
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            14,
+                            'Helmsman',
+                            65
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            15,
+                            'Pilot',
+                            71
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            16,
+                            'Privateer Officer',
+                            77
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            17,
+                            'Privateer Captain',
+                            83
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            18,
+                            'Privateer Admiral',
+                            89
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            19,
+                            'Recruit',
+                            95
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            20,
+                            'Grease-Monkey',
+                            101
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            21,
+                            'Red Shirt',
+                            107
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            22,
+                            'Oil-Gorilla',
+                            114
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            23,
+                            'Private 3rd Class',
+                            120
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            24,
+                            'Private 2nd Class',
+                            126
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            25,
+                            'Private 1st Class',
+                            133
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            26,
+                            'Merch--Harambe',
+                            140
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            27,
+                            'Petty Officer',
+                            146
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            28,
+                            'Chief Petty Officer',
+                            153
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            29,
+                            'Warrant Officer',
+                            160
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            30,
+                            'Midshipman',
+                            167
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            31,
+                            'Sub-Lieutenant',
+                            173
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            32,
+                            'Lieutenant',
+                            180
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            33,
+                            'Lieutenant-Commander',
+                            187
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            34,
+                            'Commander',
+                            194
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            35,
+                            'Captain',
+                            202
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            36,
+                            'Community Ambassador',
+                            209
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            37,
+                            'Commodore',
+                            216
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            38,
+                            'Commodore 64',
+                            223
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            39,
+                            'Vice-Rear Admiral',
+                            231
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            40,
+                            'Rear Admiral',
+                            238
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            41,
+                            'Vice-Admiral',
+                            245
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            42,
+                            'Admiral',
+                            253
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            43,
+                            'Community Ambassador Moderator',
+                            260
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            44,
+                            'Retired Admiral',
+                            268
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            45,
+                            'Force Adept',
+                            275
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            46,
+                            'Muse',
+                            283
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            47,
+                            'Local Voice',
+                            291
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            48,
+                            'Local Campaigner',
+                            298
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            49,
+                            'Local Council Candidate',
+                            306
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            50,
+                            'Local Councillor',
+                            314
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            51,
+                            'National Council Candidate',
+                            322
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            52,
+                            'Member of the Lower House',
+                            330
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            53,
+                            'Junior Shadow Minister',
+                            338
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            54,
+                            'Shadow Minister',
+                            346
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            55,
+                            'Junior Minister',
+                            354
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            56,
+                            'Minister',
+                            362
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            57,
+                            'Prime Minister',
+                            370
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            58,
+                            'Member of the Upper House',
+                            378
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            59,
+                            'After-Dinner Speaker',
+                            386
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            60,
+                            'Presidential Candidate',
+                            394
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            61,
+                            'President-Elect',
+                            402
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            62,
+                            'President',
+                            411
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            63,
+                            'Jedi/Sith',
+                            419
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            64,
+                            'Regional Conqueror',
+                            427
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            65,
+                            'Continental Conqueror',
+                            436
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            66,
+                            'World Conqueror',
+                            444
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            67,
+                            'World Leader',
+                            452
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            68,
+                            'Moon Lord',
+                            461
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            69,
+                            'System Lord',
+                            469
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            70,
+                            'Supreme System Lord',
+                            478
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            71,
+                            'Federation President',
+                            486
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            72,
+                            'Supreme Chancellor and the Senate',
+                            495
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            73,
+                            'Galactic Lord',
+                            504
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            74,
+                            'Master of the Universe',
+                            512
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            75,
+                            'Time Travelling Companion',
+                            521
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            76,
+                            'Time Travelling Conqueror',
+                            530
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            77,
+                            'Time Lord',
+                            538
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            78,
+                            'Grand Master of Time and Space',
+                            547
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            79,
+                            'Interdenominational Traveller',
+                            556
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            80,
+                            'Interdenominational Leader',
+                            565
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            81,
+                            'Demi-Angel/Demi-Demon',
+                            573
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            82,
+                            'Undisputed Ruler of All Time and Space',
+                            582
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            83,
+                            'Angel/Demon',
+                            591
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            84,
+                            'Rebel Against Heaven',
+                            600
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            85,
+                            'Demi-God/Goddess',
+                            609
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            86,
+                            'Minor Deity',
+                            618
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            87,
+                            'Arch-Angel/Demon-Knight',
+                            627
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            88,
+                            'Mid-Tier Deity',
+                            636
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            89,
+                            'Major Deity',
+                            645
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            90,
+                            'Q',
+                            654
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            91,
+                            'Royal Deity',
+                            663
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            92,
+                            'Crown Royal Deity',
+                            673
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            93,
+                            'Monarch of the Gods',
+                            682
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            94,
+                            'God/Goddess of all Gods and Goddess',
+                            691
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            95,
+                            'Programmer Deity',
+                            700
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            96,
+                            'Choppy Lover',
+                            709
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            97,
+                            'Skycalf',
+                            719
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            98,
+                            'Choppy',
+                            728
+                        );
+
+INSERT INTO rank_titles (
+                            rank,
+                            rank_name,
+                            rank_exp
+                        )
+                        VALUES (
+                            99,
+                            'Skywhale',
+                            737
                         );
 
 
@@ -285,123 +1161,6 @@ CREATE TABLE self_roles (
     exclusive_on  BOOLEAN NOT NULL
                           DEFAULT (0) 
 );
-
-INSERT INTO self_roles (
-                           guild_id,
-                           role_id,
-                           role_group_id,
-                           exclusive_on
-                       )
-                       VALUES (
-                           99903812700999680,
-                           300344318936481792,
-                           1,
-                           1
-                       );
-
-INSERT INTO self_roles (
-                           guild_id,
-                           role_id,
-                           role_group_id,
-                           exclusive_on
-                       )
-                       VALUES (
-                           99903812700999680,
-                           300343720941846528,
-                           1,
-                           1
-                       );
-
-INSERT INTO self_roles (
-                           guild_id,
-                           role_id,
-                           role_group_id,
-                           exclusive_on
-                       )
-                       VALUES (
-                           99903812700999680,
-                           300344164531306496,
-                           1,
-                           1
-                       );
-
-INSERT INTO self_roles (
-                           guild_id,
-                           role_id,
-                           role_group_id,
-                           exclusive_on
-                       )
-                       VALUES (
-                           99903812700999680,
-                           300344251072643072,
-                           1,
-                           1
-                       );
-
-INSERT INTO self_roles (
-                           guild_id,
-                           role_id,
-                           role_group_id,
-                           exclusive_on
-                       )
-                       VALUES (
-                           99903812700999680,
-                           319104185574621194,
-                           1,
-                           1
-                       );
-
-INSERT INTO self_roles (
-                           guild_id,
-                           role_id,
-                           role_group_id,
-                           exclusive_on
-                       )
-                       VALUES (
-                           99903812700999680,
-                           319104232525660160,
-                           1,
-                           1
-                       );
-
-INSERT INTO self_roles (
-                           guild_id,
-                           role_id,
-                           role_group_id,
-                           exclusive_on
-                       )
-                       VALUES (
-                           99903812700999680,
-                           182591560549007363,
-                           1,
-                           1
-                       );
-
-INSERT INTO self_roles (
-                           guild_id,
-                           role_id,
-                           role_group_id,
-                           exclusive_on
-                       )
-                       VALUES (
-                           99903812700999680,
-                           334738659032956928,
-                           0,
-                           0
-                       );
-
-INSERT INTO self_roles (
-                           guild_id,
-                           role_id,
-                           role_group_id,
-                           exclusive_on
-                       )
-                       VALUES (
-                           99903812700999680,
-                           343821836221677588,
-                           0,
-                           0
-                       );
 
 
 -- Table: theme
@@ -11985,492 +12744,6 @@ CREATE TABLE user_profile (
     )
 );
 
-INSERT INTO user_profile (
-                             guild_id,
-                             user_id,
-                             balance,
-                             points,
-                             rank,
-                             flipped,
-                             unflipped,
-                             level,
-                             werewolf_wins,
-                             werewolf_games,
-                             cooldown
-                         )
-                         VALUES (
-                             99903812700999680,
-                             98963423403991040,
-                             92,
-                             0,
-                             0,
-                             7,
-                             1,
-                             0,
-                             0,
-                             0,
-                             1506628979650
-                         );
-
-INSERT INTO user_profile (
-                             guild_id,
-                             user_id,
-                             balance,
-                             points,
-                             rank,
-                             flipped,
-                             unflipped,
-                             level,
-                             werewolf_wins,
-                             werewolf_games,
-                             cooldown
-                         )
-                         VALUES (
-                             99903812700999680,
-                             267656548103225344,
-                             0,
-                             0,
-                             0,
-                             0,
-                             0,
-                             0,
-                             0,
-                             0,
-                             0
-                         );
-
-INSERT INTO user_profile (
-                             guild_id,
-                             user_id,
-                             balance,
-                             points,
-                             rank,
-                             flipped,
-                             unflipped,
-                             level,
-                             werewolf_wins,
-                             werewolf_games,
-                             cooldown
-                         )
-                         VALUES (
-                             99903812700999680,
-                             98788817586110464,
-                             0,
-                             0,
-                             0,
-                             5,
-                             0,
-                             0,
-                             0,
-                             0,
-                             0
-                         );
-
-INSERT INTO user_profile (
-                             guild_id,
-                             user_id,
-                             balance,
-                             points,
-                             rank,
-                             flipped,
-                             unflipped,
-                             level,
-                             werewolf_wins,
-                             werewolf_games,
-                             cooldown
-                         )
-                         VALUES (
-                             99903812700999680,
-                             136468901197250560,
-                             0,
-                             0,
-                             0,
-                             2,
-                             0,
-                             0,
-                             0,
-                             0,
-                             1506624755033
-                         );
-
-INSERT INTO user_profile (
-                             guild_id,
-                             user_id,
-                             balance,
-                             points,
-                             rank,
-                             flipped,
-                             unflipped,
-                             level,
-                             werewolf_wins,
-                             werewolf_games,
-                             cooldown
-                         )
-                         VALUES (
-                             99903812700999680,
-                             101068758398795776,
-                             0,
-                             0,
-                             0,
-                             0,
-                             3,
-                             0,
-                             0,
-                             0,
-                             1506624829740
-                         );
-
-INSERT INTO user_profile (
-                             guild_id,
-                             user_id,
-                             balance,
-                             points,
-                             rank,
-                             flipped,
-                             unflipped,
-                             level,
-                             werewolf_wins,
-                             werewolf_games,
-                             cooldown
-                         )
-                         VALUES (
-                             99903812700999680,
-                             80951894490484736,
-                             0,
-                             0,
-                             0,
-                             0,
-                             0,
-                             0,
-                             0,
-                             0,
-                             0
-                         );
-
-INSERT INTO user_profile (
-                             guild_id,
-                             user_id,
-                             balance,
-                             points,
-                             rank,
-                             flipped,
-                             unflipped,
-                             level,
-                             werewolf_wins,
-                             werewolf_games,
-                             cooldown
-                         )
-                         VALUES (
-                             99903812700999680,
-                             209060413696901120,
-                             0,
-                             0,
-                             0,
-                             0,
-                             9,
-                             0,
-                             0,
-                             0,
-                             0
-                         );
-
-INSERT INTO user_profile (
-                             guild_id,
-                             user_id,
-                             balance,
-                             points,
-                             rank,
-                             flipped,
-                             unflipped,
-                             level,
-                             werewolf_wins,
-                             werewolf_games,
-                             cooldown
-                         )
-                         VALUES (
-                             99903812700999680,
-                             274918378144268290,
-                             0,
-                             0,
-                             0,
-                             3,
-                             0,
-                             0,
-                             0,
-                             0,
-                             0
-                         );
-
-INSERT INTO user_profile (
-                             guild_id,
-                             user_id,
-                             balance,
-                             points,
-                             rank,
-                             flipped,
-                             unflipped,
-                             level,
-                             werewolf_wins,
-                             werewolf_games,
-                             cooldown
-                         )
-                         VALUES (
-                             99903812700999680,
-                             163125619842875392,
-                             0,
-                             0,
-                             0,
-                             0,
-                             0,
-                             0,
-                             0,
-                             0,
-                             0
-                         );
-
-INSERT INTO user_profile (
-                             guild_id,
-                             user_id,
-                             balance,
-                             points,
-                             rank,
-                             flipped,
-                             unflipped,
-                             level,
-                             werewolf_wins,
-                             werewolf_games,
-                             cooldown
-                         )
-                         VALUES (
-                             99903812700999680,
-                             130363089206902784,
-                             0,
-                             0,
-                             0,
-                             0,
-                             3,
-                             0,
-                             0,
-                             0,
-                             0
-                         );
-
-INSERT INTO user_profile (
-                             guild_id,
-                             user_id,
-                             balance,
-                             points,
-                             rank,
-                             flipped,
-                             unflipped,
-                             level,
-                             werewolf_wins,
-                             werewolf_games,
-                             cooldown
-                         )
-                         VALUES (
-                             99903812700999680,
-                             145019506564005888,
-                             0,
-                             0,
-                             0,
-                             1,
-                             0,
-                             0,
-                             0,
-                             0,
-                             0
-                         );
-
-INSERT INTO user_profile (
-                             guild_id,
-                             user_id,
-                             balance,
-                             points,
-                             rank,
-                             flipped,
-                             unflipped,
-                             level,
-                             werewolf_wins,
-                             werewolf_games,
-                             cooldown
-                         )
-                         VALUES (
-                             99903812700999680,
-                             189019455387467776,
-                             0,
-                             0,
-                             0,
-                             2,
-                             1,
-                             0,
-                             0,
-                             0,
-                             0
-                         );
-
-INSERT INTO user_profile (
-                             guild_id,
-                             user_id,
-                             balance,
-                             points,
-                             rank,
-                             flipped,
-                             unflipped,
-                             level,
-                             werewolf_wins,
-                             werewolf_games,
-                             cooldown
-                         )
-                         VALUES (
-                             99903812700999680,
-                             173866717007577091,
-                             0,
-                             0,
-                             0,
-                             0,
-                             3,
-                             0,
-                             0,
-                             0,
-                             0
-                         );
-
-INSERT INTO user_profile (
-                             guild_id,
-                             user_id,
-                             balance,
-                             points,
-                             rank,
-                             flipped,
-                             unflipped,
-                             level,
-                             werewolf_wins,
-                             werewolf_games,
-                             cooldown
-                         )
-                         VALUES (
-                             99903812700999680,
-                             357540791029202944,
-                             0,
-                             0,
-                             0,
-                             4,
-                             2,
-                             0,
-                             0,
-                             0,
-                             0
-                         );
-
-INSERT INTO user_profile (
-                             guild_id,
-                             user_id,
-                             balance,
-                             points,
-                             rank,
-                             flipped,
-                             unflipped,
-                             level,
-                             werewolf_wins,
-                             werewolf_games,
-                             cooldown
-                         )
-                         VALUES (
-                             99903812700999680,
-                             116251099014365184,
-                             0,
-                             0,
-                             0,
-                             0,
-                             0,
-                             0,
-                             0,
-                             0,
-                             1506624785396
-                         );
-
-INSERT INTO user_profile (
-                             guild_id,
-                             user_id,
-                             balance,
-                             points,
-                             rank,
-                             flipped,
-                             unflipped,
-                             level,
-                             werewolf_wins,
-                             werewolf_games,
-                             cooldown
-                         )
-                         VALUES (
-                             99903812700999680,
-                             269513879653056512,
-                             0,
-                             0,
-                             0,
-                             0,
-                             0,
-                             0,
-                             0,
-                             0,
-                             1506624947878
-                         );
-
-INSERT INTO user_profile (
-                             guild_id,
-                             user_id,
-                             balance,
-                             points,
-                             rank,
-                             flipped,
-                             unflipped,
-                             level,
-                             werewolf_wins,
-                             werewolf_games,
-                             cooldown
-                         )
-                         VALUES (
-                             99903812700999680,
-                             107847335333097472,
-                             20,
-                             0,
-                             0,
-                             0,
-                             0,
-                             0,
-                             0,
-                             0,
-                             1506628195771
-                         );
-
-INSERT INTO user_profile (
-                             guild_id,
-                             user_id,
-                             balance,
-                             points,
-                             rank,
-                             flipped,
-                             unflipped,
-                             level,
-                             werewolf_wins,
-                             werewolf_games,
-                             cooldown
-                         )
-                         VALUES (
-                             99903812700999680,
-                             254683410281267200,
-                             69,
-                             0,
-                             0,
-                             0,
-                             0,
-                             0,
-                             0,
-                             0,
-                             1506629093460
-                         );
-
 
 -- Table: variables
 DROP TABLE IF EXISTS variables;
@@ -12496,64 +12769,6 @@ CREATE TABLE variables (
     event_on         BOOLEAN NOT NULL
                              DEFAULT (0) 
 );
-
-INSERT INTO variables (
-                          guild_id,
-                          logging_on,
-                          logging_channel,
-                          prefix,
-                          greet_on,
-                          greeting_msg,
-                          greeting_channel,
-                          game_channel,
-                          werewolf_on,
-                          delete_command,
-                          event_channel,
-                          event_on
-                      )
-                      VALUES (
-                          99903812700999680,
-                          0,
-                          NULL,
-                          '!',
-                          0,
-                          NULL,
-                          NULL,
-                          'bot-games',
-                          1,
-                          0,
-                          'events',
-                          1
-                      );
-
-INSERT INTO variables (
-                          guild_id,
-                          logging_on,
-                          logging_channel,
-                          prefix,
-                          greet_on,
-                          greeting_msg,
-                          greeting_channel,
-                          game_channel,
-                          werewolf_on,
-                          delete_command,
-                          event_channel,
-                          event_on
-                      )
-                      VALUES (
-                          244081335931502592,
-                          0,
-                          NULL,
-                          '.',
-                          0,
-                          NULL,
-                          NULL,
-                          NULL,
-                          1,
-                          0,
-                          NULL,
-                          0
-                      );
 
 
 COMMIT TRANSACTION;

@@ -1,9 +1,16 @@
-var child = require('child_process').spawn('java', ['-jar', 'Ducky-Mc-Duckerson.jar'], {stdio: ['ipc', 'pipe', 'pipe']});
+var http = require('http');
 
-child.stdout.on('data', function(data) {
-    console.log(data.toString());
-});
+http.createServer(function (req, res){
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.end('Hello World');
+}).listen(8080);
 
-child.stderr.on('data', function(data){
-    console.log(data.toString());
-});
+// var child = require('child_process').spawn('java', ['-jar', 'Ducky-Mc-Duckerson.jar'], {stdio: ['ipc', 'pipe', 'pipe']});
+
+// child.stdout.on('data', function(data) {
+//     console.log(data.toString());
+// });
+
+// child.stderr.on('data', function(data){
+//     console.log(data.toString());
+// });

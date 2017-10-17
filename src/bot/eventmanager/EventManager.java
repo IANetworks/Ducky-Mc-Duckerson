@@ -1,5 +1,6 @@
 package bot.eventmanager;
 
+import com.google.gson.Gson;
 import net.dv8tion.jda.core.events.Event;
 
 import java.lang.reflect.InvocationTargetException;
@@ -104,8 +105,8 @@ public class EventManager {
         Class c = event.getClass();
 
         Method[] methods = c.getMethods();
-        System.out.println("-------------------------------------");
-        System.out.println(c.getSimpleName());
+        //System.out.println("-------------------------------------");
+        //System.out.println(c.getSimpleName());
         for (Method method : methods) {
             String name = method.getName();
             if (trackMethodLevel0.contains(method.getName())) {
@@ -172,8 +173,10 @@ public class EventManager {
             }
             //if(isSetter(method)) System.out.println("setter: " + method);
         }
-
-        System.out.println(dataMap);
+        Gson gson = new Gson();
+        String json = gson.toJson(dataMap);
+        String eventWrapped = "{\"event\":\"" + c.getSimpleName() + "\", \"data\":" + json + "}";
+        System.out.println(eventWrapped);
     }
 
 //    public static boolean isSetter(Method method) {
