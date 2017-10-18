@@ -3,3 +3,4 @@ config.properties
 *.iml
 /out
 /.idea
+/bin
