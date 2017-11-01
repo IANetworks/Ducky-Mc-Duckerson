@@ -699,7 +699,11 @@ public class DatabaseManager {
      * @return the prefix
      */
     public String getPrefix(Long guildID) {
-        return getGuildValues(guildID).getPrefix();
+        String prefix = getGuildValues(guildID).getPrefix();
+        if (prefix == null) {
+            return "!";
+        }
+        return prefix;
     }
 
     /**

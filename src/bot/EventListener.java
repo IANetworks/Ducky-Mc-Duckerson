@@ -273,11 +273,7 @@ public class EventListener extends ListenerAdapter {
         Guild guild = event.getGuild(); //Get info about the server this message is recieved on
         Long guildID = guild.getIdLong(); //guild unique id
 
-        String guildPrefix = "!"; //Command prefix, Default to ! <- break this out?
-
-        if (dbMan.getPrefix(guildID) != null) {
-            guildPrefix = dbMan.getPrefix(guildID);
-        }
+        String guildPrefix = dbMan.getPrefix(guildID);
 
         //Check to make sure our commands are setup (async can be a bitch)
 
