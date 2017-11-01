@@ -91,106 +91,50 @@ public class EventListener extends ListenerAdapter {
 
         //HTMLParse.get_instance().CalenderStart();
 
-        String name = "set_prefix";
-        cmdList.put(name, new SetPrefixCS(container, name, 1, 1));
-
-        name = "set_level_for_user";
-        cmdList.put(name, new SetPermissionByUserCS(container, name, 2, 1));
-
-        name = "set_command_level";
-        cmdList.put(name, new SetCommandLevelCS(container, name, 3, 1));
-
-        name = "profile";
-        cmdList.put(name, new ProfileCS(container, name, 4, 999));
-
-        name = "preload";
-        cmdList.put(name, new PreloadCS(container, name, 5, 1));
-
-        name = "set_level_for_role";
-        cmdList.put(name, new SetPermissionsByRoleCS(container, name, 6, 1));
-
-        name = "help";
-        cmdList.put(name, new HelpCS(container, name, 7, 999));
-
-        name = "iam";
-        cmdList.put(name, new SelfRolesCS(container, name, 8, 999));
-
-        name = "self_assign_role";
-        cmdList.put(name, new SetSelfRoleCS(container, name, 9, 1));
-
-        name = "list_self_roles";
-        cmdList.put(name, new ListSelfRolesCS(container, name, 10, 999));
-
-        name = "remove_self_assign_role";
-        cmdList.put(name, new RemoveSelfRoleCS(container, name, 11, 1));
-
-        name = "set_self_assign_group";
-        cmdList.put(name, new SetSelfRoleGroupCS(container, name, 12, 1));
-
-        name = "toggle_group_exclusive";
-        cmdList.put(name, new SetSelfRoleGroupExculsive(container, name, 13, 1));
-
-        name = "remove_self_assign_group";
-        cmdList.put(name, new RemoveSelfRoleGroup(container, name, 14, 999));
-
-        name = "join";
-        cmdList.put(name, new WerewolfJoinCS(container, name, 15, 999));
-
-        name = "start_ww";
-        cmdList.put(name, new WerewolfStartCS(container, name, 16, 999));
-
-        name = "kill";
-        cmdList.put(name, new WerewolfKillCS(container, name, 17, 999));
-
-        name = "vote";
-        cmdList.put(name, new WerewolfVoteCS(container, name, 18, 999));
-
-        name = "toggle_werewolf";
-        cmdList.put(name, new SetWerewolfOnOffCS(container, name, 20, 1));
-
-        name = "set_game_channel";
-        cmdList.put(name, new SetGameChannelCS(container, name, 21, 1));
-
-        name = "alive";
-        cmdList.put(name, new WerewolfAliveCS(container, name, 22, 1));
-
-        name = "kick_player";
-        cmdList.put(name, new WerewolfKickPlayerCS(container, name, 23, 1));
-
-        name = "flee";
-        cmdList.put(name, new WerewolfLeaveCS(container, name, 24, 999));
-
-        name = "theme";
-        cmdList.put(name, new WerewolfThemeDetailCS(container, name, 25, 999));
-
-        name = "list_theme";
-        cmdList.put(name, new WerewolfListThemeCS(container, name, 26, 999));
-
-        name = "stop_ww";
-        cmdList.put(name, new WerewolfStopCS(container, name, 27, 1));
-
-        name = "unflip";
-        cmdList.put(name, new UnflipCS(container, name, 28, 999));
-
-        name = "tableflip";
-        cmdList.put(name, new TableFlipCS(container, name, 29, 999));
-
-        name = "toggle_delete";
-        cmdList.put(name, new DeleteCommandCS(container, name, 30, 1));
-
-        name = "toggle_event";
-        cmdList.put(name, new ToggleEventCS(container, name, 31, 1));
-
-        name = "set_event";
-        cmdList.put(name, new SetEventChannel(container, name, 32, 1));
-
-        name = "buy";
-        cmdList.put(name, new StoreCS(container, name, 33, 999));
+        setupCommand(new SetPrefixCS(container, "set_prefix", 1, 1));
+        setupCommand(new SetPermissionByUserCS(container, "set_level_for_user", 2, 1));
+        setupCommand(new SetCommandLevelCS(container, "set_command_level", 3, 1));
+        setupCommand(new ProfileCS(container, "profile", 4, 999));
+        setupCommand(new PreloadCS(container, "preload", 5, 1));
+        setupCommand(new SetPermissionsByRoleCS(container, "set_level_for_role", 6, 1));
+        setupCommand(new HelpCS(container, "help", 7, 999));
+        setupCommand(new SelfRolesCS(container, "iam", 8, 999));
+        setupCommand(new SetSelfRoleCS(container, "self_assign_role", 9, 1));
+        setupCommand(new ListSelfRolesCS(container, "list_self_roles", 10, 999));
+        setupCommand(new RemoveSelfRoleCS(container, "remove_self_assign_role", 11, 1));
+        setupCommand(new SetSelfRoleGroupCS(container, "set_self_assign_group", 12, 1));
+        setupCommand(new SetSelfRoleGroupExculsive(container, "toggle_group_exclusive", 13, 1));
+        setupCommand(new RemoveSelfRoleGroup(container, "remove_self_assign_group", 14, 999));
+        setupCommand(new WerewolfJoinCS(container, "join", 15, 999));
+        setupCommand(new WerewolfStartCS(container, "start_ww", 16, 999));
+        setupCommand(new WerewolfKillCS(container, "kill", 17, 999));
+        setupCommand(new WerewolfVoteCS(container, "vote", 18, 999));
+        setupCommand(new SetWerewolfOnOffCS(container, "toggle_werewolf", 20, 1));
+        setupCommand(new SetGameChannelCS(container, "set_game_channel", 21, 1));
+        setupCommand(new WerewolfAliveCS(container, "alive", 22, 1));
+        setupCommand(new WerewolfKickPlayerCS(container, "kick_player", 23, 1));
+        setupCommand(new WerewolfLeaveCS(container, "flee", 24, 999));
+        setupCommand(new WerewolfThemeDetailCS(container, "theme", 25, 999));
+        setupCommand(new WerewolfListThemeCS(container, "list_theme", 26, 999));
+        setupCommand(new WerewolfStopCS(container, "stop_ww", 27, 1));
+        setupCommand(new UnflipCS(container, "unflip", 28, 999));
+        setupCommand(new TableFlipCS(container, "tableflip", 29, 999));
+        setupCommand(new DeleteCommandCS(container, "toggle_delete", 30, 1));
+        setupCommand(new ToggleEventCS(container, "toggle_event", 31, 1));
+        setupCommand(new SetEventChannel(container, "set_event", 32, 1));
+        setupCommand(new StoreCS(container, "buy", 33, 999));
 
         //********* PrivateMessage Commands *********//
-        name = "see";
-        privCmdList.put(name, new WerewolfSeeCS(container, name, 19, 999));
+        setupPrivateCommand(new WerewolfSeeCS(container, "see", 19, 999));
 
+    }
+
+    private void setupCommand(CommandStructure command) {
+        cmdList.put(command.commandName, command);
+    }
+
+    private void setupPrivateCommand(CommandStructure command) {
+        privCmdList.put(command.commandName, command);
     }
 
     public void onGenericEvent(Event event) {
