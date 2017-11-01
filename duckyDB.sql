@@ -3589,7 +3589,8 @@ INSERT INTO theme (
                       195,
                       3,
                       'WOLF_LYNCH',
-                      'PLAYER1 is frog marched to the firing line, and tied up to the wall and blindfolded. The soldier begins to confess, crying "Mercy!" and offering to tell enemy secrets. But nothing can prevent these soldiers from administering justice to those who have killed their friends. One quick nod and the unit fires. PLAYER1''s body falls to the ground, silently.
+                      'PLAYER1 is frog marched to the firing line, and tied up to the wall and blindfolded. The soldier begins to confess, crying "Mercy!" and offering to tell enemy secrets. But nothing can prevent these soldiers from administering justice to those who have killed their friends. One quick nod and the unit fires. PLAYER1''s body falls to the ground, silently.
+
 Knowing the unit plans his execution, PLAYER1 bolts. However, the'
                   );
 
@@ -3603,7 +3604,8 @@ INSERT INTO theme (
                       196,
                       3,
                       'WOLF_LYNCH',
-                      'PLAYER1 quickly ran from the group, dropping all of his possessions while running. As the soldiers examine the belongings, they discover letters in the enemy''s language, as well as an enemy ID. PLAYER1 seems to have escaped, but suddenly the soldier stops dead and falls over, blood pouring from the nose and mouth. An Ally sniper has ended the enemy''s life.
+                      'PLAYER1 quickly ran from the group, dropping all of his possessions while running. As the soldiers examine the belongings, they discover letters in the enemy''s language, as well as an enemy ID. PLAYER1 seems to have escaped, but suddenly the soldier stops dead and falls over, blood pouring from the nose and mouth. An Ally sniper has ended the enemy''s life.
+
 When the last count of votes is called out the group quickly'
                   );
 
@@ -4020,7 +4022,7 @@ INSERT INTO theme (
                       228,
                       3,
                       'NIGHT_TIME',
-                      'Heading into the next town, the unit separates to infiltrate the area. They plan to later regroup after suppies have been found, but will everyone remain alive until then?'
+                      'Heading into the next town, the unit separates to infiltrate the area. They plan to later regroup after supplies have been found, but will everyone remain alive until then?'
                   );
 
 INSERT INTO theme (
@@ -4241,7 +4243,8 @@ INSERT INTO theme (
                       245,
                       3,
                       'VILL_KILL',
-                      'As the unit regathers at meeting point they discovered PLAYER1 kneeling on the floor clutching their throat in a vain attempt to stop the blood leaking out. PLAYER1''s eyes rolls as the last breath of life leaves them, the arms dropping to their sides.
+                      'As the unit regathers at meeting point they discovered PLAYER1 kneeling on the floor clutching their throat in a vain attempt to stop the blood leaking out. PLAYER1''s eyes rolls as the last breath of life leaves them, the arms dropping to their sides.
+
 A loud deafening explosion rends the air leaving the units'' ears ringing. As the ringing subsided and the dust settled, the unit regroups to find corpse with guts, mus'
                   );
 
@@ -5607,7 +5610,8 @@ INSERT INTO theme (
                       350,
                       4,
                       'NOT_SEER',
-                      'You
+                      'You
+
 e not the Inspector'
                   );
 

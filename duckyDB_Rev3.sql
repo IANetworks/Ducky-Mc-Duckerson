@@ -413,7 +413,7 @@ VALUES
     (225,3,'FIRST_NIGHT','The newly formed unit sets out in the black of night, separating so as to be able to sneak across enemy lines... However, there is already an enemy in their very midst.'),
     (226,3,'FIRST_NIGHT','The new unit spilts up, following a set task for the assult against the enemy. Every one''s loyal, right?'),
     (227,3,'NIGHT_TIME','The start of a new mission. The screams of dying soldiers grow ever louder as the men push on... A soldier checks over his back and grips his rifle tighter. '),
-    (228,3,'NIGHT_TIME','Heading into the next town, the unit separates to infiltrate the area. They plan to later regroup after suppies have been found, but will everyone remain alive until then?'),
+    (228,3,'NIGHT_TIME','Heading into the next town, the unit separates to infiltrate the area. They plan to later regroup after supplies have been found, but will everyone remain alive until then?'),
     (229,3,'DAY_TIME','The soliders find a moment''s peace in the battle. Knowing that a secret-stealing WOLFPLURAL lies among them, they fall to accusing each other. Voting starts in NUMBER seconds.'),
     (230,3,'DAY_TIME','Pinned down during an enemy bombardment, the soliders are given a moment''s chance to accuse their comrades of who might be the camouflaged WOLFPLURAL. The unit will commence a vote in NUMBER seconds...'),
     (231,3,'VOTE_TIME','The unit goes silent. The time for talking and accusing others is over. Someone turns over the hourglass. You have NUMBER seconds to vote for who you think is the WOLFPLURAL. Type ''/msg BOTNAME vote <player>'' to add your vote.'),
