@@ -1459,21 +1459,23 @@ public class Werewolf {
                         LinkedList<RankUp> rankUps = dbMan.addUserExp(guildID, thisPlayer.getUserID(), totalExpGained);
 
                         if (!rankUps.isEmpty()) {
+                            EmbedBuilder newEmbed = new EmbedBuilder();
+                            Color color = new Color(50, 255, 50);
+                            newEmbed.setAuthor(thisPlayer.getMember().getEffectiveName(), null, thisPlayer.getMember().getUser().getAvatarUrl());
+                            newEmbed.setTitle("\uD83D\uDD3C RANK UP \uD83D\uDD3C");
+                            newEmbed.setColor(color);
+
                             for (RankUp newRank : rankUps) {
                                 //TODO refactor
-                                EmbedBuilder newEmbed = new EmbedBuilder();
-                                Color color = new Color(50, 255, 50);
-                                newEmbed.setColor(color);
-                                newEmbed.setAuthor(thisPlayer.getMember().getEffectiveName(), null, thisPlayer.getMember().getUser().getAvatarUrl());
-                                newEmbed.setTitle("\uD83D\uDD3C RANK UP \uD83D\uDD3C");
+                                newEmbed.addField(thisPlayer.getMember().getEffectiveName(), " has ranked up to " + newRank.rankName, false);
                                 if (newRank.expRequired != null) {
-                                    newEmbed.setFooter("They need " + newRank.expRequired + " to rank reach the next rank", null);
+                                    newEmbed.addField("", "They need " + newRank.expRequired + " to rank reach the next rank", false);
                                 } else {
-                                    newEmbed.setFooter("Reached max rank defined. Way to go!", null);
+                                    newEmbed.addField("", "Reached max rank defined. Way to go!", false);
                                 }
-                                newEmbed.setDescription(thisPlayer.getMember().getEffectiveName() + " has ranked up to " + newRank.rankName);
-                                getGameChannel(guildID).sendMessage(newEmbed.build()).queue();
                             }
+
+                            getGameChannel(guildID).sendMessage(newEmbed.build()).queue();
                         }
                     }
                     //players only get exp if they have not fled but they may get points for being on the winning team
@@ -1529,9 +1531,8 @@ public class Werewolf {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-
-                stopGame(guildID);
             }
+            stopGame(guildID);
         }
 
         gameList.get(guildID).setCheckingWin(false);

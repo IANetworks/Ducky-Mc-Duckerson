@@ -1,16 +1,9 @@
-var http = require('http');
+'use strict'
 
-http.createServer(function (req, res){
-    res.writeHead(200, {'Content-Type': 'text/html'});
-    res.end('Hello World');
-}).listen(8080);
+console.log('Host staring up.');
 
-// var child = require('child_process').spawn('java', ['-jar', 'Ducky-Mc-Duckerson.jar'], {stdio: ['ipc', 'pipe', 'pipe']});
+const file = require('path');
 
-// child.stdout.on('data', function(data) {
-//     console.log(data.toString());
-// });
-
-// child.stderr.on('data', function(data){
-//     console.log(data.toString());
-// });
+global.Util = require(file.join(__dirname, 'lib', 'util.js'));
+Util.web.start();
+Util.bot.start();
