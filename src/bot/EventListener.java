@@ -184,8 +184,8 @@ public class EventListener extends ListenerAdapter {
         name = "set_event";
         cmdList.put(name, new SetEventChannel(container, name, 32, 1));
 
-        name = "buy";
-        cmdList.put(name, new StoreCS(container, name, 33, 999));
+        //name = "buy";
+        //cmdList.put(name, new StoreCS(container, name, 33, 999));
 
         //********* PrivateMessage Commands *********//
         name = "see";
@@ -314,7 +314,8 @@ public class EventListener extends ListenerAdapter {
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
-                } else if (msg.contains("┬─┬﻿ ノ( ゜-゜ノ)")) {
+                }
+                if (msg.contains("┬─┬﻿ ノ( ゜-゜ノ)")) {
                     try {
                         dbMan.incUserUnflipped(guildID, userID);
                     } catch (SQLException e) {
