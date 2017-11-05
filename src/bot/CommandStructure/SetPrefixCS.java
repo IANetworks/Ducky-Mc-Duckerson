@@ -29,11 +29,8 @@ public class SetPrefixCS extends CommandStructure {
     @Override
     public void execute(Member author, User authorUser, MessageChannel channel, Message message, String parameters, Map<String, CommandStructure> commandList) {
         //Check to see if we're either botAdminOwner or guild Owner
-        String curGuildPrefix = "!";
         Long guildID = author.getGuild().getIdLong();
-        if (dbMan.getPrefix(guildID) != null) {
-            curGuildPrefix = dbMan.getPrefix(guildID);
-        }
+        String curGuildPrefix = dbMan.getPrefix(guildID);
 
         if (hasPermission(author)) {
             //if we don't have any parameters, we're resetting to default
