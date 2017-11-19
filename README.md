@@ -30,7 +30,7 @@ Also, feel free to star and fork this bot.
 
 * AbbyTheBunny
 * Sinthorion
-* 
+* Inkjet
 *
 *
 *
