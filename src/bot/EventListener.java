@@ -333,7 +333,7 @@ public class EventListener extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         //These are provided with every event in JDA
-        //JDA jda = event.getJDA();                       //JDA, the core of the api.
+        JDA jda = event.getJDA();                       //JDA, the core of the api.
 
 
         //long responseNumber = event.getResponseNumber();//The amount of discord events that JDA has received since the last reconnect.
@@ -346,16 +346,33 @@ public class EventListener extends ListenerAdapter {
         // what you would see in the client.
         boolean isBotAdminOwner = isBotAdminOwner(author);
 
-        if (msg.equals("!!shutdown")) {
-            //Make sure we have permission
-            if (isBotAdminOwner) {
-                if (container.ww != null)
-                    container.ww.shutDown();
-                if (HTMLParse.get_instance() != null)
-                    HTMLParse.get_instance().ShutDown();
-                author.openPrivateChannel().queue((channel) -> sendChannelMessageAndShutdown(channel, "Bye bye, I'm closing down"));
+        if (message.isFromType(ChannelType.TEXT)) {
+            if (message.isMentioned(jda.getSelfUser())) {
+                if (msg.contains("shutdown")) {
+                    //Make sure we have permission
+                    if (isBotAdminOwner) {
+                        closeMeDown(author);
+                    }
+                }
+            }
+        } else if (message.isFromType(ChannelType.PRIVATE)) {
+            if (msg.contains("shutdown")) {
+                //Make sure we have permission
+                if (isBotAdminOwner) {
+                    closeMeDown(author);
+                }
             }
         }
+
+
+    }
+
+    private void closeMeDown(User author) {
+        if (container.ww != null)
+            container.ww.shutDown();
+        if (HTMLParse.get_instance() != null)
+            HTMLParse.get_instance().ShutDown();
+        author.openPrivateChannel().queue((channel) -> sendChannelMessageAndShutdown(channel, "Bye bye, I'm closing down"));
     }
 
     private boolean isBotAdminOwner(User author) {
