@@ -36,3 +36,4 @@ Also, feel free to star and fork this bot.
 * Crystale LesMiches
 * Guagadu
 * GFJ
+* ThibmoRozier
