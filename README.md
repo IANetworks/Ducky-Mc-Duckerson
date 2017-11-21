@@ -26,12 +26,13 @@ Our aim, with the development of Ducky Mc Duckerson, is to provide functionality
 If you're a member of the Guns of Icarus Discord, Ask @Mods for the role of Ducky's Fans and join our testing channels!
 Also, feel free to star and fork this bot.
 
-### Special Thanks to the following contributers!
+### Special Thanks to the following:
 
+* TheMann
 * AbbyTheBunny
 * Sinthorion
 * Inkjet
-*
-*
-*
-*
+* CynicalBusiness
+* Crystale LesMiches
+* Guagadu
+* GFJ
