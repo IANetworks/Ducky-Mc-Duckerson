@@ -15,7 +15,8 @@
     "url": "git+https://github.com/Mannjamin/Ducky-Mc-Duckerson.git"
   },
   "author": "AbbyTheRat",
-  "license": "ISC",
+  "license": "GPL-3.0",
+  "private": true,
   "bugs": {
     "url": "https://github.com/Mannjamin/Ducky-Mc-Duckerson/issues"
   },
