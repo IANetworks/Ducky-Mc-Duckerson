@@ -148,19 +148,24 @@ public class McDucky {
                 .buildBlocking();  //There are 2 ways to login, blocking vs async. Blocking guarantees that JDA will be completely loaded.
 
             Scanner scanner = new Scanner(System.in);
-
-            while (jda.getStatus() != JDA.Status.SHUTDOWN) {
                 String line = scanner.nextLine();
-                while ((line != null)) {
+            while (jda.getStatus() != JDA.Status.SHUTDOWN) {
                     List<TextChannel> listTextChannel = jda.getTextChannelsByName("bot-programming-geek", false);
                     if (!listTextChannel.isEmpty()) {
                         TextChannel channel = listTextChannel.get(0);
                         eventListener.onLineIn(channel, line);
                     }
-
+                if (scanner.hasNext()) {
                     line = scanner.nextLine();
+                } else {
+                    Thread.sleep(10);
                 }
-            }
+                }
+
+
+            String eventShutDown = "{\"event\":\"botShutDown\"}";
+            System.out.println(eventShutDown);
+
         } catch (LoginException e) {
             //If anything goes wrong in terms of authentication, this is the exception that will represent it
             e.printStackTrace();
