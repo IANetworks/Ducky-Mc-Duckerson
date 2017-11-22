@@ -1,0 +1,2 @@
+# Mark SQL files as "generated" so they get ignored in stats.
+*.sql linguist-generated
