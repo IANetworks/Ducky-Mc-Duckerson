@@ -31,22 +31,22 @@ public class SetGameChannelCS extends CommandStructure {
 
         //First we check to see if we have a parameter
         if (parameters.isEmpty()) {
-            channel.sendMessage("Missing a channel name").queue();
+            channel.sendMessage(localize(channel, "command.set_game_channel.error.channel_missing")).queue();
         } else {
             //check to see if we have an existing channel.
             parameters = parameters.trim();
             List<TextChannel> textChannelsByName = guild.getTextChannelsByName(parameters, true);
             if (textChannelsByName.size() == 0) {
-                channel.sendMessage("There's no channels by that name").queue();
+                channel.sendMessage(localize(channel, "command.set_game_channel.error.channel_not_found")).queue();
             } else if (textChannelsByName.size() > 1) {
-                channel.sendMessage("There's many channels by that name, narrow the game channel.").queue();
+                channel.sendMessage(localize(channel, "command.set_game_channel.error.ambiguous_channel")).queue();
             } else {
                 //store channel
                 try {
                     dbMan.setGameChannel(guildID, parameters);
-                    channel.sendMessage(parameters + " has been set as " + guild.getName() + "'s Game Channel.").queue();
+                    channel.sendMessage(localize(channel, "command.set_game_channel.success", parameters, guild.getName())).queue();
                 } catch (SQLException e) {
-                    channel.sendMessage("Unhandled booboo, contact Mistress").queue();
+                    channel.sendMessage(localize(channel, "command.set_game_channel.error.sql")).queue();
                 }
             }
 
@@ -54,7 +54,7 @@ public class SetGameChannelCS extends CommandStructure {
     }
 
     @Override
-    public String help(Long guildID) {
-        return "Set a game channel for server. This need to be set before any games can run.";
+    public String help(Long guildID, MessageChannel channel) {
+        return localize(channel, "command.set_game_channel.sucess.help");
     }
 }

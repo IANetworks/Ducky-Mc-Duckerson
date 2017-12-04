@@ -46,7 +46,7 @@ public class WerewolfAliveCS extends CommandStructure {
     }
 
     @Override
-    public String help(Long guildID) {
+    public String help(Long guildID, MessageChannel channel) {
         return "Display a list of people who are alive or dead";
     }
 }

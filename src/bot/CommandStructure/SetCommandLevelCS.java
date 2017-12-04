@@ -33,7 +33,7 @@ public class SetCommandLevelCS extends CommandStructure {
 
         if (hasPermission(author)) {
             if (parameters.isEmpty()) {
-                channel.sendMessage("I need a command name to assign a new level. Syntax is: " + dbMan.getPrefix(guildID) + commandName + " [command name] [level name]").queue();
+                channel.sendMessage(localize(channel, "command.set_command_level.error.command_missing", dbMan.getPrefix(guildID) + commandName)).queue();
             }
             String[] paraList = parameters.split(" ");
             String cmdID = paraList[1];
@@ -43,24 +43,24 @@ public class SetCommandLevelCS extends CommandStructure {
                 if (commandList.containsKey(cmdID)) {
                     try {
                         dbMan.setCommandLevel(guildID, commandList.get(cmdID).commandID, commandLevel);
-                        channel.sendMessage("I have assigned level: " + dbMan.getLevelName(guildID, commandLevel) + " to the command: " + cmdID).queue();
+                        channel.sendMessage(localize(channel, "command.set_command_level.success", dbMan.getLevelName(guildID, commandLevel), cmdID)).queue();
                     } catch (SQLException e) {
                         e.printStackTrace();
-                        channel.sendMessage("I had a hicup, excuse me. Someone get Mistress to look at setting Command Level").queue();
+                        channel.sendMessage(localize(channel, "command.set_command_level.error.sql")).queue();
                     }
                 } else {
 
                 }
             } else {
-                channel.sendMessage("This doesn't look quiet right. Syntax is: " + dbMan.getPrefix(guildID) + commandName + " [command name] [level name]").queue();
+                channel.sendMessage(localize(channel, "command.set_command_level.error.syntax", dbMan.getPrefix(guildID) + commandName)).queue();
             }
         }
 
     }
 
     @Override
-    public String help(Long guildID) {
-        return "Change the permission required for commands " + dbMan.getPrefix(guildID) + commandName + " [command name] [level name]";
+    public String help(Long guildID, MessageChannel channel) {
+        return localize(channel, "command.set_command_level.help", dbMan.getPrefix(guildID) + commandName);
 
     }
 

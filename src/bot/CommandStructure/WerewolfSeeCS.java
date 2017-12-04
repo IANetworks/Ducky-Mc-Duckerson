@@ -113,7 +113,7 @@ public class WerewolfSeeCS extends CommandStructure {
     }
 
     @Override
-    public String help(Long guildID) {
+    public String help(Long guildID, MessageChannel channel) {
         return "During a game, use this command to select a person to see.";
     }
 }

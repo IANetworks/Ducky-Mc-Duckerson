@@ -76,7 +76,7 @@ public class WerewolfKickPlayerCS extends CommandStructure {
     }
 
     @Override
-    public String help(Long guildID) {
+    public String help(Long guildID, MessageChannel channel) {
         return "Kick a users from current werewolf game";
     }
 }

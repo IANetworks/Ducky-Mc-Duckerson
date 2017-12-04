@@ -31,10 +31,10 @@ public class DeleteCommandCS extends CommandStructure {
             try {
                 dbMan.setDeleteCommand(guildID, delCmd);
                 if (!delCmd) {
-                    message.addReaction("✔").queue();
+                    message.addReaction(":heavy_check_mark:").queue();
                 }
             } catch (SQLException e) {
-                channel.sendMessage("This hurts, ow").queue();
+                channel.sendMessage(localize(channel, "command.toggle_delete.error.sql")).queue();
             }
 
 
@@ -43,7 +43,7 @@ public class DeleteCommandCS extends CommandStructure {
     }
 
     @Override
-    public String help(Long guildID) {
-        return "Set whether the commands are deleted or not. Some commands will not be deleted such as game commands.";
+    public String help(Long guildID, MessageChannel channel) {
+        return localize(channel, "command.toggle_delete.help");
     }
 }

@@ -29,9 +29,10 @@ public class ToggleEventCS extends CommandStructure {
             Boolean newState = !dbMan.isEventOn(guildID);
             try {
                 dbMan.setEventOn(guildID, newState);//Toggle state
-                channel.sendMessage("Events has now been turned " + stringOnOff(newState)).queue();
+                String stateName = localize(channel, newState ? "command.toggle_event.on" : "command.toggle_event.off");
+                channel.sendMessage(localize(channel, "command.toggle_event.success", stateName)).queue();
             } catch (SQLException e) {
-                channel.sendMessage("Oh ow ow, I did a thing, inform Abby please").queue();
+                channel.sendMessage(localize(channel, "command.toggle_event.error.sql")).queue();
             }
         }
     }
@@ -41,7 +42,7 @@ public class ToggleEventCS extends CommandStructure {
     }
 
     @Override
-    public String help(Long guildID) {
-        return "Toggles event on or off";
+    public String help(Long guildID, MessageChannel channel) {
+        return localize(channel, "command.toggle_event.help");
     }
 }

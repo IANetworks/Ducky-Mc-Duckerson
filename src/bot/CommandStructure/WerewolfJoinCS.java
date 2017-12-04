@@ -44,7 +44,7 @@ public class WerewolfJoinCS extends CommandStructure {
     }
 
     @Override
-    public String help(Long guildID) {
+    public String help(Long guildID, MessageChannel channel) {
         return "Join a game of werewolf! Only works during the sign up phase of werewolf";
     }
 }

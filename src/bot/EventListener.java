@@ -58,6 +58,11 @@ public class EventListener extends ListenerAdapter {
     private Integer commandID = null;
 
     /**
+     * Localization manager
+     */
+    private I18N i18n;
+
+    /**
      * Instantiates a new Event listener.
      *
      * @param dbMan the db man
@@ -79,7 +84,7 @@ public class EventListener extends ListenerAdapter {
     private void selfStart(DatabaseManager dbMan, String botAdmin) {
         this.dbMan = dbMan;
         this.botAdmin = botAdmin;
-
+        this.i18n = I18N.getInstance();
     }
 
     private void setupCommandList(ApplicationInfo info) {
@@ -179,7 +184,7 @@ public class EventListener extends ListenerAdapter {
             }
 
             for (TextChannel tc : ltc) {
-                tc.sendMessage("Member `" + member.getEffectiveName() + "` has left " + guild.getName() + ".").queue();
+                tc.sendMessage(i18n.localize(dbMan, tc, "member_joined_guild", member.getEffectiveName(), guild.getName())).queue();
             }
         }
     }
@@ -200,7 +205,7 @@ public class EventListener extends ListenerAdapter {
             }
 
             for (TextChannel tc : ltc) {
-                tc.sendMessage("Member `" + member.getEffectiveName() + "` has left " + guild.getName() + ".").queue();
+                tc.sendMessage(i18n.localize(dbMan, tc, "member_left_guild", member.getEffectiveName(), guild.getName())).queue();
             }
         }
     }
@@ -229,7 +234,7 @@ public class EventListener extends ListenerAdapter {
             if (msgPrefix.equals(guildPrefix)) {
                 if (cmdList.isEmpty()) {
                     //Our commands list have not setup yet, we're still waiting for infomation from Discord
-                    channel.sendMessage("My Command List has not been initiated yet. Still waiting on information from Discord. (If this taking more than a minute, there's something wrong)").queue();
+                    channel.sendMessage(i18n.localize(dbMan, channel, "error.commandlist_not_initiated")).queue();
                 } else {
                     //Loop through our commands
                     for (String commandName : cmdList.keySet()) {
@@ -298,7 +303,7 @@ public class EventListener extends ListenerAdapter {
         //Long guildID = guild.getIdLong(); //guild unique id
         if (msg.length() > 0) {
             if (privCmdList.isEmpty()) {
-                channel.sendMessage("My Command List has not been initiated yet. Still waiting on information from Discord. (If this taking more than a minute, there's something wrong)").queue();
+                channel.sendMessage(i18n.localize(dbMan, channel, "error.commandlist_not_initiated")).queue();
             } else {
                 for (String commandName : privCmdList.keySet()) {
                     if (msg.startsWith(commandName)) {
@@ -372,7 +377,7 @@ public class EventListener extends ListenerAdapter {
             container.ww.shutDown();
         if (HTMLParse.get_instance() != null)
             HTMLParse.get_instance().ShutDown();
-        author.openPrivateChannel().queue((channel) -> sendChannelMessageAndShutdown(channel, "Bye bye, I'm closing down"));
+        author.openPrivateChannel().queue((channel) -> sendChannelMessageAndShutdown(channel, i18n.localize(dbMan, channel, "shutdown.success")));
     }
 
     private boolean isBotAdminOwner(User author) {

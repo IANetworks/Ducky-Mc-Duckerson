@@ -33,7 +33,7 @@ public class WerewolfRulesCS extends CommandStructure {
     }
 
     @Override
-    public String help(Long guildID) {
+    public String help(Long guildID, MessageChannel channel) {
         return null;
     }
 }

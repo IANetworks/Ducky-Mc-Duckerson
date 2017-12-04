@@ -1,10 +1,11 @@
 package bot.database.manager;
 
+import bot.I18N;
 import bot.database.manager.data.GuildSetting;
 import bot.database.manager.data.Permissions;
 import bot.database.manager.data.SelfRoles;
 import bot.database.manager.data.UserProfile;
-import net.dv8tion.jda.core.entities.Role;
+import net.dv8tion.jda.core.entities.*;
 import werewolf.data.Theme;
 import werewolf.data.ThemeDesc;
 
@@ -20,6 +21,8 @@ public class DatabaseManager {
     private Map<Long, Permissions> listGuildPermissions = new HashMap<Long, Permissions>();
     private Map<Long, SelfRoles> listOfSelfRoles = new HashMap<Long, SelfRoles>();
 
+    private final I18N i18n;
+
     /**
      * Instantiates a new Database manager.
      *
@@ -28,6 +31,7 @@ public class DatabaseManager {
      */
     public DatabaseManager(Connection conn) throws SQLException {
         this.conn = conn;
+        this.i18n = new I18N();
         fetchGuildSettings(); //Fetch guild settings and store
         fetchCmdLevels(); //Fetch list of custom permissions and store
         fetchPermissionGroup(); //Fetch all the permissions
@@ -64,6 +68,7 @@ public class DatabaseManager {
             guildSetting.setEventOn(rs.getBoolean("event_on"));
             guildSetting.setEventChannel(rs.getString("event_channel"));
             guildSetting.isStored = true;
+            // TODO: add locale
 
             listGuildSettings.put(guildSetting.getGuildId(), guildSetting);
         }
@@ -1901,5 +1906,13 @@ public class DatabaseManager {
         return null;
     }
 
-
+    public String getLocale(MessageChannel channel) {
+        if (!(channel instanceof TextChannel)) {
+            return "en_US";
+        }
+        // TODO: some way to load the locale from channel settings
+        long guildId = ((TextChannel)channel).getIdLong();
+        GuildSetting guildVals = getGuildValues(guildId);
+        return guildVals.getLocale();
+    }
 }

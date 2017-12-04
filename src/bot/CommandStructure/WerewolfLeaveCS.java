@@ -40,7 +40,7 @@ public class WerewolfLeaveCS extends CommandStructure {
     }
 
     @Override
-    public String help(Long guildID) {
+    public String help(Long guildID, MessageChannel channel) {
         return "Run away from a game of werewolf";
     }
 }

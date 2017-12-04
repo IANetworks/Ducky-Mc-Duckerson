@@ -45,18 +45,18 @@ public class StoreCS extends CommandStructure {
                 item = Integer.valueOf(paraList[0]);
                 quantity = Integer.valueOf(paraList[1]);
             } else {
-                channel.sendMessage("This syntax looks wrong, Syntax: " + dbMan.getPrefix(guildID) + commandName + " [items id] [quantity]").queue();
+                channel.sendMessage(localize(channel, "command.buy.error.syntax", dbMan.getPrefix(guildID) + commandName)).queue();
             }
             //TODO remove Hardcode here
             if (item == 1) {
                 Integer itemCost = 1000;
                 Integer totalCost = quantity * itemCost;
                 if (totalCost > up.getBalance()) {
-                    channel.sendMessage("\uD83D\uDCB8 Sorry you don't have enough gold to get this. \uD83D\uDCB8").queue();
+                    channel.sendMessage(localize(channel, "command.buy.error.not_enough_gold")).queue();
                 } else {
                     Integer expGain = 50;
                     Integer totalExpGain = expGain * quantity;
-                    channel.sendMessage("You have gained " + totalExpGain + " exp").queue();
+                    channel.sendMessage(localize(channel, "command.buy.success", totalExpGain)).queue();
                     try {
                         LinkedList<RankUp> rankUps = dbMan.addUserExp(guildID, userID, totalExpGain.longValue());
                         dbMan.remUserBalance(guildID, userID, totalCost.longValue());
@@ -67,13 +67,13 @@ public class StoreCS extends CommandStructure {
                                 Color color = new Color(50, 255, 50);
                                 newEmbed.setColor(color);
                                 newEmbed.setAuthor(author.getEffectiveName(), null, author.getUser().getAvatarUrl());
-                                newEmbed.setTitle("\uD83D\uDD3C RANK UP \uD83D\uDD3C");
-                                newEmbed.setDescription(author.getEffectiveName() + " has ranked up to " + newRank.rankName);
+                                newEmbed.setTitle(localize(channel, "rankup.title"));
+                                newEmbed.setDescription(localize(channel, "rankup.text", author.getEffectiveName(), newRank.rankName));
                                 newEmbed.addBlankField(false);
                                 if (newRank.expRequired != null) {
-                                    newEmbed.setFooter("⏭ They need " + newRank.expRequired + " to rank reach the next rank ⏭", null);
+                                    newEmbed.setFooter(localize(channel, "rankup.xp_required", newRank.expRequired), null);
                                 } else {
-                                    newEmbed.setFooter("Reached max rank defined. Way to go! \uD83D\uDC4D", null);
+                                    newEmbed.setFooter(localize(channel, "rankup.max_rank_reached"), null);
                                 }
 
                                 channel.sendMessage(newEmbed.build()).queue();
@@ -91,7 +91,7 @@ public class StoreCS extends CommandStructure {
     }
 
     @Override
-    public String help(Long guildID) {
-        return "Buy Items with gold. Syntax: " + dbMan.getPrefix(guildID) + commandName + " [items id] [quantity]";
+    public String help(Long guildID, MessageChannel channel) {
+        return localize(channel, "command.buy.help", dbMan.getPrefix(guildID) + commandName);
     }
 }

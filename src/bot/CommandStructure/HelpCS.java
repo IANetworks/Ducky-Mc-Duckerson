@@ -39,7 +39,7 @@ public class HelpCS extends CommandStructure {
         EmbedBuilder embed = new EmbedBuilder();
         int count = 0;
         for (String commandName : commandList.keySet()) {
-            String help = commandList.get(commandName).help(guildID);
+            String help = commandList.get(commandName).help(guildID, privChannel);
             if (help == null) help = "";
             embed.addField(commandName, help, true);
             count++;
@@ -55,9 +55,9 @@ public class HelpCS extends CommandStructure {
 
 
     @Override
-    public String help(Long guildID) {
+    public String help(Long guildID, MessageChannel channel) {
 
-        return "returns a list of commands";
+        return i18n.localize(dbMan, channel, "command.help.help");
 
     }
 

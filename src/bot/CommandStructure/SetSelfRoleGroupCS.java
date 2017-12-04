@@ -44,7 +44,7 @@ public class SetSelfRoleGroupCS extends CommandStructure {
                     groupID = Integer.valueOf(paraList[0]);
                     roleName = paraList[1];
                 } else {
-                    channel.sendMessage("This syntax looks wrong, Syntax: " + dbMan.getPrefix(guildID) + commandName + " [new group id] [role name]").queue();
+                    channel.sendMessage(localize(channel, "command.set_self_assign_group.error.syntax", dbMan.getPrefix(guildID) + commandName)).queue();
                     return;
                 }
 
@@ -56,10 +56,10 @@ public class SetSelfRoleGroupCS extends CommandStructure {
                     List<Role> searchList = guild.getRolesByName(roleName, true);
                     if (searchList.isEmpty()) {
                         selfAssignRole = null;
-                        channel.sendMessage("Cannot find any role by the name '" + roleName + "'").queue();
+                        channel.sendMessage(localize(channel, "command.set_self_assign_group.error.unknown_role", roleName)).queue();
                     } else if (searchList.size() > 1) {
                         selfAssignRole = null;
-                        channel.sendMessage("I've found more than one role by the name: '" + roleName + "'. Try using the exact role name").queue();
+                        channel.sendMessage(localize(channel, "command.set_self_assign_group.error.ambiguous_role", roleName)).queue();
                     } else if (searchList.size() == 1) {
                         selfAssignRole = searchList.get(0);
                         if (selfMember.canInteract(selfAssignRole)) {
@@ -67,20 +67,20 @@ public class SetSelfRoleGroupCS extends CommandStructure {
                             if (dbMan.isRoleSelfAssignable(guildID, roleID)) {
                                 try {
                                     dbMan.setRoleGroup(guildID, roleID, groupID);
-                                    channel.sendMessage("The Role '" + selfAssignRole.getName() + "' has been changed to group: " + groupID.toString()).queue();
+                                    channel.sendMessage(localize(channel, "command.set_self_assign_group.success", selfAssignRole.getName(), groupID.toString())).queue();
                                 } catch (SQLException e) {
-                                    channel.sendMessage("This hurts, please tell Mistress to fix me").queue();
+                                    channel.sendMessage(localize(channel, "command.set_self_assign_group.error.sql")).queue();
                                 }
                             } else {
-                                channel.sendMessage("the role '" + selfAssignRole.getName() + "' is not self assignable. I cannot change non-self assignable role's group.").queue();
+                                channel.sendMessage(localize(channel, "command.set_self_assign_group.error.not_self_assignable", selfAssignRole.getName())).queue();
                             }
                         } else {
-                            channel.sendMessage("I do not have enough power to modify '" + selfAssignRole.getName() + "'").queue();
+                            channel.sendMessage(localize(channel, "command.set_self_assign_group.error.permission_denied", selfAssignRole.getName())).queue();
                         }
                     }
                 }
             } else {
-                channel.sendMessage("I do not have Manage Roles permission.").queue();
+                channel.sendMessage(localize(channel, "command.set_self_assign_group.error.bot_permission_missing")).queue();
             }
 
         }
@@ -88,8 +88,8 @@ public class SetSelfRoleGroupCS extends CommandStructure {
     }
 
     @Override
-    public String help(Long guildID) {
-        return "Change a self assignable role to a different group Syntax: " + dbMan.getPrefix(guildID) + commandName + " [new group id] [role name]";
+    public String help(Long guildID, MessageChannel channel) {
+        return localize(channel, "command.set_self_assign_group.help", dbMan.getPrefix(guildID) + commandName);
     }
 
 }

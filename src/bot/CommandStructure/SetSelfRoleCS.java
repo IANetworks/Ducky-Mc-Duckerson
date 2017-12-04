@@ -54,10 +54,10 @@ public class SetSelfRoleCS extends CommandStructure {
                     List<Role> searchList = guild.getRolesByName(roleName, true);
                     if (searchList.isEmpty()) {
                         selfAssignRole = null;
-                        channel.sendMessage("Cannot find any role by the name '" + roleName + "'").queue();
+                        channel.sendMessage(localize(channel, "command.self_assign_role.error.unknown_role", roleName)).queue();
                     } else if (searchList.size() > 1) {
                         selfAssignRole = null;
-                        channel.sendMessage("I've found more than one role by the name: '" + roleName + "'. Try using the exact role name").queue();
+                        channel.sendMessage(localize(channel, "command.self_assign_role.error.ambiguous_role", roleName)).queue();
                     } else if (searchList.size() == 1) {
                         selfAssignRole = searchList.get(0);
                     }
@@ -66,37 +66,37 @@ public class SetSelfRoleCS extends CommandStructure {
                 if (selfAssignRole != null && selfMember.canInteract(selfAssignRole)) {
                     Long roleID = selfAssignRole.getIdLong();
                     if (dbMan.isRoleSelfAssignable(guildID, roleID)) {
-                        channel.sendMessage("the role '" + selfAssignRole.getName() + "' is already self assignable").queue();
+                        channel.sendMessage(localize(channel, "command.self_assign_role.error.already_self_assignable", selfAssignRole.getName())).queue();
                     } else {
 
                         try {
 
                             if (dbMan.setNewSelfAssignableRole(guildID, selfAssignRole.getIdLong(), groupID)) {
-                                channel.sendMessage("the role '" + selfAssignRole.getName() + "' is now self assignable").queue();
+                                channel.sendMessage(localize(channel, "command.self_assign_role.success", selfAssignRole.getName())).queue();
                             } else {
-                                channel.sendMessage("the role '" + selfAssignRole.getName() + "' is already self assignable").queue();
+                                channel.sendMessage(localize(channel, "command.self_assign_role.error.already_self_assignable", selfAssignRole.getName())).queue();
                             }
                         } catch (SQLException e) {
-                            channel.sendMessage("I've had a hiccup here, can't set " + selfAssignRole.getName() + " as self assignable.").queue();
+                            channel.sendMessage(localize(channel, "command.self_assign_role.error.sql", selfAssignRole.getName())).queue();
                         }
                     }
                 } else {
                     if (selfAssignRole == null) {
-                        channel.sendMessage("I'm not able to assign that role.'").queue();
+                        channel.sendMessage(localize(channel, "command.self_assign_role.failure")).queue();
                     } else {
-                        channel.sendMessage("I do not have enough power to modify '" + selfAssignRole.getName() + "'").queue();
+                        channel.sendMessage(localize(channel, "command.self_assign_role.error.permission_denied", selfAssignRole.getName())).queue();
                     }
                 }
             } else {
-                channel.sendMessage("I do not have Manage Roles permission.").queue();
+                channel.sendMessage(localize(channel, "command.self_assign_role.error.bot_permission_missing")).queue();
             }
         }
 
     }
 
     @Override
-    public String help(Long guildID) {
-        return "set a role as self assignable, make sure the role name is spelt out correctly";
+    public String help(Long guildID, MessageChannel channel) {
+        return localize(channel, "command.self_assign_role.help");
     }
 
 }

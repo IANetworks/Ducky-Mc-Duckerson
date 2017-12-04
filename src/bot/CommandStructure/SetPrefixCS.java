@@ -42,16 +42,15 @@ public class SetPrefixCS extends CommandStructure {
                             dbMan.setPrefix("!", guildID);
                         } catch (SQLException e) {
                             e.printStackTrace();
-                            channel.sendMessage("I had an error, am I helpful creator?").queue();
+                            channel.sendMessage(i18n.localize(dbMan, channel, "command.set_prefix.error.sql1")).queue();
                         }
                     };
-                    channel.sendMessage("Resetting prefix to default").queue(callback); //Should I think about breaking this out to make localizion doable?
-                    //I don't really expect this bot to get popular but this might make the bot popular thing along non-english servers..
+                    channel.sendMessage(i18n.localize(dbMan, channel, "command.set_prefix.reset")).queue(callback);
                 }
             } else {
                 parameters = parameters.trim();
                 if (parameters.length() > 3) {
-                    channel.sendMessage("I cannot set a prefix of 4 or more, I count " + String.valueOf(parameters.length())).queue();
+                    channel.sendMessage(i18n.localize(dbMan, channel, "command.set_prefix.error.too_long", parameters.length())).queue();
                 } else {
                     final String pm = parameters;
                     Consumer<Message> callback = (response) -> {
@@ -59,10 +58,10 @@ public class SetPrefixCS extends CommandStructure {
                             dbMan.setPrefix(pm, guildID);
                         } catch (SQLException e) {
                             e.printStackTrace();
-                            channel.sendMessage("I had an error setting Prefix, am I helpful here too creator?").queue();
+                            channel.sendMessage(i18n.localize(dbMan, channel, "command.set_prefix.error.sql2")).queue();
                         }
                     };
-                    channel.sendMessage("Setting prefix to " + parameters).queue(callback); //Should I think about breaking this out to make localizion doable?
+                    channel.sendMessage(i18n.localize(dbMan, channel, "command.set_prefix.set", parameters)).queue(callback);
                 }
             }
         }
@@ -70,9 +69,8 @@ public class SetPrefixCS extends CommandStructure {
     }
 
     @Override
-    public String help(Long guildID) {
-        return "Change the prefix used before a command. Prefix is limited to 3 characters, not applying any prefix will reset to default !"
-            + dbMan.getPrefix(guildID) + commandName + " <prefix>";
+    public String help(Long guildID, MessageChannel channel) {
+        return i18n.localize(dbMan, channel, "command.set_prefix.help", dbMan.getPrefix(guildID), commandName);
 
     }
 

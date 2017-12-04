@@ -1,5 +1,6 @@
 package bot.CommandStructure;
 
+import bot.I18N;
 import bot.SharedContainer;
 import bot.database.manager.DatabaseManager;
 import net.dv8tion.jda.core.entities.Member;
@@ -52,6 +53,10 @@ public abstract class CommandStructure {
      * The Werewolf cbject. Holds Werewolf game interactions
      */
     Werewolf ww;
+    /**
+     * Internationalisation manager. All output to channels should be localized through this.
+     */
+    protected final I18N i18n;
 
     /**
      * Instantiates a new Command structure.
@@ -69,6 +74,7 @@ public abstract class CommandStructure {
         this.botAdmin = container.botAdmin;
         this.botOwner = container.botOwner;
         this.ww = container.ww;
+        this.i18n = I18N.getInstance();
     }
 
     /**
@@ -236,7 +242,24 @@ public abstract class CommandStructure {
      * Help string. Method called when a user requests help, either in a list or on a given command
      *
      * @param guildID the guild id
+     * @param channel the channel
      * @return Description of the command object and how to use it
      */
-    public abstract String help(Long guildID);
+    public String help(Long guildID, MessageChannel channel) {
+        return "";
+    }
+
+    /**
+     * Get the localized text for a localization key. The locale to be used is
+     * determined based on the channel. The method accepts additional args if
+     * the text contains placeholders for them.
+     *
+     * @param channel the channel used to determine the locale
+     * @param key     the translation key
+     * @param args    string format arguments if the localized text is a format string
+     * @return the localized text, with any format placeholders replaced
+     */
+    protected String localize(MessageChannel channel, String key, Object... args) {
+        return i18n.localize(dbMan, channel, key, args);
+    }
 }
