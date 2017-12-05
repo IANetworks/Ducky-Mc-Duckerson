@@ -242,7 +242,7 @@ public class DatabaseManager {
     }
 
     public void removeItemFromUser(Long itemID) throws SQLException {
-        String sql = "DELETE FROM user_inv WHERE user_id = ?";
+        String sql = "DELETE FROM user_inv WHERE item_id = ?";
         PreparedStatement prstmt = this.conn.prepareStatement(sql);
         prstmt.setLong(1, itemID);
         prstmt.execute();

@@ -15,7 +15,7 @@ public class TesterTitleItem extends Item {
     public TesterTitleItem(DatabaseManager dbMan, Integer invID) {
         super(
             dbMan,
-            "Tester Title",
+            "Tester",
             "Get Tester Title for profile",
             invID,
             false,

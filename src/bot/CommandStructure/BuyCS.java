@@ -62,8 +62,6 @@ public class BuyCS extends CommandStructure {
                 channel.sendMessage("I do not have this item or it's not for sale").queue();
             }
         }
-
-
     }
 
     @Override

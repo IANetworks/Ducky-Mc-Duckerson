@@ -30,7 +30,7 @@ public class ExpBoostItem extends Item {
         super(
             dbMan,
             "Experience Boost",
-            "Gain " + expGain.toString() + " + experience points",
+            "Gain " + expGain.toString() + " experience points",
             invID,
             true,
             1000,

@@ -125,8 +125,11 @@ public class EventListener extends ListenerAdapter {
         setupCommand(new StoreCS(container, "store", 33, 999));
         setupCommand(new StartCalendarCS(container, "start_event", 34, 1));
         setupCommand(new FetchCalendarCS(container, "fetch_event", 34, 1));
-        setupCommand(new BuyCS(container, "buy", 35, 1));
-        setupCommand(new GiveItemCS(container, "give_item", 36, 1));
+        setupCommand(new BuyCS(container, "buy", 35, 999));
+        setupCommand(new GiveItemCS(container, "give_item", 36, 999));
+        setupCommand(new ListUserInvCS(container, "inv", 37, 999));
+        setupCommand(new UseItemCS(container, "use_item", 38, 999));
+
 
         //********* PrivateMessage Commands *********//
         setupPrivateCommand(new WerewolfSeeCS(container, "see", 19, 999));
