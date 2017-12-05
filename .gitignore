@@ -4,3 +4,4 @@ config.properties
 /out
 /.idea
 /bin
+/src/javascript/bot/*.jar
