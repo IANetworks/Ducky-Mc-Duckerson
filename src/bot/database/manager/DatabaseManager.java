@@ -237,7 +237,6 @@ public class DatabaseManager {
             up.addItem(item);
         }
 
-
         return up;
     }
 

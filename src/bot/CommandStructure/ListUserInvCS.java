@@ -72,8 +72,12 @@ public class ListUserInvCS extends CommandStructure {
 
             embed.setColor(color);
             embed.setAuthor("Inventory of " + member.getEffectiveName(), null, member.getUser().getAvatarUrl());
-            for (Item item : inv.values()) {
-                embed.addField(item.getName() + "(Item ID: " + item.getItemID().toString() + ")", item.getDescription(), true);
+            if (inv.isEmpty()) {
+                embed.addField("Inventory", "Is Empty", false);
+            } else {
+                for (Item item : inv.values()) {
+                    embed.addField(item.getName() + "(Item ID: " + item.getItemID().toString() + ")", item.getDescription(), true);
+                }
             }
 
             if (requestedBy != null)
