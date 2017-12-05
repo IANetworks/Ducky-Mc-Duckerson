@@ -143,7 +143,6 @@ public class McDucky {
             eventListener = new EventListener(dbMan, botAdmin);
             JDA jda = new JDABuilder(AccountType.BOT)
                 .setToken(botToken)  //The token of the account that is logging in.
-                //.addEventListener(debugListener) //An instance of a class to handle verbose event logging
                 .addEventListener(eventListener)  //An instance of a class that will handle events.
                 .buildBlocking();  //There are 2 ways to login, blocking vs async. Blocking guarantees that JDA will be completely loaded.
 

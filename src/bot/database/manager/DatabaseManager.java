@@ -1,9 +1,8 @@
 package bot.database.manager;
 
-import bot.database.manager.data.GuildSetting;
-import bot.database.manager.data.Permissions;
-import bot.database.manager.data.SelfRoles;
-import bot.database.manager.data.UserProfile;
+import bot.database.manager.data.*;
+import bot.items.Item;
+import bot.items.ItemDatabase;
 import net.dv8tion.jda.core.entities.Role;
 import werewolf.data.Theme;
 import werewolf.data.ThemeDesc;
@@ -163,6 +162,28 @@ public class DatabaseManager {
     }
 
     /**
+     * @return User Inventory List
+     * @throws SQLException
+     */
+    public HashMap<Long, Item> getUserInv(Long guildID, Long userID) throws SQLException {
+        String sql = "SELECT * FROM user_inv WHERE user_id = ? AND guild_id = ?";
+        PreparedStatement prstmt = this.conn.prepareStatement(sql);
+        prstmt.setLong(1, userID);
+        prstmt.setLong(2, guildID);
+        ResultSet rs = prstmt.executeQuery();
+        ItemDatabase itemDB = new ItemDatabase(this);
+        HashMap<Long, Item> userInv = new HashMap<>();
+        while (rs.next()) {
+            Item item = itemDB.getNewItem(rs.getInt("invID"));
+            item.setItemID(rs.getLong("itemID"));
+
+            userInv.put(item.getItemID(), item);
+        }
+
+        return userInv;
+    }
+
+    /**
      * Gets user profile.
      *
      * @param guildID the guild id
@@ -193,16 +214,56 @@ public class DatabaseManager {
                 up.setRankExp(null);
             }
             up.setCooldown(rs.getTimestamp("cooldown"));
+            up.setTitle((rs.getString("title")));
 
             rowCount++;
         }
 
         if (rowCount == 0) {
             newUserProfile(guildID, userID);
-            return getUserProfile(guildID, userID);
+            up = getUserProfile(guildID, userID);
         }
 
+        sql = "SELECT * FROM user_inv WHERE user_id = ? AND guild_id = ?";
+        prstmt = this.conn.prepareStatement(sql);
+        prstmt.setLong(1, userID);
+        prstmt.setLong(2, guildID);
+        rs = prstmt.executeQuery();
+        ItemDatabase itemDB = new ItemDatabase(this);
+        while (rs.next()) {
+            Item item = itemDB.getNewItem(rs.getInt("inv_id"));
+            item.setItemID(rs.getLong("item_id"));
+
+            up.addItem(item);
+        }
+
+
         return up;
+    }
+
+    public void removeItemFromUser(Long itemID) throws SQLException {
+        String sql = "DELETE FROM user_inv WHERE user_id = ?";
+        PreparedStatement prstmt = this.conn.prepareStatement(sql);
+        prstmt.setLong(1, itemID);
+        prstmt.execute();
+    }
+
+    public Long addItemToUser(Long guildID, Long userID, Item item) throws SQLException {
+        String sql = "INSERT INTO user_inv(user_id, guild_id, inv_id) VALUES (?, ?, ?)";
+        PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        pstmt.setLong(1, userID);
+        pstmt.setLong(2, guildID);
+        pstmt.setLong(3, item.getInvID());
+
+        pstmt.execute();
+
+        ResultSet generatedKeys = pstmt.getGeneratedKeys();
+        if (generatedKeys.next()) {
+            return generatedKeys.getLong(1);
+        }
+
+        return null;
+
     }
 
     public Boolean isCooldownOver(Long guildID, Long userID) throws SQLException {
@@ -243,6 +304,16 @@ public class DatabaseManager {
         pstmt.setLong(3, userID);
         pstmt.execute();
     }
+
+    public void setUserTitle(Long guildID, Long userID, String title) throws SQLException {
+        String sql = "UPDATE user_profile SET title = ? WHERE guild_id = ? AND user_id = ?";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setString(1, title);
+        pstmt.setLong(2, guildID);
+        pstmt.setLong(3, userID);
+        pstmt.execute();
+    }
+
 
     private void newUserProfile(Long guildID, Long userID) throws SQLException {
         String sql = "INSERT INTO user_profile (user_id, guild_id, cooldown) VALUES (?, ?, ?)";

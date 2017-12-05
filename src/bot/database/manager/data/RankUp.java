@@ -1,4 +1,4 @@
-package bot.database.manager;
+package bot.database.manager.data;
 
 public class RankUp {
     public Integer rank;

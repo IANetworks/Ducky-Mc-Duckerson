@@ -3,6 +3,7 @@ package bot;
 import bot.CommandStructure.*;
 import bot.database.manager.DatabaseManager;
 import bot.eventmanager.EventManager;
+import bot.items.ItemDatabase;
 import net.dv8tion.jda.bot.entities.ApplicationInfo;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.*;
@@ -88,8 +89,7 @@ public class EventListener extends ListenerAdapter {
         container.botAdmin = botAdmin;
         container.botOwner = botOwner;
         container.ww = new Werewolf(dbMan, info.getJDA().getSelfUser());
-
-        //HTMLParse.get_instance().CalenderStart();
+        container.itemDB = new ItemDatabase(dbMan);
 
         setupCommand(new SetPrefixCS(container, "set_prefix", 1, 1));
         setupCommand(new SetPermissionByUserCS(container, "set_level_for_user", 2, 1));
@@ -122,7 +122,11 @@ public class EventListener extends ListenerAdapter {
         setupCommand(new DeleteCommandCS(container, "toggle_delete", 30, 1));
         setupCommand(new ToggleEventCS(container, "toggle_event", 31, 1));
         setupCommand(new SetEventChannel(container, "set_event", 32, 1));
-        setupCommand(new StoreCS(container, "buy", 33, 999));
+        setupCommand(new StoreCS(container, "store", 33, 999));
+        setupCommand(new StartCalendarCS(container, "start_event", 34, 1));
+        setupCommand(new FetchCalendarCS(container, "fetch_event", 34, 1));
+        setupCommand(new BuyCS(container, "buy", 35, 1));
+        setupCommand(new GiveItemCS(container, "give_item", 36, 1));
 
         //********* PrivateMessage Commands *********//
         setupPrivateCommand(new WerewolfSeeCS(container, "see", 19, 999));

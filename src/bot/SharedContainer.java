@@ -1,6 +1,7 @@
 package bot;
 
 import bot.database.manager.DatabaseManager;
+import bot.items.ItemDatabase;
 import net.dv8tion.jda.core.entities.User;
 import werewolf.Werewolf;
 
@@ -21,8 +22,12 @@ public class SharedContainer {
      */
     public User botOwner;
     /**
-     * The Ww.
+     * The Werewolf object.
      */
     public Werewolf ww;
 
+    /**
+     * The Item Database
+     */
+    public ItemDatabase itemDB;
 }

@@ -2,6 +2,7 @@ package bot.CommandStructure;
 
 import bot.SharedContainer;
 import bot.database.manager.DatabaseManager;
+import bot.items.ItemDatabase;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
@@ -19,7 +20,7 @@ public abstract class CommandStructure {
     /**
      * The Command name. Defines the name used to call the command. e.g "SetPrefix"
      */
-    public String commandName; //Store the command name here.
+    public String commandName; //ItemDatabase the command name here.
     /**
      * The Command unique id defined at the commands creation. A command may have several commmand name,
      * but will be defined with a unique ID.
@@ -54,6 +55,11 @@ public abstract class CommandStructure {
     Werewolf ww;
 
     /**
+     * The Item Database.
+     */
+    ItemDatabase itemDB;
+
+    /**
      * Instantiates a new Command structure.
      *
      * @param container           the container - Contains varies object a command might need for operation
@@ -69,6 +75,7 @@ public abstract class CommandStructure {
         this.botAdmin = container.botAdmin;
         this.botOwner = container.botOwner;
         this.ww = container.ww;
+        this.itemDB = container.itemDB;
     }
 
     /**
