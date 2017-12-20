@@ -1,7 +1,16 @@
+# App Configuration
 config.properties
-*.db
+
+# Project Configuration
 *.iml
-/out
-/.idea
-/bin
-/src/javascript/bot/*.jar
+.idea/
+
+# Database
+*.db
+
+# Binaries and Build Targets
+target/
+**/*.jar
+
+# Maven
+dependency-reduced-pom.xml
