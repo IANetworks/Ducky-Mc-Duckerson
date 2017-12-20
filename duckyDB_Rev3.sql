@@ -105,7 +105,7 @@ VALUES
     (4,'Mafia','With the Mafia claiming a stake in town, there''s no end to the citizens'' woe.','WPPWAH','2007-12-01 21:30:00','2007-12-01 21:30:00',0,1),
     (5,'Star Trek','Ouuu~','Unknown','2007-12-01 23:00:00','2007-12-01 23:00:00',0,1),
     (6,'Pirates','Yarrrr, I be a pirate. Catch me booty, if ye can.','Xaphod','2007-12-02 00:50:00','2007-12-02 20:00:00',0,1),
-    (7,'Ops of Werewolf','Someone wants to take over the #werewolf channel.. but who?','Joune','2008-03-22 02:56:46','2008-03-27 21:36:27',0,1),
+    (7,'Ops of Werewolf','Someone wants to take over the #io.github.mannjamin.ducky.werewolf channel.. but who?','Joune','2008-03-22 02:56:46','2008-03-27 21:36:27',0,1),
     (8,'Tikus','This theme is loosely based off of the Tikus Family and Friends','Joune','2008-03-21 21:05:39','2008-03-27 21:36:35',0,1);
 
 INSERT INTO `theme_defaults`
@@ -210,7 +210,7 @@ VALUES
     (22,1,'NO_LYNCH','As the sun gets low in the sky, the villagers are unable to reach a decision on who to lynch, and without the momentum of a united mob, the crowd slowly dissipates to take shelter in their homes...'),
     (23,1,'WOLF_LYNCH','After coming to a decision, PLAYER1 is quickly dragged from the crowd, and dragged to the hanging tree. PLAYER1 is strung up, and the block kicked from beneath their feet. There is a yelp of pain, but PLAYER1''s neck doesn''t snap, and fur begins to sprout from their body. A gunshot rings out, as a villager puts a silver bullet in the beast''s head...'),
     (24,1,'SEER_LYNCH','PLAYER1 runs before the mob is organised, dashing away from the village. Tackled to the ground near to the lake, PLAYER1 is tied to a log, screaming, and thrown into the water. With no means of escape, PLAYER1 drowns, but as the villagers watch, tarot cards float to the surface and their mistake is all too apparent...'),
-    (25,1,'VILL_LYNCH','The air thick with adrenaline, the villagers grab PLAYER1 who struggles furiously, pleading innocence, but the screams fall on deaf ears. PLAYER1 is dragged to the stake at the edge of the village, and burned alive. But the villagers shouts and cheers fade as they realise the moon is already up - PLAYER1 was not a werewolf after all...'),
+    (25,1,'VILL_LYNCH','The air thick with adrenaline, the villagers grab PLAYER1 who struggles furiously, pleading innocence, but the screams fall on deaf ears. PLAYER1 is dragged to the stake at the edge of the village, and burned alive. But the villagers shouts and cheers fade as they realise the moon is already up - PLAYER1 was not a io.github.mannjamin.ducky.werewolf after all...'),
     (26,1,'START_GAME','PLAYER1 has started a game. Everyone else has NUMBER seconds to join in the mob. "/msg BOTNAME join''" or "!join" to join the game.'),
     (27,1,'START_GAME_NOTICE','PLAYER1 has started a game!'),
     (28,1,'ADDED','Added to the game. Your role will be given once registration elapses.'),
@@ -795,7 +795,7 @@ VALUES
     (821,7,'WOLF_INSTRUCTIONS','To ban a member of the channel, type /msg BOTNAME kill <playername> (Note, this does not actually ban them. Sorry.)'),
     (822,7,'SEER_INSTRUCTIONS','To check up and see if someone is abusing there ops, type /msg BOTNAME see <playername>'),
     (823,7,'WOLVES_INSTRUCTIONS','You need to talk to PLAYER1 and come to agreement on who deserves the boot.'),
-    (824,7,'VILL_DESCRIPTION','You are an innocent player of werewolf, that is just in for a good time. You hope that the evil ops do not get there way in taking over the channel.'),
+    (824,7,'VILL_DESCRIPTION','You are an innocent player of io.github.mannjamin.ducky.werewolf, that is just in for a good time. You hope that the evil ops do not get there way in taking over the channel.'),
     (825,7,'WOLF_DESCRIPTION','You are an Op, hoping to take over the channel through any means possible.'),
     (826,7,'SEER_DESCRIPTION','You are Pious, so drop dead gorgeous, and often referred to as "He Who Must Not Be Named" due to your amazingness.'),
     (827,7,'MASON_DESCRIPTION','You are a Half-Op, and know that PLAYER2 is a fellow Half-Op. In honesty, you can''t do anything. But then again, normal Half-Ops can''t do much either.'),

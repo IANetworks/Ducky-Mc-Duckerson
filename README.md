@@ -17,7 +17,7 @@ Here is the list of features currently in development for Duck Mc Duckerson, som
 * Games
 * Timer with Text To Speech option, mutli timers with set name
 * Nickname change and playing status
-* Discord Games, like werewolf/mafia, vote.
+* Discord Games, like io.github.mannjamin.ducky.werewolf/mafia, vote.
 * Faction Messages/goals/progress
 
 ### The Aim of Ducky Mc Duckerson:

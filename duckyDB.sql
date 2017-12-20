@@ -1456,7 +1456,7 @@ INSERT INTO theme (
                       25,
                       1,
                       'VILL_LYNCH',
-                      'The air thick with adrenaline, the villagers grab PLAYER1 who struggles furiously, pleading innocence, but the screams fall on deaf ears. PLAYER1 is dragged to the stake at the edge of the village, and burned alive. But the villagers shouts and cheers fade as they realise the moon is already up - PLAYER1 was not a werewolf after all...'
+                      'The air thick with adrenaline, the villagers grab PLAYER1 who struggles furiously, pleading innocence, but the screams fall on deaf ears. PLAYER1 is dragged to the stake at the edge of the village, and burned alive. But the villagers shouts and cheers fade as they realise the moon is already up - PLAYER1 was not a io.github.mannjamin.ducky.werewolf after all...'
                   );
 
 INSERT INTO theme (
@@ -9026,7 +9026,7 @@ INSERT INTO theme (
                       982,
                       1,
                       'AVATAR',
-                      'https://i.pinimg.com/736x/18/4c/9b/184c9bea9fee748aeb85d6e8d16ffdb6--werewolf-art-werewolves.jpg'
+                      'https://i.pinimg.com/736x/18/4c/9b/184c9bea9fee748aeb85d6e8d16ffdb6--io.github.mannjamin.ducky.werewolf-art-werewolves.jpg'
                   );
 
 
