@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * The type Self roles cs.
  */
-public class SelfRolesCS extends CommandStructure {
+public class RemoveSelfRolesCS extends CommandStructure {
 
     /**
      * Instantiates a new Self roles cs.
@@ -24,8 +24,8 @@ public class SelfRolesCS extends CommandStructure {
      * @param commandID           the command id
      * @param commandDefaultLevel the command default level
      */
-    public SelfRolesCS(SharedContainer container, String commandName, int commandID,
-                       int commandDefaultLevel) {
+    public RemoveSelfRolesCS(SharedContainer container, String commandName, int commandID,
+                             int commandDefaultLevel) {
         super(container, commandName, commandID, commandDefaultLevel);
     }
 
@@ -68,47 +68,14 @@ public class SelfRolesCS extends CommandStructure {
             }
 
             if (selfAssignRole != null) {
-                addRoleList.add(selfAssignRole);
                 Long roleID = selfAssignRole.getIdLong();
                 if (dbMan.isRoleSelfAssignable(guildID, roleID)) {
                     GuildController controller = guild.getController();
+                    message.addReaction("✅").queue();
 
-                    if (dbMan.isRoleExclusive(guildID, roleID)) {
-                        List<Role> userRoles = author.getRoles();
-                        Integer roleGroupID = dbMan.getRoleGroup(guildID, roleID);
-                        HashSet<Long> roleList = dbMan.getListOfRolesByGroup(guildID, roleGroupID);
-
-                        //The Role is exclusive so we need to remove any roles that falls under the same role group
-                        for (Role userRole : userRoles) {
-                            Long userRoleID = userRole.getIdLong();
-
-                            if (!userRoleID.equals(roleID)) {
-                                if (roleList.contains(userRoleID)) {
-                                    if (selfMember.canInteract(userRole)) {
-                                        removeRoleList.add(userRole);
-                                    } else {
-                                        //TODO Edit this so it only output one message instead of a spam of messages.
-                                        channel.sendMessage("I do not have enough power to edit '"
-                                            + userRole.getName() + "' from " + author.getEffectiveName())
-                                            .queue();
-                                    }
-                                }
-                            }
-
-                        }
-                    }
-
-                    if (!removeRoleList.isEmpty()) {
-                        message.addReaction("✅").queue();
-                        controller.modifyMemberRoles(author, addRoleList, removeRoleList).queue(
-                            success -> successRoleChange(success, channel, author, addRoleList, removeRoleList),
-                            failure -> errorRoleChange(failure, channel, author, addRoleList, removeRoleList));
-                    } else {
-                        message.addReaction("✅").queue();
-                        controller.addRolesToMember(author, addRoleList).queue(
-                            success -> successRoleChange(success, channel, author, addRoleList),
-                            failure -> errorRoleChange(failure, channel, author, addRoleList));
-                    }
+                    controller.removeSingleRoleFromMember(author, selfAssignRole).queue(
+                        success -> successRoleChange(success, channel, author, addRoleList, removeRoleList),
+                        failure -> errorRoleChange(failure, channel, author, addRoleList, removeRoleList));
                 } else {
                     channel.sendMessage("Role: '" + roleName + "' cannot be self assigned.").queue();
                     message.addReaction("❌").queue();

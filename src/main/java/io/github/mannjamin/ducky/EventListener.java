@@ -129,6 +129,7 @@ public class EventListener extends ListenerAdapter {
         setupCommand(new GiveItemCS(container, "give_item", 36, 999));
         setupCommand(new ListUserInvCS(container, "inv", 37, 999));
         setupCommand(new UseItemCS(container, "use_item", 38, 999));
+        setupCommand(new RemoveSelfRolesCS(container, "iamnot", 39, 999));
 
 
         //********* PrivateMessage Commands *********//
@@ -231,24 +232,21 @@ public class EventListener extends ListenerAdapter {
         //Check Prefix
         if (msg.length() > 0) {
             String msgPrefix = msg.substring(0, guildPrefix.length());
-            String msgCommand = msg.substring(guildPrefix.length()).toLowerCase();
+            String msgFullCommand = msg.substring(guildPrefix.length()).toLowerCase();
+            String msgCommand = msgFullCommand.split(" ", 2)[0];
 
             if (msgPrefix.equals(guildPrefix)) {
                 if (cmdList.isEmpty()) {
                     //Our commands list have not setup yet, we're still waiting for infomation from Discord
                     channel.sendMessage("My Command List has not been initiated yet. Still waiting on information from Discord. (If this taking more than a minute, there's something wrong)").queue();
                 } else {
-                    //Loop through our commands
-                    for (String commandName : cmdList.keySet()) {
-                        if (msgCommand.startsWith(commandName)) {
-                            Integer cmdCharCount = guildPrefix.length() + commandName.length();
-                            String parameters = msg.substring(cmdCharCount);
+                    if (cmdList.containsKey(msgCommand)) {
+                        Integer cmdCharCount = guildPrefix.length() + msgCommand.length();
+                        String parameters = msg.substring(cmdCharCount);
+                        cmdList.get(msgCommand).execute(author, channel, message, parameters, cmdList);
 
-                            cmdList.get(commandName).execute(author, channel, message, parameters, cmdList);
-                            if (deleteCommand(guildID)) {
-                                message.delete().reason("Clearing commands").queue();
-                            }
-                            break; //We found a matching command, let break out of the loop
+                        if (deleteCommand(guildID)) {
+                            message.delete().reason("Clearing commands").queue();
                         }
                     }
                 }

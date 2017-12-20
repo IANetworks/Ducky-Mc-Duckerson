@@ -86,7 +86,6 @@ public class EventManager {
         trackMethodLevel1.add("getTitle");
         trackMethodLevel1.add("getRawContent");
         trackMethodLevel1.add("isEdited");
-        trackMethodLevel1.add("getCount");
         trackMethodLevel1.add("isEmote");
 
         trackMethodLevel2.add("toString");
