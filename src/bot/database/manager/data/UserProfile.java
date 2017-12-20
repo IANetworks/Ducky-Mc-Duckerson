@@ -1,6 +1,9 @@
 package bot.database.manager.data;
 
 import java.sql.Timestamp;
+import java.util.HashMap;
+
+import bot.items.Item;
 
 /**
  * The type User profile.
@@ -55,6 +58,16 @@ public class UserProfile {
     private Timestamp cooldown;
 
     /**
+     * Current profile Title
+     */
+    private String title;
+
+    /**
+     * User's Inventory ItemID, Item
+     */
+    private HashMap<Long, Item> userInv = new HashMap<>();
+
+    /**
      * Gets rank name.
      *
      * @return the rank name
@@ -63,6 +76,14 @@ public class UserProfile {
         if (rankName == null)
             return "**This Rank is Not Defined**";
         return rankName;
+    }
+
+    public void addItem(Item item) {
+        userInv.put(item.getItemID(), item);
+    }
+
+    public HashMap<Long, Item> getInv() {
+        return userInv;
     }
 
     /**
@@ -216,5 +237,17 @@ public class UserProfile {
 
     public void setCooldown(Timestamp cooldown) {
         this.cooldown = cooldown;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Integer getItemCount() {
+        return userInv.size();
     }
 }

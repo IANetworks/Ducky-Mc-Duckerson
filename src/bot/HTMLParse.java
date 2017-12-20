@@ -109,10 +109,10 @@ public class HTMLParse {
                 for (int i = 0; i < thisDaysData.length; i++) {
                     todaysEvents += thisDaysData[i] + " ";
                 }
-                channel.sendMessage(todaysEvents);
+                channel.sendMessage(todaysEvents).queue();
                 return todaysEvents;
             } else {
-                channel.sendMessage("No events today!");
+                channel.sendMessage("No events today!").queue();
                 return "No Event Today";
             }
         } catch (IOException e) {

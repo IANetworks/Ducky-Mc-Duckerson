@@ -1,7 +1,7 @@
 package werewolf;
 
 import bot.database.manager.DatabaseManager;
-import bot.database.manager.RankUp;
+import bot.database.manager.data.RankUp;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;

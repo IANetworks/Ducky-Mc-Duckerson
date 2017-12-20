@@ -30,6 +30,9 @@ Also, feel free to star and fork this bot.
 
 * TheMann
 * AbbyTheBunny
+* dasfoxx
+* Wolfprint
+* Dr. Pit Lazarus
 * Sinthorion
 * Inkjet
 * CynicalBusiness

@@ -87,17 +87,22 @@ public class ProfileCS extends CommandStructure {
                 embed.addField("Exp Required:", "\uD83D\uDCAF Max Rank \uD83D\uDCAF", true);
             embed.addField("Points:", up.getPoints().toString(), true);
             embed.addField("Gold:", up.getBalance().toString() + " :moneybag:", true);
-            embed.addField("Table Flipped:", up.getFlipped().toString(), true);
-            embed.addField("Table Unflipped:", up.getUnflipped().toString(), true);
+            embed.addField("Tables Flipped:", up.getFlipped().toString(), true);
+            embed.addField("Tables Unflipped:", up.getUnflipped().toString(), true);
             embed.addField("Werewolf Games:", up.getWerewolfGames().toString(), true);
             embed.addField("Werewolf Wins:", up.getWerewolfWins().toString(), true);
+            embed.addField("No Items:", up.getItemCount().toString(), true);
             if (requestedBy != null)
                 embed.addField("", "Profile requested by: " + requestedBy.getEffectiveName(), false);
             embed.setFooter("To see your profile, use " + prefix + "profile", null);
             embed.setTimestamp(Instant.now());
 
             embed.setThumbnail(member.getUser().getAvatarUrl());
-            embed.setDescription(userLevelName);
+            if (up.getTitle() == null || up.getTitle().equals("")) {
+                embed.setDescription(userLevelName);
+            } else {
+                embed.setDescription(userLevelName + System.lineSeparator() + "**Title:** " + up.getTitle());
+            }
             channel.sendMessage(embed.build()).queue();
         } catch (SQLException e) {
             e.printStackTrace();
