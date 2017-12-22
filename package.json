@@ -1,0 +1,34 @@
+{
+  "name": "ducky",
+  "version": "0.1.0",
+  "description": "Root package for Ducky bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IANetworks/Ducky-Mc-Duckerson.git"
+  },
+  "author": "IANetworks",
+  "_contributorsNote": "Unlike the pom.xml, the email is required and a full name must be used over a username.",
+  "contributors": [
+    "Abby Seward-Munday <ad@vr-networks.co.uk> [AbbyTheRat]",
+    "Matthew Struble <matt@vevox.io> [CynicalBusiness]"
+  ],
+  "license": "GPL-3.0",
+  "private": true,
+  "bugs": {
+    "url": "https://github.com/IANetworks/Ducky-Mc-Duckerson/issues"
+  },
+  "homepage": "https://github.com/IANetworks/Ducky-Mc-Duckerson#readme",
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-clean": "^1.1.0",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-shell": "^2.1.0",
+    "grunt-todo": "^0.5.0",
+    "load-grunt-tasks": "^3.5.2",
+    "time-grunt": "^1.4.0"
+  }
+}
