@@ -1,2 +1,5 @@
 # Mark SQL files as "generated" so they get ignored in stats.
 *.sql linguist-generated=true
+
+# Contents of /lib are "vendored" and should also be ignored by Linguist
+lib/* linguist-vendored=true
