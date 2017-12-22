@@ -43,7 +43,7 @@ public class UserProfile {
      */
     private Long werewolfWins;
     /**
-     * Number of io.github.mannjamin.ducky.werewolf games played
+     * Number of werewolf games played
      */
     private Long werewolfGames;
 
