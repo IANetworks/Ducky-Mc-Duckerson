@@ -15,6 +15,7 @@ import net.dv8tion.jda.core.exceptions.RateLimitedException;
 
 import javax.security.auth.login.LoginException;
 import java.io.*;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -216,7 +217,8 @@ public class McDucky {
 
         // Try to open the file into a fileStream (Reader in Java).
         try {
-            fileReader = new FileReader("duckyDB.sql");
+            URI sqlFile = getClass().getClassLoader().getResource("duckyDB.sql").toURI();
+            fileReader = new FileReader(new File(sqlFile));
         } catch (Exception ex) {
             ex.fillInStackTrace();
             ex.printStackTrace();
