@@ -74,15 +74,15 @@
             <artifactId>socket.io-client</artifactId>
             <version>1.0.0</version>
         </dependency>
-    </dependencies>
 
-    <testDependencies>
-      <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-api</artifactId>
-        <version>5.0.2</version>
-      </dependency>
-    </testDependencies>
+        <!-- Test Dependencies -->
+        <dependency>
+          <groupId>org.junit.jupiter</groupId>
+          <artifactId>junit-jupiter-api</artifactId>
+          <version>5.0.2</version>
+          <scope>test</scope>
+        </dependency>
+    </dependencies>
 
     <build>
         <finalName>${project.name}-${project.version}</finalName>
