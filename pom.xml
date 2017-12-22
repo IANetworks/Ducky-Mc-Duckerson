@@ -76,6 +76,14 @@
         </dependency>
     </dependencies>
 
+    <testDependencies>
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-api</artifactId>
+        <version>5.0.2</version>
+      </dependency>
+    </testDependencies>
+
     <build>
         <finalName>${project.name}-${project.version}</finalName>
 
