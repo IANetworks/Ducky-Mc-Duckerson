@@ -11,6 +11,11 @@ config.properties
 # Binaries and Build Targets
 target/
 **/*.jar
+src/main/javascript/bot/
 
 # Maven
 dependency-reduced-pom.xml
+
+# NPM
+node_modules/
+npm-debug.log
