@@ -23,23 +23,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 
-//Input/Output Imports
-//Database Imports
-//import java.sql.Statement;
-
-// Use UserID to store unquie ID of each enitity
-//TODO Logging (to echo certain logs that's not tracked in Aduit. Such as quit/joins.
-//TODO Permissions, set custom permissions, tie into role, so for example someone with the role "BotHandler" 
-//		can do everything while someone with indepentent role can do games only. 
-//TODO Welcome after someone select .iam for the first time
-//TODO Role assistment 
-//TODO Greeting Message - Greet someone joinning for the first time  
-//TODO Custom Reaction - !fb/!faq and so on, allow this to be defined at runtime instead of hard code
-//TODO FAQ - allow someone to request a FAQ link to Guns of Icarus Online   
-//TODO Forum Tie in - Scrape the forum of user profiles. (This is just about the only thing we can do, without hacking the game client.  <- We might do this.
-//TODO Music - The way Discord handles Bots, is that we can have different programs use the same token so we can easily have another bot running just for 
-//		Music and not worry about coding it into this program
-
 /**
  * The type Mc ducky.
  * <p>
