@@ -28,9 +28,45 @@ exports = module.exports = grunt => {
         usePackage: true
       },
       src: [ 'src/**/*' ]
+    },
+
+    //
+    // Shell scripts
+    shell: {
+      mavenPackage: 'mvn package',
+      mavenTest: 'mvn test',
+      mavenClean: 'mvn clean'
+    },
+
+    //
+    // Copy files
+    copy: {
+      maven: {
+        src: 'target/Ducky*.jar',
+        dest: 'src/main/javascript/bot/Ducky.jar'
+      }
+    },
+
+    //
+    // Cleanup
+    clean: {
+      jars: {
+        src: 'src/**/*.jar'
+      }
     }
   })
 
   //
   // register tasks
+  grunt.registerTask('build', [
+    'shell:mavenPackage',
+    'copy:maven'
+  ])
+  grunt.registerTask('test', [
+    'shell:mavenTest'
+  ])
+  grunt.registerTask('clean', [
+    'shell:mavenClean',
+    'clean:jars'
+  ])
 }
