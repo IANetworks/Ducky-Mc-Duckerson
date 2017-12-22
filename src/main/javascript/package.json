@@ -4,7 +4,8 @@
   "description": "To control Ducky bot and display stats from Ducky bot",
   "main": "main.js",
   "dependencies": {
-    "express": "^4.16.2"
+    "express": "^4.16.2",
+    "socket.io": "^2.0.4"
   },
   "devDependencies": {},
   "scripts": {

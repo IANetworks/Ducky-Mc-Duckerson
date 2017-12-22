@@ -10,15 +10,15 @@ exports.start = () => {
     exports.__botProcess = botProcess
 
     botProcess.stdout.on('data', function(data) {
-        process.send(data);
+        console.log(data.toString());
     })
    
    botProcess.stderr.on('data', function(data){
-        process.send(data);
+        console.log(data.toString());
    })
 
    botProcess.on('error', err => {
-       process.send(err)
+       console.log(err.toString())
    })
 
    

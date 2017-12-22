@@ -4,6 +4,7 @@ import io.github.mannjamin.ducky.database.manager.DatabaseManager;
 import io.github.mannjamin.ducky.eventmanager.EventManager;
 import io.github.mannjamin.ducky.items.ItemDatabase;
 import io.github.mannjamin.ducky.commandstructure.*;
+import io.socket.client.Socket;
 import net.dv8tion.jda.bot.entities.ApplicationInfo;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.*;
@@ -57,14 +58,15 @@ public class EventListener extends ListenerAdapter {
      */
     Map<String, CommandStructure> privCmdList = new HashMap<String, CommandStructure>();
     private Integer commandID = null;
+    Socket socket;
 
     /**
      * Instantiates a new Event listener.
      *
      * @param dbMan the db man
      */
-    public EventListener(DatabaseManager dbMan) {
-        selfStart(dbMan, null);
+    public EventListener(DatabaseManager dbMan, Socket socket) {
+        selfStart(dbMan, null, socket);
     }
 
     /**
@@ -73,13 +75,14 @@ public class EventListener extends ListenerAdapter {
      * @param dbMan    the db man
      * @param botAdmin the bot admin
      */
-    public EventListener(DatabaseManager dbMan, String botAdmin) {
-        selfStart(dbMan, botAdmin);
+    public EventListener(DatabaseManager dbMan, String botAdmin, Socket socket) {
+        selfStart(dbMan, botAdmin, socket);
     }
 
-    private void selfStart(DatabaseManager dbMan, String botAdmin) {
+    private void selfStart(DatabaseManager dbMan, String botAdmin, Socket socket) {
         this.dbMan = dbMan;
         this.botAdmin = botAdmin;
+        this.socket = socket;
 
     }
 
@@ -146,7 +149,7 @@ public class EventListener extends ListenerAdapter {
     }
 
     public void onGenericEvent(Event event) {
-        EventManager thisEvent = new EventManager();
+        EventManager thisEvent = new EventManager(socket);
         thisEvent.onJDAEvent(event);
     }
 
@@ -401,11 +404,14 @@ public class EventListener extends ListenerAdapter {
         channel.sendMessage(message).queue(callback);
     }
 
-
-    public void onLineIn(TextChannel channel, String message) {
-        if (!message.isEmpty()) {
-            channel.sendMessage(message).queue();
+    public void onConsoleMessage(TextChannel channel, Object[] args) {
+        for (Object obj : args) {
+            if (obj instanceof String) {
+                String message = (String) obj;
+                if (!message.isEmpty()) {
+                    channel.sendMessage(message).queue();
+                }
+            }
         }
-
     }
 }

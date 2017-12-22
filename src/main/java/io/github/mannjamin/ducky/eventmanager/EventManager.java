@@ -1,6 +1,7 @@
 package io.github.mannjamin.ducky.eventmanager;
 
 import com.google.gson.Gson;
+import io.socket.client.Socket;
 import net.dv8tion.jda.core.events.Event;
 
 import java.lang.reflect.InvocationTargetException;
@@ -14,6 +15,11 @@ import java.util.Map;
  * The type Event manager.
  */
 public class EventManager {
+    Socket socket;
+
+    public EventManager(Socket socket) {
+        this.socket = socket;
+    }
 
     /**
      * Is getter boolean.
@@ -175,7 +181,9 @@ public class EventManager {
         Gson gson = new Gson();
         String json = gson.toJson(dataMap);
         String eventWrapped = "{\"event\":\"" + c.getSimpleName() + "\", \"data\":" + json + "}";
-        System.out.println(eventWrapped);
+
+        socket.emit("consoleLog", eventWrapped);
+        //System.out.println(eventWrapped);
     }
 
 //    public static boolean isSetter(Method method) {

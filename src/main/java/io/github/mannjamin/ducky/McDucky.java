@@ -3,6 +3,10 @@ package io.github.mannjamin.ducky;
 //JDA Imports
 
 import io.github.mannjamin.ducky.database.manager.DatabaseManager;
+import io.github.mannjamin.ducky.eventmanager.ConsoleMessage;
+import io.github.mannjamin.ducky.eventmanager.EventConnect;
+import io.socket.client.IO;
+import io.socket.client.Socket;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -11,6 +15,7 @@ import net.dv8tion.jda.core.exceptions.RateLimitedException;
 
 import javax.security.auth.login.LoginException;
 import java.io.*;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -140,30 +145,28 @@ public class McDucky {
         // we would use AccountType.CLIENT
         try {
             //debugListener = new DebugListener(dbug);
-            eventListener = new EventListener(dbMan, botAdmin);
+            Socket socket = IO.socket("http://localhost");
+            eventListener = new EventListener(dbMan, botAdmin, socket);
             JDA jda = new JDABuilder(AccountType.BOT)
                 .setToken(botToken)  //The token of the account that is logging in.
                 .addEventListener(eventListener)  //An instance of a class that will handle events.
                 .buildBlocking();  //There are 2 ways to login, blocking vs async. Blocking guarantees that JDA will be completely loaded.
+            List<TextChannel> listTextChannel = jda.getTextChannelsByName("programming-geek", false);
+            TextChannel channel;
+            socket.on(Socket.EVENT_CONNECT, new EventConnect(socket, eventListener));
+            if (!listTextChannel.isEmpty()) {
+                channel = listTextChannel.get(0);
+                System.out.println("Ducky: listening to consoleMessages");
+                socket.on("consoleMessage", new ConsoleMessage(socket, eventListener, channel));
+            } else {
+                System.out.println("Ducky: not listening for consoleMessage");
+            }
 
-            Scanner scanner = new Scanner(System.in);
-                String line = scanner.nextLine();
-            while (jda.getStatus() != JDA.Status.SHUTDOWN) {
-                    List<TextChannel> listTextChannel = jda.getTextChannelsByName("bot-programming-geek", false);
-                    if (!listTextChannel.isEmpty()) {
-                        TextChannel channel = listTextChannel.get(0);
-                        eventListener.onLineIn(channel, line);
-                    }
-                if (scanner.hasNext()) {
-                    line = scanner.nextLine();
-                } else {
-                    Thread.sleep(10);
-                }
-                }
+            socket.connect();
 
 
-            String eventShutDown = "{\"event\":\"botShutDown\"}";
-            System.out.println(eventShutDown);
+            //String eventShutDown = "{\"event\":\"botShutDown\"}";
+            //System.out.println(eventShutDown);
 
         } catch (LoginException e) {
             //If anything goes wrong in terms of authentication, this is the exception that will represent it
@@ -178,6 +181,8 @@ public class McDucky {
             //The login process is one which can be ratelimited. If you attempt to login in multiple times, in rapid succession
             // (multiple times a second), you would hit the ratelimit, and would see this exception.
             //As a note: It is highly unlikely that you will ever see the exception here due to how infrequent login is.
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
             e.printStackTrace();
         }
 
