@@ -78,23 +78,23 @@ public class ProfileCS extends CommandStructure {
 
 
             embed.setColor(color);
-            embed.setAuthor(i18n.localize(dbMan, channel, "command.profile.profile_of", member.getEffectiveName()), null, member.getUser().getAvatarUrl());
-            embed.addField(i18n.localize(dbMan, channel, "command.profile.rank"), up.getRankName(), false);
-            embed.addField(i18n.localize(dbMan, channel, "command.profile.exp"), up.getLevel().toString(), true);
+            embed.setAuthor(localize(channel, "command.profile.profile_of", member.getEffectiveName()), null, member.getUser().getAvatarUrl());
+            embed.addField(localize(channel, "command.profile.rank"), up.getRankName(), false);
+            embed.addField(localize(channel, "command.profile.exp"), up.getLevel().toString(), true);
             if (up.getRankExp() != null)
-                embed.addField(i18n.localize(dbMan, channel, "command.profile.exp_required"), up.getRankExp().toString(), true);
+                embed.addField(localize(channel, "command.profile.exp_required"), up.getRankExp().toString(), true);
             else
-                embed.addField(i18n.localize(dbMan, channel, "command.profile.exp_required"), "\uD83D\uDCAF Max Rank \uD83D\uDCAF", true);
-            embed.addField(i18n.localize(dbMan, channel, "command.profile.points"), up.getPoints().toString(), true);
-            embed.addField(i18n.localize(dbMan, channel, "command.profile.gold"), up.getBalance().toString() + " :moneybag:", true);
-            embed.addField(i18n.localize(dbMan, channel, "command.profile.tables_flipped"), up.getFlipped().toString(), true);
-            embed.addField(i18n.localize(dbMan, channel, "command.profile.tables_unflipped"), up.getUnflipped().toString(), true);
-            embed.addField(i18n.localize(dbMan, channel, "command.profile.werewolf_games"), up.getWerewolfGames().toString(), true);
-            embed.addField(i18n.localize(dbMan, channel, "command.profile.werewolf_wins"), up.getWerewolfWins().toString(), true);
-            embed.addField("No Items:", up.getItemCount().toString(), true);
+                embed.addField(localize(channel, "command.profile.exp_required"), localize(channel, "command.profile.max_rank"), true);
+            embed.addField(localize(channel, "command.profile.points"), up.getPoints().toString(), true);
+            embed.addField(localize(channel, "command.profile.gold"), up.getBalance().toString() + " :moneybag:", true);
+            embed.addField(localize(channel, "command.profile.tables_flipped"), up.getFlipped().toString(), true);
+            embed.addField(localize(channel, "command.profile.tables_unflipped"), up.getUnflipped().toString(), true);
+            embed.addField(localize(channel, "command.profile.werewolf_games"), up.getWerewolfGames().toString(), true);
+            embed.addField(localize(channel, "command.profile.werewolf_wins"), up.getWerewolfWins().toString(), true);
+            embed.addField(localize(channel, "command.profile.items"), up.getItemCount().toString(), true);
             if (requestedBy != null)
-                embed.addField("", i18n.localize(dbMan, channel, "command.profile.requested_by", requestedBy.getEffectiveName()), false);
-            embed.setFooter(i18n.localize(dbMan, channel, "command.profile.notice", prefix), null);
+                embed.addField("", localize(channel, "command.profile.requested_by", requestedBy.getEffectiveName()), false);
+            embed.setFooter(localize(channel, "command.profile.notice", prefix), null);
             embed.setTimestamp(Instant.now());
 
             embed.setThumbnail(member.getUser().getAvatarUrl());
@@ -111,7 +111,7 @@ public class ProfileCS extends CommandStructure {
 
     @Override
     public String help(Long guildID, MessageChannel channel) {
-        return i18n.localize(dbMan, channel, "command.profile.help", dbMan.getPrefix(guildID), commandName);
+        return localize(channel, "command.profile.help", dbMan.getPrefix(guildID), commandName);
 
     }
 
