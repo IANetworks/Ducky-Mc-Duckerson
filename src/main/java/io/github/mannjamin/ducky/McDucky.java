@@ -108,11 +108,7 @@ public class McDucky {
         String fileName = databaseName + ".db";
         //We'll check to see if our database exisit or not, if doesn't we need to make sure the tables are setup.
         final File dbFile = new File(fileName);
-        boolean dbExists = false;
-
-        if (dbFile.exists()) {
-            dbExists = true;
-        }
+        boolean dbExists = dbFile.exists();
 
         //connect to our Database
 
