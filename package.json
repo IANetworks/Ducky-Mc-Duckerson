@@ -21,5 +21,10 @@
   "bugs": {
     "url": "https://github.com/IANetworks/Ducky-Mc-Duckerson/issues"
   },
-  "homepage": "https://github.com/IANetworks/Ducky-Mc-Duckerson#readme"
+  "homepage": "https://github.com/IANetworks/Ducky-Mc-Duckerson#readme",
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "load-grunt-tasks": "^3.5.2",
+    "time-grunt": "^1.4.0"
+  }
 }
