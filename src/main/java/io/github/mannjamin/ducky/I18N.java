@@ -111,7 +111,11 @@ public class I18N {
         if (i18n == null) {
             i18n = new Properties();
             try {
-                i18n.load(new FileInputStream(locale + ".lang"));
+                InputStream in = this.getClass().getClassLoader().getResourceAsStream(locale + ".lang");
+                if (in == null) {
+                    throw new IOException("Failed loading properties for locale " + locale);
+                }
+                i18n.load(in);
             } catch (IOException e) {
                 System.out.println("Failed loading properties for locale " + locale);
             }
