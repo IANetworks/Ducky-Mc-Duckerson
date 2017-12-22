@@ -131,10 +131,10 @@ public class Werewolf {
     }
 
     /**
-     * Gets io.github.mannjamin.ducky.werewolf game state.
+     * Gets werewolf game state.
      *
      * @param guildID the guild id
-     * @return the io.github.mannjamin.ducky.werewolf game state
+     * @return the werewolf game state
      */
     public GameState getWerewolfGameState(Long guildID) {
         if (gameList.containsKey(guildID)) {
@@ -368,7 +368,7 @@ public class Werewolf {
 
         //This game requires the bot to have the ability to edit permissions,
         if (!selfMember.hasPermission(Permission.MANAGE_PERMISSIONS)) {
-            channel.sendMessage("This game requires the bot to have manage permissions. If you don't wish to give the bot manage permissions, you can turn io.github.mannjamin.ducky.werewolf game off.").queue();
+            channel.sendMessage("This game requires the bot to have manage permissions. If you don't wish to give the bot manage permissions, you can turn werewolf game off.").queue();
         }
 
         //first check to make sure we're not already holding the channel object for this server
