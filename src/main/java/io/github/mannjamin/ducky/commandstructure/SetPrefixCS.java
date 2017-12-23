@@ -70,7 +70,7 @@ public class SetPrefixCS extends CommandStructure {
 
     @Override
     public String help(Long guildID, MessageChannel channel) {
-        return i18n.localize(dbMan, channel, "command.set_prefix.help", dbMan.getPrefix(guildID), commandName);
+        return i18n.localize(dbMan, channel, "command.set_prefix.help", dbMan.getPrefix(guildID) + commandName);
 
     }
 

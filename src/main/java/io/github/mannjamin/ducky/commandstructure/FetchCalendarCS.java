@@ -33,6 +33,6 @@ public class FetchCalendarCS extends CommandStructure {
 
     @Override
     public String help(Long guildID, MessageChannel channel) {
-        return "Fetch any events happening today";
+        return localize(channel, "command.fetch_event.help");
     }
 }

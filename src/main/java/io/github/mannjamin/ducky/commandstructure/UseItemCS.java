@@ -41,7 +41,7 @@ public class UseItemCS extends CommandStructure {
                         Item item = inv.get(itemID);
                         item.executeUse(guild, author, channel);
                     } else {
-                        channel.sendMessage("You do not have this item to use").queue();
+                        channel.sendMessage(localize(channel, "command.use_item.error.item_missing")).queue();
                     }
 
 
@@ -49,13 +49,13 @@ public class UseItemCS extends CommandStructure {
                     e.printStackTrace();
                 }
             } else {
-                channel.sendMessage("This syntax looks wrong, Syntax: " + dbMan.getPrefix(guildID) + commandName + " [items id]").queue();
+                channel.sendMessage(localize(channel, "command.use_item.error.syntax", dbMan.getPrefix(guildID) + commandName)).queue();
             }
         }
     }
 
     @Override
     public String help(Long guildID, MessageChannel channel) {
-        return "Use Item from your inventory";
+        return localize(channel, "command.use_item.help");
     }
 }

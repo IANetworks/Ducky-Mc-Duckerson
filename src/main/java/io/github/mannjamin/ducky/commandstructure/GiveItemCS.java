@@ -42,23 +42,22 @@ public class GiveItemCS extends CommandStructure {
                             if (itemDB.hasItem(item)) {
                                 itemDB.obtainItem(item, guild, member, channel, quantity);
                             } else {
-                                channel.sendMessage("I do not have this item").queue();
+                                channel.sendMessage(localize(channel, "command.give_item.error.missing_item")).queue();
                             }
                         }
                     }
                 } else {
-                    channel.sendMessage("This syntax looks wrong, Syntax: " + dbMan.getPrefix(guildID) + commandName + " [items id] [quantity] [mention]").queue();
+                    channel.sendMessage(localize(channel, "command.give_item.error.syntax", dbMan.getPrefix(guildID) + commandName)).queue();
                 }
             } else {
-                channel.sendMessage("This syntax looks wrong, Syntax: " + dbMan.getPrefix(guildID) + commandName + " [items id] [quantity] [mention]").queue();
+                channel.sendMessage(localize(channel, "command.give_item.error.syntax", dbMan.getPrefix(guildID) + commandName)).queue();
             }
-
 
         }
     }
 
     @Override
     public String help(Long guildID, MessageChannel channel) {
-        return "Give Items Syntax: " + dbMan.getPrefix(guildID) + commandName + " [inv id] [quantity] [mention]";
+        return localize(channel, "command.give_item.help", dbMan.getPrefix(guildID) + commandName);
     }
 }

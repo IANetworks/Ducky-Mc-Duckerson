@@ -29,10 +29,10 @@ public class StoreCS extends CommandStructure {
         if (hasPermission(author)) {
             HashMap<Integer, Item> storeList = itemDB.getStoreList();
             EmbedBuilder embed = new EmbedBuilder();
-            embed.setTitle("Store", null);
+            embed.setTitle(localize(channel, "command.store.title"), null);
             for (Item item : storeList.values()) {
-                embed.addField(item.getName() + "(ID: " + item.getInvID().toString() + ")", item.getDescription() + System.lineSeparator()
-                    + "Cost: " + item.getCost(), true);
+                embed.addField(localize(channel, "command.store.item", item.getLocalizedName(channel), item.getInvID()),
+                    localize(channel, "command.store.item_description", item.getDescription(channel), item.getCost()), true);
             }
             channel.sendMessage(embed.build()).queue();
         }
@@ -40,6 +40,6 @@ public class StoreCS extends CommandStructure {
 
     @Override
     public String help(Long guildID, MessageChannel channel) {
-        return "Display list of items that can be brought with gold";
+        return localize(channel, "command.store.help");
     }
 }
