@@ -42,15 +42,15 @@ public class SetPrefixCS extends CommandStructure {
                             dbMan.setPrefix("!", guildID);
                         } catch (SQLException e) {
                             e.printStackTrace();
-                            channel.sendMessage(i18n.localize(dbMan, channel, "command.set_prefix.error.sql1")).queue();
+                            channel.sendMessage(localize(channel, "command.set_prefix.error.sql1")).queue();
                         }
                     };
-                    channel.sendMessage(i18n.localize(dbMan, channel, "command.set_prefix.reset")).queue(callback);
+                    channel.sendMessage(localize(channel, "command.set_prefix.reset")).queue(callback);
                 }
             } else {
                 parameters = parameters.trim();
                 if (parameters.length() > 3) {
-                    channel.sendMessage(i18n.localize(dbMan, channel, "command.set_prefix.error.too_long", parameters.length())).queue();
+                    channel.sendMessage(localize(channel, "command.set_prefix.error.too_long", parameters.length())).queue();
                 } else {
                     final String pm = parameters;
                     Consumer<Message> callback = (response) -> {
@@ -58,10 +58,10 @@ public class SetPrefixCS extends CommandStructure {
                             dbMan.setPrefix(pm, guildID);
                         } catch (SQLException e) {
                             e.printStackTrace();
-                            channel.sendMessage(i18n.localize(dbMan, channel, "command.set_prefix.error.sql2")).queue();
+                            channel.sendMessage(localize(channel, "command.set_prefix.error.sql2")).queue();
                         }
                     };
-                    channel.sendMessage(i18n.localize(dbMan, channel, "command.set_prefix.set", parameters)).queue(callback);
+                    channel.sendMessage(localize(channel, "command.set_prefix.set", parameters)).queue(callback);
                 }
             }
         }
@@ -70,7 +70,7 @@ public class SetPrefixCS extends CommandStructure {
 
     @Override
     public String help(Long guildID, MessageChannel channel) {
-        return i18n.localize(dbMan, channel, "command.set_prefix.help", dbMan.getPrefix(guildID) + commandName);
+        return localize(channel, "command.set_prefix.help", dbMan.getPrefix(guildID) + commandName);
 
     }
 

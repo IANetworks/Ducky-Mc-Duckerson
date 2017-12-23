@@ -53,7 +53,7 @@ public class ProfileCS extends CommandStructure {
                 Member userMember = author.getGuild().getMemberById(user.getIdLong());
 
                 if (userMember == null) {
-                    channel.sendMessage(i18n.localize(dbMan, channel, "command.profile.user_not_found", user.getAsMention())).queue();
+                    channel.sendMessage(localize(channel, "command.profile.user_not_found", user.getAsMention())).queue();
                 } else {
                     Integer userLevel = getPermissionLevel(userMember);
                     String userLevelName = dbMan.getLevelName(guildID, userLevel);

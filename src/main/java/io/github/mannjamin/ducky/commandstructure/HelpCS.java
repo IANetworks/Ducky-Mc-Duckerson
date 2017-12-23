@@ -57,7 +57,7 @@ public class HelpCS extends CommandStructure {
     @Override
     public String help(Long guildID, MessageChannel channel) {
 
-        return i18n.localize(dbMan, channel, "command.help.help");
+        return localize(channel, "command.help.help");
 
     }
 
