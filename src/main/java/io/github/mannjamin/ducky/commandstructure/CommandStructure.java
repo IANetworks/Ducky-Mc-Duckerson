@@ -252,9 +252,7 @@ public abstract class CommandStructure {
      * @param channel the channel
      * @return Description of the command object and how to use it
      */
-    public String help(Long guildID, MessageChannel channel) {
-        return "";
-    }
+    public abstract String help(Long guildID, MessageChannel channel);
 
     /**
      * Get the localized text for a localization key. The locale to be used is
