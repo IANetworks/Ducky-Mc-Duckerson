@@ -1,5 +1,6 @@
 package io.github.mannjamin.ducky.items;
 
+import io.github.mannjamin.ducky.I18N;
 import io.github.mannjamin.ducky.database.manager.DatabaseManager;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
@@ -15,7 +16,6 @@ public abstract class Item implements Cloneable {
     //Base item info
     protected Integer invID; //invID
     protected String name;
-    protected String description;
     protected boolean buyable;
     protected Integer cost;
     protected boolean usable;
@@ -23,10 +23,9 @@ public abstract class Item implements Cloneable {
     //Unique ID
     private Long itemID;
 
-    public Item(DatabaseManager dbMan, String name, String description, Integer invID, boolean buyable, Integer cost, boolean usable, ItemType type, Long itemID) {
+    public Item(DatabaseManager dbMan, String name, Integer invID, boolean buyable, Integer cost, boolean usable, ItemType type, Long itemID) {
         this.dbMan = dbMan;
         this.name = name;
-        this.description = description;
         this.invID = invID;
         this.buyable = buyable;
         this.cost = cost;
@@ -67,17 +66,8 @@ public abstract class Item implements Cloneable {
      *
      * @return the description
      */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Sets description of the item
-     *
-     * @param description the description
-     */
-    public void setDescription(String description) {
-        this.description = description;
+    public String getDescription(MessageChannel channel) {
+        return localize(channel, String.format("item.%s.description", name));
     }
 
     /**
@@ -87,6 +77,10 @@ public abstract class Item implements Cloneable {
      */
     public String getName() {
         return name;
+    }
+
+    public String getLocalizedName(MessageChannel channel) {
+        return localize(channel, String.format("item.%s.name", getName()));
     }
 
     /**
@@ -191,4 +185,17 @@ public abstract class Item implements Cloneable {
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
+
+  /**
+   * Helper function as shortcut for <code>i18n.localize(dbMan, ...)</code>
+   * @param channel
+   * @param key
+   * @param args
+   * @return
+   */
+    protected String localize(MessageChannel channel, String key, Object... args) {
+        I18N i18n = I18N.getInstance();
+        return i18n.localize(dbMan, channel, key, args);
+    }
+
 }

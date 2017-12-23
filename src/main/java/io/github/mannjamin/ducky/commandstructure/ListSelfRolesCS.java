@@ -36,38 +36,39 @@ public class ListSelfRolesCS extends CommandStructure {
 
             String roleName = "";
             String groupID = "";
-            String isExculsive = "";
+            String isExclusive = "";
 
             //TODO Limit how large a list can get
             for (Long roleID : listOfSelfRoles.keySet()) {
                 if (roleName == "") {
+                    // TODO: localize role name?
                     roleName = guild.getRoleById(roleID).getName();
                     groupID = listOfSelfRoles.get(roleID).toString();
-                    isExculsive = stringYesNo(guildID, roleID);
+                    isExclusive = stringYesNo(guildID, roleID, channel);
                 } else {
                     roleName = roleName + System.lineSeparator() + guild.getRoleById(roleID).getName();
                     groupID = groupID + System.lineSeparator() + listOfSelfRoles.get(roleID).toString();
-                    isExculsive = isExculsive + System.lineSeparator() + stringYesNo(guildID, roleID);
+                    isExclusive = isExclusive + System.lineSeparator() + stringYesNo(guildID, roleID, channel);
                 }
 
             }
 
-            embed.addField("Role Name", roleName, true);
-            embed.addField("Group ID", groupID, true);
-            embed.addField("Exculsive", isExculsive, true);
+            embed.addField(localize(channel, "command.list_self_roles.role_name"), roleName, true);
+            embed.addField(localize(channel, "command.list_self_roles.group_id"), groupID, true);
+            embed.addField(localize(channel, "command.list_self_roles.exclusive"), isExclusive, true);
 
             channel.sendMessage(embed.build()).queue();
         }
 
     }
 
-    private String stringYesNo(Long guildID, Long roleID) {
-        return dbMan.isRoleExclusive(guildID, roleID) ? "yes" : "no";
+    private String stringYesNo(Long guildID, Long roleID, MessageChannel channel) {
+        return localize(channel, dbMan.isRoleExclusive(guildID, roleID) ? "command.list_self_roles.exclusive.yes" : "command.list_self_roles.exclusive.no");
     }
 
     @Override
-    public String help(Long guildID) {
-        return "Returns list of roles that can be self assigned";
+    public String help(Long guildID, MessageChannel channel) {
+        return localize(channel, "command.list_self_roles.help");
     }
 
 }

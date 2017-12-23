@@ -34,8 +34,7 @@ public class SetPermissionsByRoleCS extends CommandStructure {
             //if we don't have any parameters, we're resetting to default
             if (parameters.isEmpty()) {
                 //check to make sure we're actually changing a default
-                channel.sendMessage("Expecting an @role mention or valid role name").queue(); //Should I think about breaking this out to make localizion doable?
-                //I don't really expect this bot to get popular but this might make the bot popular thing along non-english servers..
+                channel.sendMessage(localize(channel, "command.set_level_for_role.error.mention_missing")).queue();
             } else {
                 parameters = parameters.trim();
                 Integer levelID = null;
@@ -53,47 +52,47 @@ public class SetPermissionsByRoleCS extends CommandStructure {
                                 try {
                                     String userLevelName = dbMan.getLevelName(guildID, levelID);
                                     dbMan.setRoleLevel(guildID, levelID, role.getIdLong());
-                                    channel.sendMessage("I've assigned level: " + userLevelName + " to the role: " + role.getName()).queue();
+                                    channel.sendMessage(localize(channel, "command.set_level_for_role.success", userLevelName, role.getName())).queue();
                                 } catch (SQLException e) {
                                     e.printStackTrace();
-                                    channel.sendMessage("I had a booboo from setting roles, Mistress, fix me please!").queue();
+                                    channel.sendMessage(localize(channel, "command.set_level_for_role.error.sql")).queue();
                                 }
                             }
                         } else {
                             int firstSpace = parameters.indexOf(" "); //Ok we don't have an At Mention for Roles, let see if we can find a valid role name instead
                             if (firstSpace > -1) {
                                 if (firstSpace >= parameters.length()) {
-                                    channel.sendMessage("This doesn't look right.. !setlevelbyrole [level] [role name]").queue();
+                                    channel.sendMessage(localize(channel, "command.set_level_for_role.error.syntax", dbMan.getPrefix(guildID) + commandName)).queue();
                                 } else {
                                     String roleName = parameters.substring(firstSpace).trim();
                                     List<Role> searchRole = guild.getRolesByName(roleName, false);
                                     if (searchRole.isEmpty()) {
-                                        channel.sendMessage("Cannot find any role by the name '" + roleName + "' Role name is case sensetive").queue();
+                                        channel.sendMessage(localize(channel, "command.set_level_for_role.error.unknown_role", roleName)).queue();
                                     } else {
                                         for (Role thisRole : searchRole) {
                                             try {
                                                 String userLevelName = dbMan.getLevelName(guildID, levelID);
                                                 dbMan.setRoleLevel(guildID, levelID, thisRole.getIdLong());
-                                                channel.sendMessage("I've assigned level: " + userLevelName + " to the role: " + thisRole.getName()).queue();
+                                                channel.sendMessage(localize(channel, "command.set_level_for_role.success", userLevelName, thisRole.getName())).queue();
                                             } catch (SQLException e) {
                                                 e.printStackTrace();
-                                                channel.sendMessage("I had a booboo from setting roles, Mistress, fix me please!").queue();
+                                                channel.sendMessage(localize(channel, "command.set_level_for_role.error.sql")).queue();
                                             }
                                         }
                                     }
                                 }
 
                             } else {
-                                channel.sendMessage("This doesn't look right.. !setlevelbyrole [level] [role name]").queue();
+                                channel.sendMessage(localize(channel, "command.set_level_for_role.error.syntax", dbMan.getPrefix(guildID) + commandName)).queue();
                             }
                         }
                     } else {
-                        channel.sendMessage("You cannot set permission to equal or higher than your level").queue();
+                        channel.sendMessage(localize(channel, "command.set_level_for_role.error.permission")).queue();
                     }
                 } else if (levelID < 2) {
-                    channel.sendMessage("I cannot assign " + dbMan.getLevelName(guildID, levelID) + " to roles ").queue();
+                    channel.sendMessage(localize(channel, "command.set_level_for_role.error.not_assignable", dbMan.getLevelName(guildID, levelID))).queue();
                 } else {
-                    channel.sendMessage("I do not know what level to assign.").queue();
+                    channel.sendMessage(localize(channel, "command.set_level_for_role.error.level_missing")).queue();
                 }
             }
         }
@@ -101,9 +100,8 @@ public class SetPermissionsByRoleCS extends CommandStructure {
     }
 
     @Override
-    public String help(Long guildID) {
-        return "Set Permissions by Roles, you can either @ mention role names or use role names, role names are case senetive " + dbMan.getPrefix(guildID) + commandName + " [level] [role name]";
-
+    public String help(Long guildID, MessageChannel channel) {
+        return localize(channel, "command.set_level_for_role.help", dbMan.getPrefix(guildID) + commandName);
     }
 
 }

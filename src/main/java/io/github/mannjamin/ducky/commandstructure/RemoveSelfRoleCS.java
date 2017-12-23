@@ -46,10 +46,10 @@ public class RemoveSelfRoleCS extends CommandStructure {
                     List<Role> searchList = guild.getRolesByName(roleName, true);
                     if (searchList.isEmpty()) {
                         selfAssignRole = null;
-                        channel.sendMessage("Cannot find any role by the name '" + roleName + "'").queue();
+                        channel.sendMessage(localize(channel, "command.remove_self_assign_role.error.unknown_role", roleName)).queue();
                     } else if (searchList.size() > 1) {
                         selfAssignRole = null;
-                        channel.sendMessage("I've found more than one role by the name: '" + roleName + "'. Try using the exact role name").queue();
+                        channel.sendMessage(localize(channel, "command.remove_self_assign_role.error.ambiguous_role", roleName)).queue();
                     } else if (searchList.size() == 1) {
                         selfAssignRole = searchList.get(0);
                         if (selfMember.canInteract(selfAssignRole)) {
@@ -58,27 +58,27 @@ public class RemoveSelfRoleCS extends CommandStructure {
                                 try {
                                     dbMan.removeRole(guildID, roleID);
                                 } catch (SQLException e) {
-                                    channel.sendMessage("I do not like this, it not a good touch. Please tell Creator that there's an SQL issue.").queue();
+                                    channel.sendMessage(localize(channel, "command.remove_self_assign_role.error.sql")).queue();
                                 }
-                                channel.sendMessage("The role '" + selfAssignRole.getName() + "' is now not self assignable").queue();
+                                channel.sendMessage(localize(channel, "command.remove_self_assign_role.success", selfAssignRole.getName())).queue();
                             } else {
-                                channel.sendMessage("The role " + selfAssignRole.getName() + " is already not self assignable").queue();
+                                channel.sendMessage(localize(channel, "command.remove_self_assign_role.error.already_self_assignable", selfAssignRole.getName())).queue();
                             }
                         } else {
-                            channel.sendMessage("I do not have enough power to modify '" + selfAssignRole.getName() + "'").queue();
+                            channel.sendMessage(localize(channel, "command.remove_self_assign_role.error.permission_denied", selfAssignRole.getName())).queue();
                         }
                     }
                 }
             } else {
-                channel.sendMessage("I do not have Manage Roles permission.").queue();
+                channel.sendMessage(localize(channel, "command.remove_self_assign_role.error.bot_permission_missing")).queue();
             }
         }
 
     }
 
     @Override
-    public String help(Long guildID) {
-        return "set all a role as not self assignable: " + dbMan.getPrefix(guildID) + commandName + " [role name]";
+    public String help(Long guildID, MessageChannel channel) {
+        return localize(channel, "command.remove_self_assign_role.help", dbMan.getPrefix(guildID) + commandName);
     }
 
 }

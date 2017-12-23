@@ -93,7 +93,7 @@ public class WerewolfKillCS extends CommandStructure {
     }
 
     @Override
-    public String help(Long guildID) {
+    public String help(Long guildID, MessageChannel channel) {
         return "If you're a wolf, then you select who to kill.";
     }
 }

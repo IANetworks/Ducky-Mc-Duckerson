@@ -48,7 +48,7 @@ public class ListUserInvCS extends CommandStructure {
                 Member userMember = author.getGuild().getMemberById(user.getIdLong());
 
                 if (userMember == null) {
-                    channel.sendMessage("I cannot find " + user.getAsMention() + " on this server. I can only show inventories of users that are on this server.").queue();
+                    channel.sendMessage(localize(channel, "command.inv.error.unknown_user", user.getAsMention())).queue();
                 } else {
                     sendUserInv(userMember, channel, prefix, color, author);
                 }
@@ -71,18 +71,18 @@ public class ListUserInvCS extends CommandStructure {
             HashMap<Long, Item> inv = up.getInv();
 
             embed.setColor(color);
-            embed.setAuthor("Inventory of " + member.getEffectiveName(), null, member.getUser().getAvatarUrl());
+            embed.setAuthor(localize(channel, "command.inv.title", member.getEffectiveName()), null, member.getUser().getAvatarUrl());
             if (inv.isEmpty()) {
-                embed.addField("Inventory", "Is Empty", false);
+                embed.addField(localize(channel, "command.inc.inventory"), localize(channel, "command.inv.empty"), false);
             } else {
                 for (Item item : inv.values()) {
-                    embed.addField(item.getName() + "(Item ID: " + item.getItemID().toString() + ")", item.getDescription(), true);
+                    embed.addField(localize(channel, "command.inv.item", item.getLocalizedName(channel), item.getItemID()), item.getDescription(channel), true);
                 }
             }
 
             if (requestedBy != null)
-                embed.addField("", member.getEffectiveName() + "'s inventory requested by: " + requestedBy.getEffectiveName(), false);
-            embed.setFooter("To see your inventory, use " + prefix + "inv", null);
+                embed.addField("", localize(channel, "command.inv.requested_by", member.getEffectiveName(), requestedBy.getEffectiveName()), false);
+            embed.setFooter(localize(channel, "command.inv.usage", prefix + commandName), null);
             embed.setTimestamp(Instant.now());
 
             embed.setThumbnail(member.getUser().getAvatarUrl());
@@ -93,7 +93,7 @@ public class ListUserInvCS extends CommandStructure {
     }
 
     @Override
-    public String help(Long guildID) {
-        return "Display list of items in user's inventory";
+    public String help(Long guildID, MessageChannel channel) {
+        return localize(channel, "command.inv.help");
     }
 }

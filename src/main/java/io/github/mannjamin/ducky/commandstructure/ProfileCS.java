@@ -53,7 +53,7 @@ public class ProfileCS extends CommandStructure {
                 Member userMember = author.getGuild().getMemberById(user.getIdLong());
 
                 if (userMember == null) {
-                    channel.sendMessage("I cannot find " + user.getAsMention() + " on this server. I can only show profiles that are on this server.").queue();
+                    channel.sendMessage(localize(channel, "command.profile.user_not_found", user.getAsMention())).queue();
                 } else {
                     Integer userLevel = getPermissionLevel(userMember);
                     String userLevelName = dbMan.getLevelName(guildID, userLevel);
@@ -78,23 +78,23 @@ public class ProfileCS extends CommandStructure {
 
 
             embed.setColor(color);
-            embed.setAuthor("Profile of " + member.getEffectiveName(), null, member.getUser().getAvatarUrl());
-            embed.addField("Rank:", up.getRankName(), false);
-            embed.addField("Current Exp:", up.getLevel().toString(), true);
+            embed.setAuthor(localize(channel, "command.profile.profile_of", member.getEffectiveName()), null, member.getUser().getAvatarUrl());
+            embed.addField(localize(channel, "command.profile.rank"), up.getRankName(), false);
+            embed.addField(localize(channel, "command.profile.exp"), up.getLevel().toString(), true);
             if (up.getRankExp() != null)
-                embed.addField("Exp Required:", up.getRankExp().toString(), true);
+                embed.addField(localize(channel, "command.profile.exp_required"), up.getRankExp().toString(), true);
             else
-                embed.addField("Exp Required:", "\uD83D\uDCAF Max Rank \uD83D\uDCAF", true);
-            embed.addField("Points:", up.getPoints().toString(), true);
-            embed.addField("Gold:", up.getBalance().toString() + " :moneybag:", true);
-            embed.addField("Tables Flipped:", up.getFlipped().toString(), true);
-            embed.addField("Tables Unflipped:", up.getUnflipped().toString(), true);
-            embed.addField("Werewolf Games:", up.getWerewolfGames().toString(), true);
-            embed.addField("Werewolf Wins:", up.getWerewolfWins().toString(), true);
-            embed.addField("No Items:", up.getItemCount().toString(), true);
+                embed.addField(localize(channel, "command.profile.exp_required"), localize(channel, "command.profile.max_rank"), true);
+            embed.addField(localize(channel, "command.profile.points"), up.getPoints().toString(), true);
+            embed.addField(localize(channel, "command.profile.gold"), up.getBalance().toString() + " :moneybag:", true);
+            embed.addField(localize(channel, "command.profile.tables_flipped"), up.getFlipped().toString(), true);
+            embed.addField(localize(channel, "command.profile.tables_unflipped"), up.getUnflipped().toString(), true);
+            embed.addField(localize(channel, "command.profile.werewolf_games"), up.getWerewolfGames().toString(), true);
+            embed.addField(localize(channel, "command.profile.werewolf_wins"), up.getWerewolfWins().toString(), true);
+            embed.addField(localize(channel, "command.profile.items"), up.getItemCount().toString(), true);
             if (requestedBy != null)
-                embed.addField("", "Profile requested by: " + requestedBy.getEffectiveName(), false);
-            embed.setFooter("To see your profile, use " + prefix + "profile", null);
+                embed.addField("", localize(channel, "command.profile.requested_by", requestedBy.getEffectiveName()), false);
+            embed.setFooter(localize(channel, "command.profile.notice", prefix), null);
             embed.setTimestamp(Instant.now());
 
             embed.setThumbnail(member.getUser().getAvatarUrl());
@@ -110,8 +110,8 @@ public class ProfileCS extends CommandStructure {
     }
 
     @Override
-    public String help(Long guildID) {
-        return "Return users profiles. No mention, will return your profile.  @mention user will return their profile. " + dbMan.getPrefix(guildID) + commandName + " <@mention>";
+    public String help(Long guildID, MessageChannel channel) {
+        return localize(channel, "command.profile.help", dbMan.getPrefix(guildID), commandName);
 
     }
 

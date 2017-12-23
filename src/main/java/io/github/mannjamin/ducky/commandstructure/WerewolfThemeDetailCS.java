@@ -47,7 +47,7 @@ public class WerewolfThemeDetailCS extends CommandStructure {
     }
 
     @Override
-    public String help(Long guildID) {
+    public String help(Long guildID, MessageChannel channel) {
         return "Display theme infomation. Syntax is " + dbMan.getPrefix(guildID) + commandName + " [themeID]";
     }
 }

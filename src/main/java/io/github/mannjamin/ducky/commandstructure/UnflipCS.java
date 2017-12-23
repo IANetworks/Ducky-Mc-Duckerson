@@ -31,13 +31,13 @@ public class UnflipCS extends CommandStructure {
             try {
                 dbMan.incUserUnflipped(guildID, author.getUser().getIdLong());
             } catch (SQLException e) {
-                channel.sendMessage("Ouchie.").queue();
+                channel.sendMessage(localize(channel, "command.unflip.error.sql")).queue();
             }
         }
     }
 
     @Override
-    public String help(Long guildID) {
-        return "unflip tables for you";
+    public String help(Long guildID, MessageChannel channel) {
+        return localize(channel, "command.unflip.help");
     }
 }

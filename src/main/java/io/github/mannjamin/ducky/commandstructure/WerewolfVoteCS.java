@@ -92,7 +92,7 @@ public class WerewolfVoteCS extends CommandStructure {
     }
 
     @Override
-    public String help(Long guildID) {
-        return "During a game of io.github.mannjamin.ducky.werewolf, vote who you think is the weakest link, goodbye. Syntax: " + commandName + " [Number/@Mention/Nickname]";
+    public String help(Long guildID, MessageChannel channel) {
+        return "During a game of werewolf, vote who you think is the weakest link, goodbye. Syntax: " + commandName + " [Number/@Mention/Nickname]";
     }
 }

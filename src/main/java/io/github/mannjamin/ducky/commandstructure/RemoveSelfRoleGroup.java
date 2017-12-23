@@ -43,26 +43,27 @@ public class RemoveSelfRoleGroup extends CommandStructure {
                             HashSet<Long> removedRoles = dbMan.removeGroup(guildID, groupID);
                             String formatting = "";
                             for (Long roleID : removedRoles) {
+                                // TODO: localize role names?
                                 if (formatting.equals("")) {
                                     formatting = guild.getRoleById(roleID).getName();
                                 } else {
                                     formatting = formatting + ", " + guild.getRoleById(roleID).getName();
                                 }
                             }
-                            channel.sendMessage("The group " + groupID + "has been removed with the role(s): " + formatting).queue();
+                            channel.sendMessage(localize(channel, "command.remove_self_assign_group.success", groupID, formatting)).queue();
 
                         } catch (SQLException e) {
-                            channel.sendMessage("Ah, I borked here. I need tinkering here.").queue();
+                            channel.sendMessage(localize(channel, "command.remove_self_assign_group.error.sql")).queue();
                         }
                     } else {
-                        channel.sendMessage("I do not have any group by that ID").queue();
+                        channel.sendMessage(localize(channel, "command.remove_self_assign_group.error.unknown_group")).queue();
                     }
 
                 } else {
-                    channel.sendMessage("Something doesn't look right, the Syntax is: " + dbMan.getPrefix(guildID) + commandName + " [group id]");
+                    channel.sendMessage(localize(channel, "command.remove_self_assign_group.error.syntax", dbMan.getPrefix(guildID) + commandName));
                 }
             } else {
-                channel.sendMessage("I do not have Manage Roles permission.").queue();
+                channel.sendMessage(localize(channel, "command.remove_self_assign_group.error.bot_permission_missing")).queue();
             }
 
         }
@@ -70,8 +71,8 @@ public class RemoveSelfRoleGroup extends CommandStructure {
     }
 
     @Override
-    public String help(Long guildID) {
-        return "set all roles in a group as not self assignable: " + dbMan.getPrefix(guildID) + commandName + " [group id]";
+    public String help(Long guildID, MessageChannel channel) {
+        return localize(channel, "command.remove_self_assign_group.help", dbMan.getPrefix(guildID) + commandName);
     }
 
 }
