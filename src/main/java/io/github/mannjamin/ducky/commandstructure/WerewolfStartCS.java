@@ -58,7 +58,7 @@ public class WerewolfStartCS extends CommandStructure {
 
                 } else {
                     //We need an id to select a theme
-                    channel.sendMessage("Start a game of io.github.mannjamin.ducky.werewolf, Syntax: " + dbMan.getPrefix(guildID) + commandName + " [themeID]").queue();
+                    channel.sendMessage("Start a game of werewolf, Syntax: " + dbMan.getPrefix(guildID) + commandName + " [themeID]").queue();
                 }
             } else {
                 //A Game is currently running, user will need to wait until the game is finished
@@ -69,8 +69,8 @@ public class WerewolfStartCS extends CommandStructure {
     }
 
     @Override
-    public String help(Long guildID) {
-        return "Start a game of io.github.mannjamin.ducky.werewolf, Syntax: " + dbMan.getPrefix(guildID) + commandName + " [themeID]";
+    public String help(Long guildID, MessageChannel channel) {
+        return "Start a game of werewolf, Syntax: " + dbMan.getPrefix(guildID) + commandName + " [themeID]";
     }
 
 }

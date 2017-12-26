@@ -1,0 +1,208 @@
+# suppress inspection "TrailingSpacesInProperty" for whole file
+meta.locale.this = English
+
+role.botadmin = Bot Adminstrator
+role.guildowner = Server Owner
+role.admin = Assigned Adminstrator
+role.moderator = Assigned Moderator
+role.operator = Assigned Operator
+role.user = User
+role.banned = Banned
+
+error.commandlist_not_initiated = My Command List has not been initiated yet. Still waiting on information from Discord. (If this taking more than a minute, there's something wrong)
+shutdown.success = Bye bye, I'm closing down
+member_left_guild = Member `%s` has left %s.
+member_joined_guild = Member `%s` has joined %s.
+
+rankup.title = \uD83D\uDD3C RANK UP \uD83D\uDD3C
+rankup.text = %s has ranked up to %s
+rankup.xp_required = ⏭ They need %s to rank reach the next rank ⏭
+rankup.max_rank_reached = Reached max rank defined. Way to go! \uD83D\uDC4D
+
+command.profile.user_not_found = I cannot find %s on this server. I can only show profiles that are on this server.
+command.profile.profile_of = Profile of 
+command.profile.rank = Rank: 
+command.profile.max_rank = 💯 Max Rank 💯
+command.profile.exp = Current Exp: 
+command.profile.exp_required = Exp Required: 
+command.profile.points = Points: 
+command.profile.gold = Gold: 
+command.profile.tables_flipped = Tables Flipped: 
+command.profile.tables_unflipped = Tables Unflipped: 
+command.profile.werewolf_games = Werewolf Games: 
+command.profile.werewolf_wins = Werewolf Wins: 
+command.profile.items = No Items: 
+command.profile.requested_by = Profile requested by %s
+command.profile.notice = To see your profile, use %sprofile
+command.profile.help = Return users profiles. No mention, will return your profile. @mention user will return their profile: `%s <@mention>`
+
+command.set_prefix.error.sql1 = I had an error, am I helpful creator?
+command.set_prefix.error.sql2 = I had an error setting Prefix, am I helpful here too creator?
+command.set_prefix.error.too_long = I cannot set a prefix of 4 or more, I count %d
+command.set_prefix.reset = Resetting prefix to default
+command.set_prefix.set = Setting prefix to %s
+command.set_prefix.help = Change the prefix used before a command. Prefix is limited to 3 characters, not applying any prefix will reset to default, Syntax: `%s <prefix>`    
+
+command.help.help = Returns a list of commands
+
+command.set_level_for_user.error.mention_missing = Expecting a @mention
+command.set_level_for_user.error.sql = Ouch, Setting users broke me.
+command.set_level_for_user.error.insufficient_permission_level = You cannot set permission to equal or higher than your level
+command.set_level_for_user.error.special_level = I cannot assign the special level: %s to roles
+command.set_level_for_user.error.unknown_level = I do not know what level to assign.
+command.set_level_for_user.success = I've assigned level: %s to the user: %s
+command.set_level_for_user.help = Set Permissions by User, use @mention to assign permission to users, %s [level] [@mention]
+
+command.set_command_level.error.command_missing = I need a command name to assign a new level. Syntax is: %s [command name] [level name]
+command.set_command_level.error.sql = I had a hicup, excuse me. Someone get Mistress to look at setting Command Level
+command.set_command_level.error.syntax = This doesn't look quiet right. Syntax is: %s [command name] [level name]
+command.set_command_level.success = I have assigned level: %s to the command: %s
+command.set_command_level.help = Change the permission required for commands %s [command name] [level name]
+
+command.preload.success = Yes! I've preloaded some titles
+command.preload.help = Special Command for loading default values. Used when bot joins a server and the bot did not automantically assign the default values into database
+
+command.set_level_for_role.error.mention_missing = Expecting an @role mention or valid role name
+command.set_level_for_role.error.sql = I had a booboo from setting roles, Mistress, fix me please!
+command.set_level_for_role.error.syntax = This doesn't look right... %s [level] [role name]
+command.set_level_for_role.error.unknown_role = Cannot find any role by the name '%s' Role name is case sensetive
+command.set_level_for_role.error.permission = You cannot set permission to equal or higher than your level
+command.set_level_for_role.error.not_assignable = I cannot assign %s to roles
+command.set_level_for_role.error.level_missing = I do not know what level to assign.
+command.set_level_for_role.success = I've assigned level: %s to the role: %s
+command.set_level_for_role.help = Set Permissions by Roles, you can either @ mention role names or use role names, role names are case senetive %s [level] [role name]
+
+command.iam.error.unknown_role = Cannot find any role by the name '%s'
+command.iam.error.role_ambiguous = I've found more than one role by the name: '%s'. Try using the exact role name
+command.iam.error.bot_permission_missing = I cannot assign any roles due to lack of Manage Roles permission.
+command.iam.error.permission_denied = I do not have enough power to edit '%s' from %s
+command.iam.error.not_self_assignable = Role: '%s' cannot be self assigned.
+command.iam.error.permission_error = PermissionError giving roles to [%s]: %s
+command.iam.error.unknown_error = Unknown error while giving/removing roles to [%s]: <%s>: %s
+command.iam.help = self assign a role, make sure the role name is spelt out correctly
+
+command.self_assign_role.error.unknown_role = Cannot find any role by the name '%s%'
+command.self_assign_role.error.ambiguous_role = I've found more than one role by the name: '%s'. Try using the exact role name
+command.self_assign_role.error.already_self_assignable = The role '%s' is already self assignable
+command.self_assign_role.error.sql = I've had a hiccup here, can't set %s as self assignable.
+command.self_assign_role.error.bot_permission_missing = I do not have Manage Roles permission.
+command.self_assign_role.error.permission_denied = I do not have enough power to modify '%s'
+command.self_assign_role.failure = I'm not able to assign that role.
+command.self_assign_role.success = The role '%s' is now self assignable.
+command.self_assign_role.help = set a role as self assignable, make sure the role name is spelt out correctly
+
+command.list_self_roles.role_name = Role Name
+command.list_self_roles.group_id = Group ID
+command.list_self_roles.exclusive = Exclusive
+command.list_self_roles.exclusive.yes = yes
+command.list_self_roles.exclusive.no = no
+command.list_self_roles.help = Returns list of roles that can be self assigned
+
+command.remove_self_assign_role.error.unknown_role = Cannot find any role by the name '%s%'
+command.remove_self_assign_role.error.ambiguous_role = I've found more than one role by the name: '%s'. Try using the exact role name
+command.remove_self_assign_role.error.already_self_assignable = The role '%s' is already not self assignable
+command.remove_self_assign_role.error.sql = I do not like this, it not a good touch. Please tell Creator that there's an SQL issue.
+command.remove_self_assign_role.error.bot_permission_missing = I do not have Manage Roles permission.
+command.remove_self_assign_role.error.permission_denied = I do not have enough power to modify '%s'
+command.remove_self_assign_role.success = The role '%s' is now not self assignable.
+command.remove_self_assign_role.help = set a role as not self assignable: `%s [role name]`
+
+command.set_self_assign_group.error.syntax = This syntax looks wrong, Syntax: `%s [new group id] [role name]`
+command.set_self_assign_group.error.unknown_role = Cannot find any role by the name '%s'
+command.set_self_assign_group.error.ambiguous_role = I've found more than one role by the name '%s'. Try using the exact role name
+command.set_self_assign_group.error.sql = This hurts, please tell Mistress to fix me
+command.set_self_assign_group.error.not_self_assignable = The role '%s' is not self assignable. I cannot change non-self assignable role's group.
+command.set_self_assign_group.error.permission_denied = I do not have enough power to modify '%s'
+command.set_self_assign_group.error.bot_permission_missing = I do not have Manage Roles permission.
+command.set_self_assign_group.success = The Role '%s' has been changed to group: %s 
+command.set_self_assign_group.help = Change a self assignable role to a different group Syntax: `%s [new group id] [role name]`
+
+command.toggle_group_exclusive.error.sql = Ah, I borked here. I need tinkering here.
+command.toggle_group_exclusive.error.unknown_group = I do not have any group by that ID
+command.toggle_group_exclusive.error.syntax = Something doesn't look right, the Syntax is: `%s [group id]`
+command.toggle_group_exclusive.error.bot_permission_missing = I do not have Manage Roles permission.
+command.toggle_group_exclusive.exclusive = exclusive
+command.toggle_group_exclusive.not_exclusive = not exclusive
+command.toggle_group_exclusive.success = Group %s is set to %s
+command.toggle_group_exclusive.help = Toggle a group to be exculsive or not exculsive Syntax: `%s [group id]`
+
+command.remove_self_assign_group.error.sql = Ah, I borked here. I need tinkering here.
+command.remove_self_assign_group.error.unknown_group = I do not have any group by that ID
+command.remove_self_assign_group.error.syntax = Something doesn't look right, the Syntax is: `%s  [group id]`
+command.remove_self_assign_group.error.bot_permission_missing = I do not have Manage Roles permission.
+command.remove_self_assign_group.success = The group %s has been removed with the role(s): %s
+command.remove_self_assign_group.help = Set all roles in a group as not self assignable: `%s [group id]`
+
+command.tableflip.error.sql = Ouch.
+command.tableflip.help = Flip tables for you
+
+command.unflip.error.sql = Ouchie.
+command.unflip.help = Unflip tables for you
+
+command.toggle_delete.error.sql = This hurts, ow
+command.toggle_delete.help = Set whether the commands are deleted or not. Some commands will not be deleted such as game commands.
+
+command.toggle_event.error.sql = Oh ow ow, I did a thing, inform Abby please
+command.toggle_event.success = Events has now been turned %s
+command.toggle_event.on = On
+command.toggle_event.off = Off
+command.toggle_event.help = Toggles event on or off
+
+command.set_event.error.channel_missing = Missing a channel name
+command.set_event.error.channel_not_found = There's no channels by that name
+command.set_event.error.ambiguous_channel = There's many channels by that name, narrow the channel.
+command.set_event.error.sql = Unhandled booboobooo, contact Abby
+command.set_event.success = %s has been set as %s's Event Channel.
+command.set_event.sucess.help = Set Event Channel
+
+command.set_game_channel.error.channel_missing = Missing a channel name
+command.set_game_channel.error.channel_not_found = There's no channels by that name
+command.set_game_channel.error.ambiguous_channel = There's many channels by that name, narrow the game channel.
+command.set_game_channel.error.sql = Unhandled booboo, contact Mistress
+command.set_game_channel.success = %s has been set as %s's Game Channel.
+command.set_game_channel.sucess.help = Set a game channel for server. This need to be set before any games can run.
+
+command.start_event.help = Fetch any events happening today
+
+command.fetch_event.help = Fetch any events happening today
+
+command.buy.error.syntax = This syntax looks wrong, Syntax: `%s [inv id] [quantity]`
+command.buy.error.not_enough_gold = \uD83D\uDCB8 Sorry you don't have enough gold to get this. \uD83D\uDCB8
+command.buy.error.item_not_available = I do not have this item or it's not for sale
+command.buy.help = Buy Items with gold. Syntax: `%s [inv id] [quantity]`
+
+command.store.title = Store
+command.store.item = %s (ID: %d)
+command.store.item_description = %s%nCost: %d
+command.store.help = Display list of items that can be brought with gold
+
+command.inv.error.unknown_user = I cannot find %s on this server. I can only show inventories of users that are on this server.
+command.inv.title = Inventory of %s
+command.inc.inventory = Inventory
+command.inv.empty = Is Empty
+command.inv.item = %s (Item ID: %d)
+command.inv.requested_by = %s's inventory requested by: %s
+command.inv.usage = To see your inventory, use %s
+command.inv.help = Display list of items in user's inventory
+
+command.use_item.error.item_missing = You do not have this item to use
+command.use_item.error.syntax = This syntax looks wrong, Syntax: `%s [item id]`
+command.use_item.help = Use Item from your inventory
+
+command.give_item.error.missing_item = I do not have this item
+command.give_item.error.syntax = This syntax looks wrong, Syntax: `%s [items id] [quantity] [mention]`
+command.give_item.help = Give Items, Syntax: `%s [inv id] [quantity] [mention]`
+
+item.exp_boost.name = Experience Boost
+item.exp_boost.description = Gain %d experience points
+item.exp_boost.buy = %s has gained: %d %s
+item.exp_boost.rank_up = :arrow_up_small: RANK UP :arrow_up_small:
+item.exp_boost.field.rank_up = has ranked up to %s
+item.exp_boost.field.xp_needed = They need %d to rank reach the next rank
+item.exp_boost.field.max_reached = Reached max rank defined. Way to go!
+
+item.tester_title.name = Tester
+item.tester_title.description = Get Tester Title for profile
+item.tester_title.title_set = Title set to %s
+item.tester_title.user_already_has_title = %s already have this title
+item.tester_title.buy = %s has gained %s

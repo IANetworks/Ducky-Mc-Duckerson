@@ -31,13 +31,13 @@ public class TableFlipCS extends CommandStructure {
             try {
                 dbMan.incUserFlipped(guildID, author.getUser().getIdLong());
             } catch (SQLException e) {
-                channel.sendMessage("Ouch.").queue();
+                channel.sendMessage(localize(channel, "command.tableflip.error.sql")).queue();
             }
         }
     }
 
     @Override
-    public String help(Long guildID) {
-        return "Flip tables for you";
+    public String help(Long guildID, MessageChannel channel) {
+        return localize(channel, "command.tableflip.help");
     }
 }

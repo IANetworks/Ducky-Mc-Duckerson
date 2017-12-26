@@ -3,6 +3,7 @@ package io.github.mannjamin.ducky.commandstructure;
 import io.github.mannjamin.ducky.SharedContainer;
 import io.github.mannjamin.ducky.database.manager.DatabaseManager;
 import io.github.mannjamin.ducky.items.ItemDatabase;
+import io.github.mannjamin.ducky.I18N;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
@@ -20,7 +21,7 @@ public abstract class CommandStructure {
     /**
      * The Command name. Defines the name used to call the command. e.g "SetPrefix"
      */
-    public String commandName; //ItemDatabase the command name here.
+    public String commandName; //Store the command name here.
     /**
      * The Command unique id defined at the commands creation. A command may have several commmand name,
      * but will be defined with a unique ID.
@@ -53,6 +54,10 @@ public abstract class CommandStructure {
      * The Werewolf cbject. Holds Werewolf game interactions
      */
     Werewolf ww;
+    /**
+     * Internationalisation manager. All output to channels should be localized through this.
+     */
+    protected final I18N i18n;
 
     /**
      * The Item Database.
@@ -76,6 +81,7 @@ public abstract class CommandStructure {
         this.botOwner = container.botOwner;
         this.ww = container.ww;
         this.itemDB = container.itemDB;
+        this.i18n = I18N.getInstance();
     }
 
     /**
@@ -243,7 +249,22 @@ public abstract class CommandStructure {
      * Help string. Method called when a user requests help, either in a list or on a given command
      *
      * @param guildID the guild id
+     * @param channel the channel
      * @return Description of the command object and how to use it
      */
-    public abstract String help(Long guildID);
+    public abstract String help(Long guildID, MessageChannel channel);
+
+    /**
+     * Get the localized text for a localization key. The locale to be used is
+     * determined based on the channel. The method accepts additional args if
+     * the text contains placeholders for them.
+     *
+     * @param channel the channel used to determine the locale
+     * @param key     the translation key
+     * @param args    string format arguments if the localized text is a format string
+     * @return the localized text, with any format placeholders replaced
+     */
+    protected String localize(MessageChannel channel, String key, Object... args) {
+        return i18n.localize(dbMan, channel, key, args);
+    }
 }

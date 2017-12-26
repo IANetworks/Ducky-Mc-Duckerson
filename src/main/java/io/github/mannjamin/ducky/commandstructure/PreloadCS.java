@@ -36,7 +36,7 @@ public class PreloadCS extends CommandStructure {
         try {
             boolean setDefault = dbMan.setNewPermissionNames(guildID);
             if (setDefault) {
-                channel.sendMessage("Yes! I've preloaded some titles").queue(); //
+                channel.sendMessage(localize(channel, "command.preload.success")).queue(); //
             }
 
         } catch (SQLException e) {
@@ -46,9 +46,8 @@ public class PreloadCS extends CommandStructure {
     }
 
     @Override
-    public String help(Long guildID) {
-        return "Special Command for loading default values. Used when bot joins a server and the bot did not automantically assign the default values into database";
-
+    public String help(Long guildID, MessageChannel channel) {
+        return localize(channel, "command.preload.help");
     }
 
 }

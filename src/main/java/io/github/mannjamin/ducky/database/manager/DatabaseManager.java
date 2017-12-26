@@ -6,6 +6,10 @@ import io.github.mannjamin.ducky.database.manager.data.*;
 import net.dv8tion.jda.core.entities.Role;
 import io.github.mannjamin.ducky.werewolf.data.Theme;
 import io.github.mannjamin.ducky.werewolf.data.ThemeDesc;
+import io.github.mannjamin.ducky.I18N;
+import net.dv8tion.jda.core.entities.*;
+import io.github.mannjamin.ducky.werewolf.data.Theme;
+import io.github.mannjamin.ducky.werewolf.data.ThemeDesc;
 
 import java.sql.*;
 import java.util.*;
@@ -19,6 +23,8 @@ public class DatabaseManager {
     private Map<Long, Permissions> listGuildPermissions = new HashMap<Long, Permissions>();
     private Map<Long, SelfRoles> listOfSelfRoles = new HashMap<Long, SelfRoles>();
 
+    private final I18N i18n;
+
     /**
      * Instantiates a new Database manager.
      *
@@ -27,6 +33,7 @@ public class DatabaseManager {
      */
     public DatabaseManager(Connection conn) throws SQLException {
         this.conn = conn;
+        this.i18n = new I18N();
         fetchGuildSettings(); //Fetch guild settings and store
         fetchCmdLevels(); //Fetch list of custom permissions and store
         fetchPermissionGroup(); //Fetch all the permissions
@@ -63,6 +70,7 @@ public class DatabaseManager {
             guildSetting.setEventOn(rs.getBoolean("event_on"));
             guildSetting.setEventChannel(rs.getString("event_channel"));
             guildSetting.isStored = true;
+            // TODO: add locale
 
             listGuildSettings.put(guildSetting.getGuildId(), guildSetting);
         }
@@ -827,7 +835,7 @@ public class DatabaseManager {
     }
 
     /**
-     * Is io.github.mannjamin.ducky.werewolf on boolean.
+     * Is werewolf on boolean.
      *
      * @param guildID the guild id
      * @return the boolean
@@ -1070,7 +1078,7 @@ public class DatabaseManager {
     }
 
     /**
-     * Sets io.github.mannjamin.ducky.werewolf on.
+     * Sets werewolf on.
      *
      * @param guildID the guild id
      * @param wwOn    the ww on
@@ -1971,5 +1979,13 @@ public class DatabaseManager {
         return null;
     }
 
-
+    public String getLocale(MessageChannel channel) {
+        if (!(channel instanceof TextChannel)) {
+            return "en_US";
+        }
+        // TODO: some way to load the locale from channel settings
+        long guildId = ((TextChannel)channel).getIdLong();
+        GuildSetting guildVals = getGuildValues(guildId);
+        return guildVals.getLocale();
+    }
 }

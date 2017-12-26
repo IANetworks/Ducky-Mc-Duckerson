@@ -35,7 +35,7 @@ public class BuyCS extends CommandStructure {
                 invID = Integer.valueOf(paraList[0]);
                 quantity = Integer.valueOf(paraList[1]);
             } else {
-                channel.sendMessage("This syntax looks wrong, Syntax: " + dbMan.getPrefix(guildID) + commandName + " [items id] [quantity]").queue();
+                channel.sendMessage(localize(channel, "command.buy.error.syntax", dbMan.getPrefix(guildID) + commandName)).queue();
             }
 
             if (itemDB.hasStoreItem(invID)) {
@@ -46,7 +46,7 @@ public class BuyCS extends CommandStructure {
                     Integer itemCost = item.getCost();
                     Integer totalCost = itemCost * quantity;
                     if (totalCost > up.getBalance()) {
-                        channel.sendMessage("\uD83D\uDCB8 Sorry you don't have enough gold to get this. \uD83D\uDCB8").queue();
+                        channel.sendMessage(localize(channel, "command.buy.error.not_enough_gold")).queue();
                     } else {
                         itemDB.obtainItem(invID, guild, author, channel, quantity);
                     }
@@ -56,13 +56,13 @@ public class BuyCS extends CommandStructure {
                 }
 
             } else {
-                channel.sendMessage("I do not have this item or it's not for sale").queue();
+                channel.sendMessage(localize(channel, "command.buy.error.item_not_available")).queue();
             }
         }
     }
 
     @Override
-    public String help(Long guildID) {
-        return "Buy Items with gold. Syntax: " + dbMan.getPrefix(guildID) + commandName + " [inv id] [quantity]";
+    public String help(Long guildID, MessageChannel channel) {
+        return localize(channel, "command.buy.help", dbMan.getPrefix(guildID) + commandName);
     }
 }

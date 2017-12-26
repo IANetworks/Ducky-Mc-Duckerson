@@ -43,7 +43,7 @@ public class SetWerewolfOnOffCS extends CommandStructure {
     }
 
     @Override
-    public String help(Long guildID) {
-        return "Toggles io.github.mannjamin.ducky.werewolf game on/off";
+    public String help(Long guildID, MessageChannel channel) {
+        return "Toggles werewolf game on/off";
     }
 }

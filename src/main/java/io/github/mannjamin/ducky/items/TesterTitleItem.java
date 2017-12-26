@@ -12,24 +12,13 @@ import java.util.HashMap;
 public class TesterTitleItem extends Item {
 
     public TesterTitleItem(DatabaseManager dbMan, Integer invID) {
-        super(
-            dbMan,
-            "Tester",
-            "Get Tester Title for profile",
-            invID,
-            false,
-            null,
-            true,
-            ItemType.TITLE,
-            null
-        );
+        this(dbMan, invID, null);
     }
 
     public TesterTitleItem(DatabaseManager dbMan, Integer invID, Long itemID) {
         super(
             dbMan,
-            "Tester",
-            "Get Tester Title for profile",
+            "tester_title",
             invID,
             false,
             null,
@@ -57,10 +46,10 @@ public class TesterTitleItem extends Item {
             }
 
             if (hasItem) {
-                channel.sendMessage(member.getEffectiveName() + " already have this title.").queue();
+                channel.sendMessage(localize(channel, "item.tester_title.user_already_has_title", member.getEffectiveName())).queue();
             } else {
                 dbMan.addItemToUser(guildID, userID, this);
-                channel.sendMessage(member.getEffectiveName() + " has gained: " + this.getName()).queue();
+                channel.sendMessage(localize(channel, "item.tester_title.buy", member.getEffectiveName(), this.getLocalizedName(channel))).queue();
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -73,8 +62,9 @@ public class TesterTitleItem extends Item {
         Long guildID = guild.getIdLong();
         Long userID = member.getUser().getIdLong();
         try {
+            // TODO: localize title?
             dbMan.setUserTitle(guildID, userID, this.getName());
-            channel.sendMessage("Title set to " + this.getName()).queue();
+            channel.sendMessage(localize(channel, "item.tester_title.title_set", this.getLocalizedName(channel))).queue();
         } catch (SQLException e) {
             e.printStackTrace();
         }

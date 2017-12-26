@@ -49,11 +49,11 @@ public class SelfRolesCS extends CommandStructure {
                 List<Role> searchList = guild.getRolesByName(roleName, true);
                 if (searchList.isEmpty()) {
                     selfAssignRole = null;
-                    channel.sendMessage("Cannot find any role by the name '" + roleName + "'").queue();
+                    channel.sendMessage(localize(channel, "command.iam.error.unknown_role", roleName)).queue();
                     message.addReaction("❌").queue();
                 } else if (searchList.size() > 1) {
                     selfAssignRole = null;
-                    channel.sendMessage("I've found more than one role by the name: '" + roleName + "'. Try using the exact role name").queue();
+                    channel.sendMessage(localize(channel, "command.iam.error.role_ambiguous", roleName)).queue();
                     message.addReaction("❌").queue();
 
                 } else if (searchList.size() == 1) {
@@ -62,7 +62,7 @@ public class SelfRolesCS extends CommandStructure {
 
                 if (!selfMember.hasPermission(Permission.MANAGE_ROLES)) {
                     selfAssignRole = null;
-                    channel.sendMessage("I cannot assign any roles due to lack of Manage Roles permission.").queue();
+                    channel.sendMessage(localize(channel, "command.iam.error.bot_permission_missing")).queue();
                     message.addReaction("❌").queue();
                 }
             }
@@ -82,18 +82,15 @@ public class SelfRolesCS extends CommandStructure {
                         for (Role userRole : userRoles) {
                             Long userRoleID = userRole.getIdLong();
 
-                            if (!userRoleID.equals(roleID)) {
-                                if (roleList.contains(userRoleID)) {
-                                    if (selfMember.canInteract(userRole)) {
-                                        removeRoleList.add(userRole);
-                                    } else {
-                                        //TODO Edit this so it only output one message instead of a spam of messages.
-                                        channel.sendMessage("I do not have enough power to edit '"
-                                            + userRole.getName() + "' from " + author.getEffectiveName())
-                                            .queue();
+                                if (!userRoleID.equals(roleID)) {
+                                    if (roleList.contains(userRoleID)) {
+                                        if (selfMember.canInteract(userRole)) {
+                                            removeRoleList.add(userRole);
+                                        } else {
+                                            channel.sendMessage(localize(channel, "command.iam.error.permission_denied", userRole.getName(), author.getEffectiveName())).queue();
+                                        }
                                     }
                                 }
-                            }
 
                         }
                     }
@@ -110,7 +107,7 @@ public class SelfRolesCS extends CommandStructure {
                             failure -> errorRoleChange(failure, channel, author, addRoleList));
                     }
                 } else {
-                    channel.sendMessage("Role: '" + roleName + "' cannot be self assigned.").queue();
+                    channel.sendMessage(localize(channel, "command.iam.error.not_self_assignable", roleName)).queue();
                     message.addReaction("❌").queue();
                 }
             }
@@ -133,11 +130,9 @@ public class SelfRolesCS extends CommandStructure {
 //            Permission missingPermission = pe.getPermission();  //If you want to know exactly what permission is missing, this is how.
             //Note: some PermissionExceptions have no permission provided, only an error message!
 
-            channel.sendMessage("PermissionError giving roles to [" + member.getEffectiveName()
-                + "]: " + failure.getMessage()).queue(); //TODO LIST ROLES
+            channel.sendMessage(localize(channel, "command.iam.error.permission_error", member.getEffectiveName(), failure.getMessage())).queue(); //TODO LIST ROLES
         } else {
-            channel.sendMessage("Unknown error while giving/removing roles to [" + member.getEffectiveName()
-                + "]: " + "<" + failure.getClass().getSimpleName() + ">: " + failure.getMessage()).queue(); //TODO List Roles - word this better
+            channel.sendMessage(localize(channel, "command.iam.error.unknown_error", member.getEffectiveName(), failure.getClass().getSimpleName(), failure.getMessage())).queue(); //TODO List Roles - word this better
         }
     }
 
@@ -172,8 +167,8 @@ public class SelfRolesCS extends CommandStructure {
     }
 
     @Override
-    public String help(Long guildID) {
-        return "self assign a role, make sure the role name is spelt out correctly";
+    public String help(Long guildID, MessageChannel channel) {
+        return localize(channel, "command.iam.help");
     }
 
 }

@@ -41,32 +41,29 @@ public class SetSelfRoleGroupExculsive extends CommandStructure {
                         Boolean isExculsive = dbMan.isGroupExculsive(guildID, groupID);
                         try {
                             dbMan.setGroupExculsive(guildID, groupID, !isExculsive);
-                            channel.sendMessage("Group " + groupID + " is set to " + stringBlankNot(!isExculsive) + " exculsive").queue();
+                            String newStatus = localize(channel, isExculsive ? "command.toggle_group_exclusive.exclusive" : "command.toggle_group_exclusive.not_exclusive");
+                            channel.sendMessage(localize(channel, "command.toggle_group_exclusive.success", groupID, newStatus)).queue();
                         } catch (SQLException e) {
-                            channel.sendMessage("Ah, I borked here. I need tinkering here.").queue();
+                            channel.sendMessage(localize(channel, "command.toggle_group_exclusive.error.sql")).queue();
                         }
                     } else {
-                        channel.sendMessage("I do not have any group by that ID").queue();
+                        channel.sendMessage(localize(channel, "command.toggle_group_exclusive.error.unknown_group")).queue();
                     }
 
                 } else {
-                    channel.sendMessage("Something doesn't look right, the Syntax is: " + dbMan.getPrefix(guildID) + commandName + " [group id]");
+                    channel.sendMessage(localize(channel, "command.toggle_group_exclusive.error.syntax", dbMan.getPrefix(guildID) + commandName));
                 }
             } else {
-                channel.sendMessage("I do not have Manage Roles permission.").queue();
+                channel.sendMessage(localize(channel, "command.toggle_group_exclusive.error.bot_permission_missing")).queue();
             }
 
         }
 
     }
 
-    private String stringBlankNot(Boolean exculsive) {
-        return exculsive ? "" : "not";
-    }
-
     @Override
-    public String help(Long guildID) {
-        return "Toggle a group to be exculsive or not exculsive Syntax: " + dbMan.getPrefix(guildID) + commandName + " [group id]";
+    public String help(Long guildID, MessageChannel channel) {
+        return localize(channel, "command.toggle_group_exclusive.help", dbMan.getPrefix(guildID) + commandName);
     }
 
 }

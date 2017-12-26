@@ -21,6 +21,8 @@ public class GuildSetting {
     private Boolean eventOn = false;
     private String eventChannel = null;
 
+    private String locale = "en_US";
+
     /**
      * Is ww on boolean.
      *
@@ -205,5 +207,13 @@ public class GuildSetting {
 
     public Boolean isEventOn() {
         return eventOn;
+    }
+
+    public String getLocale() {
+        return locale;
+    }
+
+    public void setLocale(String locale) {
+        this.locale = locale;
     }
 }

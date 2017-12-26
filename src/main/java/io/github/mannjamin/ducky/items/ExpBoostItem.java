@@ -13,24 +13,13 @@ public class ExpBoostItem extends Item {
     private static Long expGain = 50L;
 
     public ExpBoostItem(DatabaseManager dbMan, Integer invID) {
-        super(
-            dbMan,
-            "Experience Boost",
-            "Gain " + expGain.toString() + " + experience points",
-            invID,
-            true,
-            1000,
-            true,
-            ItemType.INVITEM,
-            null
-        );
+      this(dbMan, invID, null);
     }
 
     public ExpBoostItem(DatabaseManager dbMan, Integer invID, Long itemID) {
         super(
             dbMan,
-            "Experience Boost",
-            "Gain " + expGain.toString() + " experience points",
+            "exp_boost",
             invID,
             true,
             1000,
@@ -41,6 +30,11 @@ public class ExpBoostItem extends Item {
     }
 
     @Override
+    public String getDescription(MessageChannel channel) {
+        return localize(channel, String.format("item.%s.description", name), expGain);
+    }
+
+    @Override
     public void execute(Guild guild, Member member, MessageChannel channel, Integer amount) {
         Long guildID = guild.getIdLong();
         Long userID = member.getUser().getIdLong();
@@ -48,6 +42,10 @@ public class ExpBoostItem extends Item {
         if (amount == null || amount == 1) {
             try {
                 dbMan.addItemToUser(guildID, userID, this);
+              channel.sendMessage(
+                localize(channel, "item.exp_boost.buy",
+                  member.getEffectiveName(), amount, this.getLocalizedName(channel))
+              ).queue();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -56,7 +54,10 @@ public class ExpBoostItem extends Item {
                 for (int i = 0; i < amount; i++) {
                     dbMan.addItemToUser(guildID, userID, this);
                 }
-                channel.sendMessage(member.getEffectiveName() + " has gained: " + amount.toString() + " " + this.getName()).queue();
+                channel.sendMessage(
+                    localize(channel, "item.exp_boost.buy",
+                        member.getEffectiveName(), amount, this.getLocalizedName(channel))
+                ).queue();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -76,15 +77,15 @@ public class ExpBoostItem extends Item {
                 EmbedBuilder newEmbed = new EmbedBuilder();
                 Color color = new Color(50, 255, 50);
                 newEmbed.setAuthor(member.getEffectiveName(), null, member.getUser().getAvatarUrl());
-                newEmbed.setTitle("\uD83D\uDD3C RANK UP \uD83D\uDD3C");
+                newEmbed.setTitle(localize(channel, "item.exp_boost.rank_up"));
                 newEmbed.setColor(color);
 
                 for (RankUp newRank : rankUps) {
-                    newEmbed.addField(member.getEffectiveName(), " has ranked up to " + newRank.rankName, false);
+                    newEmbed.addField(member.getEffectiveName(), localize(channel, "item.exp_boost.field.rank_up", newRank.rankName), false);
                     if (newRank.expRequired != null) {
-                        newEmbed.addField("", "They need " + newRank.expRequired + " to rank reach the next rank", false);
+                        newEmbed.addField("", localize(channel, "item.exp_boost.field.xp_needed", newRank.expRequired), false);
                     } else {
-                        newEmbed.addField("", "Reached max rank defined. Way to go!", false);
+                        newEmbed.addField("", localize(channel, "item.exp_boost.field.max_reached"), false);
                     }
                 }
 

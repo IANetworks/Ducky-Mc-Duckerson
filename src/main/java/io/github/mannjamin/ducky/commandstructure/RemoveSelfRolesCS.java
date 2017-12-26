@@ -139,7 +139,7 @@ public class RemoveSelfRolesCS extends CommandStructure {
     }
 
     @Override
-    public String help(Long guildID) {
+    public String help(Long guildID, MessageChannel channel) {
         return "self assign a role, make sure the role name is spelt out correctly";
     }
 
