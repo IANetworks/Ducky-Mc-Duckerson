@@ -22,7 +22,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Properties;
-import java.util.Scanner;
 
 /**
  * The type Mc ducky.

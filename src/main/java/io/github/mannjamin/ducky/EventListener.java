@@ -138,6 +138,7 @@ public class EventListener extends ListenerAdapter {
         setupCommand(new ListUserInvCS(container, "inv", 37, 999));
         setupCommand(new UseItemCS(container, "use_item", 38, 999));
         setupCommand(new RemoveSelfRolesCS(container, "iamnot", 39, 999));
+      setupCommand(new NewProfileCS(container, "new_profile", 40, 999));
 
 
         //********* PrivateMessage Commands *********//
@@ -229,7 +230,7 @@ public class EventListener extends ListenerAdapter {
         Long userID = author.getUser().getIdLong();
         MessageChannel channel = event.getChannel();
         Message message = event.getMessage(); //Message recieved
-        String msg = message.getContent(); // String readable content of message
+      String msg = message.getContentDisplay(); // String readable content of message
         Guild guild = event.getGuild(); //Get info about the server this message is recieved on
         Long guildID = guild.getIdLong(); //guild unique id
 
@@ -251,9 +252,11 @@ public class EventListener extends ListenerAdapter {
                     if (cmdList.containsKey(msgCommand)) {
                         Integer cmdCharCount = guildPrefix.length() + msgCommand.length();
                         String parameters = msg.substring(cmdCharCount);
-                        cmdList.get(msgCommand).execute(author, channel, message, parameters, cmdList);
+                      CommandStructure callCommand = cmdList.get(msgCommand);
+                      callCommand.execute(author, channel, message, parameters, cmdList);
 
                         if (deleteCommand(guildID)) {
+                          if (callCommand.commandID != 40)
                             message.delete().reason("Clearing commands").queue();
                         }
                     }
@@ -306,7 +309,7 @@ public class EventListener extends ListenerAdapter {
         User author = event.getAuthor();
         MessageChannel channel = event.getChannel();
         Message message = event.getMessage(); //Message recieved
-        String msg = message.getContent().trim().toLowerCase(); // String readable content of message
+      String msg = message.getContentDisplay().trim().toLowerCase(); // String readable content of message
         //Guild guild = event.getGuild(); //Get info about the server this message is recieved on
         //Long guildID = guild.getIdLong(); //guild unique id
         if (msg.length() > 0) {
@@ -355,7 +358,7 @@ public class EventListener extends ListenerAdapter {
         User author = event.getAuthor();                //The user that sent the message
         Message message = event.getMessage();           //The message that was received.
 
-        String msg = message.getContent();              //This returns a human readable version of the Message. Similar to
+      String msg = message.getContentDisplay();              //This returns a human readable version of the Message. Similar to
         // what you would see in the client.
         boolean isBotAdminOwner = isBotAdminOwner(author);
 
