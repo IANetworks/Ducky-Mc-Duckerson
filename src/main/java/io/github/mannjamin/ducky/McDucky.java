@@ -67,6 +67,8 @@ public class McDucky {
         String botToken = configProps.getProperty("bot_token"); //Bot Token that is used to log into Discord
         String databaseName = configProps.getProperty("database_name", "default"); //Database Name
         String botAdmin = configProps.getProperty("bot_admin"); //In case Bot Owner is different from the creator of the bot token, this is rare but in the program creator situation this has happened.
+        String host = configProps.getProperty("host", "localhost");
+        String port = configProps.getProperty("port", "");
         DatabaseManager dbMan = null;
 
 //		int debugLevel;
@@ -124,7 +126,14 @@ public class McDucky {
         // we would use AccountType.CLIENT
         try {
             //debugListener = new DebugListener(dbug);
-            Socket socket = IO.socket("http://localhost");
+            URI uri;
+            if (port.isEmpty()) {
+                uri = new URI("http://" + host);
+            } else {
+                uri = new URI("http://" + host + ":" + port);
+            }
+
+            Socket socket = IO.socket(uri);
             eventListener = new EventListener(dbMan, botAdmin, socket);
             JDA jda = new JDABuilder(AccountType.BOT)
                 .setToken(botToken)  //The token of the account that is logging in.
@@ -191,6 +200,8 @@ public class McDucky {
         configProps.setProperty("bot_token", "");
         configProps.setProperty("debug_level", "0"); //Set to Off
         configProps.setProperty("database_name", "default");
+        configProps.setProperty("host", "localhost");
+        configProps.setProperty("port", "");
 
         //Save to file
         OutputStream outputStream = new FileOutputStream(configFile);

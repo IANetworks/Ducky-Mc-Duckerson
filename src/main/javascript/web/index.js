@@ -26,7 +26,7 @@ io.on('connection', function(socket){
         io.emit('consoleMessage', msg)
     });
     socket.on('consoleLog', function(msg) {
-        console.log('consoleLog:' + msg)
+        //console.log('consoleLog:' + msg)
         io.emit('consoleLog', msg)
     })
 })
