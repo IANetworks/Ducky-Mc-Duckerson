@@ -10732,7 +10732,20 @@ CREATE TABLE variables (
                              DEFAULT (0),
     event_channel    STRING,
     event_on         BOOLEAN NOT NULL
-                             DEFAULT (0) 
+                             DEFAULT (0)
+);
+
+
+-- Table: aliases
+DROP TABLE IF EXISTS aliases;
+
+CREATE TABLE aliases (
+    guild_id         INTEGER NOT NULL,
+    alias            STRING NOT NULL,
+    command          STRING NOT NULL,
+    PRIMARY KEY (
+        guild_id, alias
+    )
 );
 
 

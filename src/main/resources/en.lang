@@ -166,6 +166,15 @@ command.start_event.help = Fetch any events happening today
 
 command.fetch_event.help = Fetch any events happening today
 
+command.alias.error.syntax = This syntax looks wrong; syntax: `%s [alias] [command]`
+command.alias.error.already_used = The command `!%s` is already used
+command.alias.error.command_not_found = I couldn't find any command by the name `%s`
+command.alias.error.sql = Oops, something went wrong, please don't tell Abby that I was naughty
+command.alias.error.alias_not_found = You tried to remove an alias that doesn't exist
+command.alias.error.recursion = You can't create an alias of an alias!
+command.alias.removed = Alias removed!
+command.alias.help = Define an alias for another command. Usage: `%s [alias] [command]`
+
 command.buy.error.syntax = This syntax looks wrong, Syntax: `%s [inv id] [quantity]`
 command.buy.error.not_enough_gold = \uD83D\uDCB8 Sorry you don't have enough gold to get this. \uD83D\uDCB8
 command.buy.error.item_not_available = I do not have this item or it's not for sale

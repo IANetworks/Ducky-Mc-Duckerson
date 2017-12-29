@@ -138,11 +138,26 @@ public class EventListener extends ListenerAdapter {
         setupCommand(new ListUserInvCS(container, "inv", 37, 999));
         setupCommand(new UseItemCS(container, "use_item", 38, 999));
         setupCommand(new RemoveSelfRolesCS(container, "iamnot", 39, 999));
-      setupCommand(new NewProfileCS(container, "new_profile", 40, 999));
+        setupCommand(new NewProfileCS(container, "new_profile", 40, 999));
+        setupCommand(new AliasCS(container, "alias", 40, 1, 41, 999));
 
 
         //********* PrivateMessage Commands *********//
         setupPrivateCommand(new WerewolfSeeCS(container, "see", 19, 999));
+
+
+        // Setup aliases
+        try {
+            dbMan.getAliases().forEach((alias, mapping) -> {
+                AliasMappingCS command = new AliasMappingCS(container, alias, 41, 999);
+                mapping.forEach((guildID, commandName) -> {
+                    command.commandMapping.put(guildID, cmdList.get(commandName));
+                });
+                setupCommand(command);
+            });
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -252,8 +267,8 @@ public class EventListener extends ListenerAdapter {
                     if (cmdList.containsKey(msgCommand)) {
                         Integer cmdCharCount = guildPrefix.length() + msgCommand.length();
                         String parameters = msg.substring(cmdCharCount);
-                      CommandStructure callCommand = cmdList.get(msgCommand);
-                      callCommand.execute(author, channel, message, parameters, cmdList);
+                        CommandStructure callCommand = cmdList.get(msgCommand);
+                        callCommand.execute(author, channel, message, parameters, cmdList);
 
                         if (deleteCommand(guildID)) {
                           if (callCommand.commandID != 40)

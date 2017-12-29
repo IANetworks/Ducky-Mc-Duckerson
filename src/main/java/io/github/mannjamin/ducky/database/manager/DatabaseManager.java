@@ -3,7 +3,6 @@ package io.github.mannjamin.ducky.database.manager;
 import io.github.mannjamin.ducky.items.Item;
 import io.github.mannjamin.ducky.items.ItemDatabase;
 import io.github.mannjamin.ducky.database.manager.data.*;
-import net.dv8tion.jda.core.entities.Role;
 import io.github.mannjamin.ducky.werewolf.data.Theme;
 import io.github.mannjamin.ducky.werewolf.data.ThemeDesc;
 import io.github.mannjamin.ducky.I18N;
@@ -271,6 +270,39 @@ public class DatabaseManager {
 
         return null;
 
+    }
+
+    public Map<String, Map<Long, String>> getAliases() throws SQLException {
+        String sql = "SELECT * FROM aliases";
+        Statement stmt = conn.createStatement();
+        ResultSet result = stmt.executeQuery(sql);
+
+        Map<String, Map<Long, String>> aliases = new HashMap<>();
+        while (result.next()) {
+            String alias = result.getString("alias");
+            if (!aliases.containsKey(alias)) {
+                aliases.put(alias, new HashMap<>());
+            }
+            aliases.get(alias).put(result.getLong("guild_id"), result.getString("command"));
+        }
+        return aliases;
+    }
+
+    public void setAlias(Long guildID, String alias, String command) throws SQLException {
+        String sql = "INSERT INTO aliases (guild_id, alias, command) VALUES (?, ?, ?)";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setLong(1, guildID);
+        stmt.setString(2, alias);
+        stmt.setString(3, command);
+        stmt.execute();
+    }
+
+    public void removeAlias(Long guildID, String alias) throws SQLException {
+        String sql = "DELETE FROM aliases WHERE guild_id = ? AND alias = ?";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setLong(1, guildID);
+        stmt.setString(2, alias);
+        stmt.execute();
     }
 
     public Boolean isCooldownOver(Long guildID, Long userID) throws SQLException {
