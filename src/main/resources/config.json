@@ -1,0 +1,12 @@
+{
+  "token": null,
+  "admin": null,
+  "debugLevel": 0,
+  "db": {
+    "name": "default"
+  },
+  "socket": {
+    "host": "localhost",
+    "port": 3000
+  }
+}
