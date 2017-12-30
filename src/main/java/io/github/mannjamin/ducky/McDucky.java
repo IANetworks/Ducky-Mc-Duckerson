@@ -31,6 +31,7 @@ import java.util.List;
 public class McDucky {
     private static final String DB_DRIVER = "jdbc";
     private static final String DB_TYPE = "sqlite";
+    private static final String DB_FILE = "duckyDB.sql";
 
     private final EventListener eventListener;
     private final Configuration config;
@@ -61,7 +62,7 @@ public class McDucky {
 
         // now the database
         final File databaseFile = new File(config.databaseName + ".db");
-        if (!databaseFile.exists()) throw new FileNotFoundException(databaseFile.getAbsolutePath());
+        if (!databaseFile.exists()) setupTables();
 
         final String url = String.format("%s:%s:%s", McDucky.DB_DRIVER, McDucky.DB_TYPE, databaseFile.getAbsolutePath());
         databaseConnection = DriverManager.getConnection(url);
@@ -129,8 +130,7 @@ public class McDucky {
 
         // Try to open the file into a fileStream (Reader in Java).
         try {
-            URI sqlFile = getClass().getClassLoader().getResource("duckyDB.sql").toURI();
-            fileReader = new FileReader(new File(sqlFile));
+            fileReader = new InputStreamReader(McDucky.class.getResourceAsStream("/" + DB_FILE));
         } catch (Exception ex) {
             ex.fillInStackTrace();
             ex.printStackTrace();
