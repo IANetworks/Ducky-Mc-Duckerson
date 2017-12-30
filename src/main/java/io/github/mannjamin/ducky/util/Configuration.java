@@ -31,7 +31,8 @@ public class Configuration {
      */
     Configuration(JsonObject root) throws UndefinedTokenException, UnknownHostException {
         final JsonElement tokenE = root.get("token");
-        token = tokenE.isJsonNull() ? null : tokenE.getAsString();
+        if (tokenE.isJsonNull()) throw new UndefinedTokenException();
+        else token = tokenE.getAsString();
 
         final JsonElement adminE = root.get("admin");
         admin = adminE.isJsonNull() ? null : adminE.getAsString();
