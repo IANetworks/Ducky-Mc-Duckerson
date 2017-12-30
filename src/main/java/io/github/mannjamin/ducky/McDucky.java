@@ -100,6 +100,12 @@ public class McDucky {
      * @param args the input arguments
      */
     public static void main(String[] args) {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            System.out.println("shutting down...");
+
+            // do things on shut down here
+        }));
+
         // FIXME Somebody should put some proper logging down here
         try {
             new McDucky();
