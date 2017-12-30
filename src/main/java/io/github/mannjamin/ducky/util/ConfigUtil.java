@@ -2,9 +2,11 @@ package io.github.mannjamin.ducky.util;
 
 import com.google.gson.JsonParser;
 import io.github.mannjamin.ducky.McDucky;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 import java.io.*;
+import java.net.URL;
 
 /**
  * Configuration management controller
@@ -39,12 +41,8 @@ public class ConfigUtil {
      * @throws IOException If the configuration file could not be written or copied.
      */
     private static void createConfiguration() throws IOException {
-        final InputStream is = McDucky.class.getResourceAsStream(FILE_PATH);
-        final OutputStream os = new FileOutputStream(new File(FILE_PATH));
-
-        IOUtils.copy(is, os);
-        is.close();
-        os.close();
+        final URL url = McDucky.class.getResource("/" + FILE_PATH);
+        FileUtils.copyURLToFile(url, new File(FILE_PATH));
     }
 
     /**

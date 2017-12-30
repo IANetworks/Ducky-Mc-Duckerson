@@ -1,5 +1,6 @@
 package io.github.mannjamin.ducky.util;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.net.InetAddress;
@@ -29,11 +30,15 @@ public class Configuration {
      * @throws UnknownHostException    If the hostname could not be resolved
      */
     Configuration(JsonObject root) throws UndefinedTokenException, UnknownHostException {
-        token = root.get("token").getAsString();
-        admin = root.get("admin").getAsString();
+        final JsonElement tokenE = root.get("token");
+        token = tokenE.isJsonNull() ? null : tokenE.getAsString();
+
+        final JsonElement adminE = root.get("admin");
+        admin = adminE.isJsonNull() ? null : adminE.getAsString();
+
         debugLevel = root.get("debugLevel").getAsByte();
 
-        JsonObject db = root.getAsJsonObject("database");
+        JsonObject db = root.getAsJsonObject("db");
         databaseName = db.get("name").getAsString();
 
         JsonObject socket = root.getAsJsonObject("socket");
