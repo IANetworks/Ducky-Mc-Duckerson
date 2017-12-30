@@ -24,6 +24,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * The Main class
@@ -37,8 +38,9 @@ public class McDucky {
     private final Configuration config;
     private final Connection databaseConnection;
     private final DatabaseManager databaseManager;
-    private final Socket socket;
-    private final JDA jda;
+    private static Socket socket = null;
+    private static JDA jda = null;
+    private static boolean shutdown = false;
 
     /**
      * Creates a new instance of the bot
@@ -59,6 +61,12 @@ public class McDucky {
 
         // start by loading the config
         config = ConfigUtil.getConfiguration();
+        if (shutdown) {
+            databaseManager = null;
+            databaseConnection = null;
+            eventListener = null;
+            return;
+        }
 
         // now the database
         final File databaseFile = new File(config.databaseName + ".db");
@@ -68,6 +76,13 @@ public class McDucky {
         databaseConnection = DriverManager.getConnection(url);
         setupTables();
 
+        if (shutdown) {
+            databaseManager = null;
+            eventListener = null;
+            databaseConnection.close();
+            return;
+        }
+
         databaseManager = new DatabaseManager(databaseConnection);
 
         // now for the socket
@@ -75,10 +90,16 @@ public class McDucky {
         socket = IO.socket(uri);
 
         eventListener = new EventListener(databaseManager, config.admin, socket);
+        //if(shutdown) return;
         jda = new JDABuilder(AccountType.BOT)
             .setToken(config.token)
             .addEventListener(eventListener)
             .buildBlocking();
+
+        if (shutdown) {
+            jda.shutdown();
+            return;
+        }
         socket.on(Socket.EVENT_CONNECT, new EventConnect(socket, eventListener));
 
         // lastly, some debug stuff
@@ -92,6 +113,12 @@ public class McDucky {
 
         // now connect
         socket.connect();
+
+        if (shutdown) {
+            jda.shutdown();
+            socket.disconnect();
+        }
+
     }
 
     /**
@@ -102,11 +129,16 @@ public class McDucky {
     public static void main(String[] args) {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             System.out.println("shutting down...");
-
             // do things on shut down here
+            shutdown = true;
+            if (jda != null)
+                jda.shutdown();
+            if (socket != null)
+                socket.close();
         }));
 
         // FIXME Somebody should put some proper logging down here
+        // TODO SLF4J in general (Logging)
         try {
             new McDucky();
         } catch (IOException e) {

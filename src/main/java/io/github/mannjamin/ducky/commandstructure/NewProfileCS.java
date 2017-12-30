@@ -111,8 +111,6 @@ public class NewProfileCS extends CommandStructure {
                 return false;
             }
             BufferedImage profileBackgroundImg = ImageIO.read(McDucky.class.getResourceAsStream(BACKGROUND_000));
-            if (profileBackgroundImg == null)
-                return false;
             BufferedImage profileImg = new BufferedImage(profileBackgroundImg.getWidth(), profileBackgroundImg.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
             Graphics2D canvas = (Graphics2D) profileImg.getGraphics();
