@@ -1,5 +1,6 @@
 package io.github.mannjamin.ducky.commandstructure;
 
+import io.github.mannjamin.ducky.McDucky;
 import io.github.mannjamin.ducky.SharedContainer;
 import io.github.mannjamin.ducky.database.manager.data.UserProfile;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -27,6 +28,8 @@ import java.util.Objects;
  * The type Profile cs.
  */
 public class NewProfileCS extends CommandStructure {
+
+    private final String BACKGROUND_000 = "/profile/profile_background000.png";
 
     /**
      * Instantiates a new Profile cs.
@@ -85,7 +88,6 @@ public class NewProfileCS extends CommandStructure {
 
     private boolean sendProfile(Member member, MessageChannel channel, String prefix, String userLevelName, Member requestedBy) {
         try {
-            URI profileBackgroundUri = new URI("profile/profile_background000.png");
             URL avatarURL = new URL(member.getUser().getAvatarUrl());
             BufferedImage avatar = getAvatar(avatarURL);
             String nickname = member.getEffectiveName();
@@ -108,7 +110,7 @@ public class NewProfileCS extends CommandStructure {
             if (avatar == null) {
                 return false;
             }
-            BufferedImage profileBackgroundImg = ImageIO.read(new File(profileBackgroundUri));
+            BufferedImage profileBackgroundImg = ImageIO.read(McDucky.class.getResourceAsStream(BACKGROUND_000));
             if (profileBackgroundImg == null)
                 return false;
             BufferedImage profileImg = new BufferedImage(profileBackgroundImg.getWidth(), profileBackgroundImg.getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -167,7 +169,7 @@ public class NewProfileCS extends CommandStructure {
             channel.sendFile(is, "profile_" + member.getUser().getId() + ".png").queue();
             return true;
 
-        } catch (URISyntaxException | SQLException | IOException e) {
+        } catch (SQLException | IOException e) {
             e.printStackTrace();
         }
         return false;
