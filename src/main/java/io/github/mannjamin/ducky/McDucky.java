@@ -124,7 +124,7 @@ public class McDucky {
         // we would use AccountType.CLIENT
         try {
             //debugListener = new DebugListener(dbug);
-            Socket socket = IO.socket("http://localhost");
+            Socket socket = IO.socket("http://localhost:8080");
             eventListener = new EventListener(dbMan, botAdmin, socket);
             JDA jda = new JDABuilder(AccountType.BOT)
                 .setToken(botToken)  //The token of the account that is logging in.

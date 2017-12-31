@@ -31,7 +31,7 @@ io.on('connection', function(socket){
     })
 })
 
-http.listen(80, () => console.log('App listening at port 80! Cause I BE BUNNY!'))
+http.listen(8080, () => console.log('App listening at port 8080! Cause I BE BUNNY!'))
 
 //process.on('message', (thisMessage) => messageRecieved)
 
