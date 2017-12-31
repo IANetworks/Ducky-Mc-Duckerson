@@ -68,12 +68,15 @@ public class McDucky {
             return;
         }
 
+
         // now the database
         final File databaseFile = new File(config.databaseName + ".db");
+        boolean newDatabase = false;
+        if (!databaseFile.exists()) newDatabase = true;
         final String url = String.format("%s:%s:%s", McDucky.DB_DRIVER, McDucky.DB_TYPE, databaseFile.getAbsolutePath());
         databaseConnection = DriverManager.getConnection(url);
 
-        if (!databaseFile.exists()) setupTables();
+        if (newDatabase) setupTables();
 
         if (shutdown) {
             databaseManager = null;
