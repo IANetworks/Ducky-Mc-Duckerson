@@ -10749,5 +10749,15 @@ CREATE TABLE aliases (
 );
 
 
+-- Table: locale_settings
+DROP TABLE IF EXISTS locale_settings;
+
+CREATE TABLE locale_settings (
+    snowflake_id         INTEGER NOT NULL
+                                 PRIMARY KEY,
+    locale                STRING NOT NULL
+);
+
+
 COMMIT TRANSACTION;
 PRAGMA foreign_keys = on;

@@ -175,6 +175,11 @@ command.alias.error.recursion = You can't create an alias of an alias!
 command.alias.removed = Alias removed!
 command.alias.help = Define an alias for another command. Usage: `%s [alias] [command]`
 
+command.set_language.error.syntax = This syntax looks wrong. Syntax: `%s [locale-code]`
+command.set_language.error.unknown_locale = I couldn't find any locale by the name '%s'. 
+command.set_language.error.sql = Critical error on all systems. Press Enter to start the selfdestruct process.%n%nPress Enter to continue.
+command.set_language.help = Sets the language for the current channel. Syntax: `%s [locale-code]`
+
 command.buy.error.syntax = This syntax looks wrong, Syntax: `%s [inv id] [quantity]`
 command.buy.error.not_enough_gold = \uD83D\uDCB8 Sorry you don't have enough gold to get this. \uD83D\uDCB8
 command.buy.error.item_not_available = I do not have this item or it's not for sale
