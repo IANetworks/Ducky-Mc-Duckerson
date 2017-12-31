@@ -92,17 +92,35 @@ public class NewProfileCS extends CommandStructure {
             BufferedImage avatar = getAvatar(avatarURL);
             String nickname = member.getEffectiveName();
             UserProfile up;
-            String title = null;
-            String rank = null;
-            String guildName = member.getGuild().getName();
-            boolean hasTitle = false;
-
             up = dbMan.getUserProfile(member.getGuild().getIdLong(), member.getUser().getIdLong());
-            title = up.getTitle();
-            rank = up.getRankName();
+            //obtain all the strings.. ALL the strings
+            String title = up.getTitle();
+            String rank = up.getRankName();
+            String guildName = member.getGuild().getName();
+            String balance = up.getBalance().toString();
+            String tableFlip = up.getFlipped().toString();
+            String tableUnflip = up.getUnflipped().toString();
+            String werewolfWins = up.getWerewolfWins().toString();
+            String werewolfGames = up.getWerewolfGames().toString();
+            String rankExp = up.getRankExp().toString();
+            String rankExpTotal;
+            if (up.getRankExp() != null)
+                rankExpTotal = rankExp + "/" + up.getLevel().toString();
+            else
+                rankExpTotal = rankExp + "/∞";
+            String points = up.getPoints().toString();
+            String tableFlipStr = "(╯°□°）╯︵ ┻━┻";
+            String unflipStr = "┬─┬\uFEFF ノ( ゜-゜ノ)";
+
+            final int padding = 10;
+
+            boolean hasTitle = false;
+            //TODO setup /profile/ folder for external profile background images
+
             if (title == null) title = "";
             if (!Objects.equals(title, "")) {
                 hasTitle = true;
+                //title = localize(channel, title);
             } else {
                 title = "1";
             }
@@ -110,62 +128,131 @@ public class NewProfileCS extends CommandStructure {
             if (avatar == null) {
                 return false;
             }
+            //Get Avatar and Background
             BufferedImage profileBackgroundImg = ImageIO.read(McDucky.class.getResourceAsStream(BACKGROUND_000));
             BufferedImage profileImg = new BufferedImage(profileBackgroundImg.getWidth(), profileBackgroundImg.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
+            //Start Canvas
             Graphics2D canvas = (Graphics2D) profileImg.getGraphics();
-            canvas.drawImage(profileBackgroundImg, 0, 0, null);
+            canvas.drawImage(profileBackgroundImg, 0, 0, null); //Draw background
+
+            //Get string size for NameTag
             canvas.setColor(Color.BLACK);
             canvas.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 19));
-
             FontMetrics fontMetrics = canvas.getFontMetrics();
             Rectangle2D nameTag = fontMetrics.getStringBounds(nickname, canvas);
 
+            //Location for nameTag and Background
             int centerXBackground = Math.round((profileBackgroundImg.getWidth() - Math.round(nameTag.getWidth())) / 2);
             int dropYNameTagBackground = (int) Math.floor(nameTag.getHeight()) + 10;
 
+            //Avatar Location
             int heightDropAvatar = dropYNameTagBackground + 20;
             int rightJustifiedAvatar = profileBackgroundImg.getWidth() - (int) Math.floor(avatar.getWidth()) - 20;
 
-
+            //NameTagBox Location and size
             int nameTagBackgroundWidth = profileImg.getWidth() - 20;
-            int nameTagBackgroundHeight = (int) Math.floor(nameTag.getHeight()) + 10;
             int centerXNameTagBG = Math.round((profileImg.getWidth() - nameTagBackgroundWidth) / 2);
-            Color nameTagColour = new Color(0, 0, 0, 64);
+            int nameTagY = padding;
 
+            //TilteTag Location
             canvas.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 10));
             fontMetrics = canvas.getFontMetrics();
             Rectangle2D titleTag = fontMetrics.getStringBounds(title, canvas);
-            nameTagBackgroundHeight = (int) Math.floor(titleTag.getHeight()) + nameTagBackgroundHeight;
+            int nameTagBackgroundHeight = (int) Math.floor(titleTag.getHeight()) + (int) Math.floor(nameTag.getHeight()) + 10;
             int dropYTitleTag = dropYNameTagBackground + (int) Math.floor(titleTag.getHeight());
             int centerXTitleTag = (int) Math.round((profileBackgroundImg.getWidth() - titleTag.getWidth()) / 2);
 
+            //User Level Tag Location
+            Rectangle2D userLevelTag = fontMetrics.getStringBounds(userLevelName, canvas);
+            int userLevelY = (int) Math.round(profileBackgroundImg.getHeight() - userLevelTag.getHeight());
+            int userLevelX = 10;
+
+            //discord server name location
+            Rectangle2D guildNameTag = fontMetrics.getStringBounds(guildName, canvas);
+            int guildNameX = (int) Math.round(profileBackgroundImg.getWidth() - guildNameTag.getWidth()) - padding;
+
+            //Statistics location
+            canvas.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
+            fontMetrics = canvas.getFontMetrics();
+            Rectangle2D statTag = fontMetrics.getStringBounds("Statistic", canvas);
+            int statTagYBG = heightDropAvatar + avatar.getHeight() - 2;
+            int statTagYDrop = heightDropAvatar + avatar.getHeight() + (int) Math.round(statTag.getHeight()) - 2;
+            int statTagBackgroundHeight = (int) Math.round(statTag.getHeight() + 10);
+            int statTagX = (int) Math.round((profileBackgroundImg.getWidth() - statTag.getWidth()) / 2);
+
+            int maxStatTagWidth = 0;
+            int testMaxStatTagWidth = 0;
+            //RankTag Locations
+            canvas.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
+            fontMetrics = canvas.getFontMetrics();
+            Rectangle2D rankTag = fontMetrics.getStringBounds("Rank :", canvas);
+            int rankTagY = statTagYDrop + statTagBackgroundHeight + 5;
+            maxStatTagWidth = (int) Math.floor(rankTag.getWidth()) + padding;
+
+            //TODO replace with an image of coin(s?)
+            int curTagY = rankTagY + (int) Math.floor(rankTag.getHeight());
+            Rectangle2D curTag = fontMetrics.getStringBounds("Coins :", canvas);
+            testMaxStatTagWidth = (int) Math.floor(curTag.getWidth()) + padding;
+            if (testMaxStatTagWidth > maxStatTagWidth) maxStatTagWidth = testMaxStatTagWidth;
+
+
+            int tableFlipTagY = curTagY + (int) Math.floor(rankTag.getHeight());
+            Rectangle2D flipTag = fontMetrics.getStringBounds(tableFlipStr + " :", canvas);
+            testMaxStatTagWidth = (int) Math.floor(flipTag.getWidth()) + padding;
+            if (testMaxStatTagWidth > maxStatTagWidth) maxStatTagWidth = testMaxStatTagWidth;
+
+
+            int unFlipTableTagY = tableFlipTagY + (int) Math.floor(rankTag.getHeight());
+            Rectangle2D unflipTag = fontMetrics.getStringBounds(unflipStr + " :", canvas);
+            testMaxStatTagWidth = (int) Math.floor(unflipTag.getWidth()) + padding;
+            if (testMaxStatTagWidth > maxStatTagWidth) maxStatTagWidth = testMaxStatTagWidth;
+
+
+            int rankTagX = maxStatTagWidth - (int) Math.floor(rankTag.getWidth());
+            int curTagX = maxStatTagWidth - (int) Math.floor(curTag.getWidth());
+            int tableFlipTagX = maxStatTagWidth - (int) Math.floor(flipTag.getWidth());
+            int unFlipTableTagX = maxStatTagWidth - (int) Math.floor(unflipTag.getWidth());
+
+            //place all elements onto canvas
+            Color nameTagColour = new Color(0, 0, 0, 64);
+            canvas.setColor(nameTagColour);
+            canvas.fillRoundRect(centerXNameTagBG, nameTagY, nameTagBackgroundWidth, nameTagBackgroundHeight, 3, 3);
+            canvas.fillRoundRect(centerXNameTagBG, statTagYBG, nameTagBackgroundWidth, statTagBackgroundHeight, 3, 3);
+            //Images
+            canvas.drawImage(avatar, rightJustifiedAvatar, heightDropAvatar, null);
+
             canvas.setColor(Color.BLACK);
+            //Font Size 19
+            canvas.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 19));
+            canvas.drawString(nickname, centerXBackground, dropYNameTagBackground);
+            //Font Size 14
+            canvas.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
+            canvas.drawString("Statistic", statTagX, statTagYDrop);
+            //Font Size 12
+            canvas.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 12));
+            canvas.drawString("Rank :", rankTagX, rankTagY);
+            canvas.drawString("Coins :", curTagX, curTagY);
+            canvas.drawString(tableFlipStr + " :", tableFlipTagX, tableFlipTagY);
+            canvas.drawString(unflipStr + " :", unFlipTableTagX, unFlipTableTagY);
+
+
+            //Font Size 10
+            canvas.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 10));
+            canvas.drawString(userLevelName, padding, userLevelY);
+            canvas.drawString(guildName, guildNameX, userLevelY);
             if (hasTitle) {
+
                 canvas.drawString(title, centerXTitleTag, dropYTitleTag);
             }
 
-            Rectangle2D userLevelTag = fontMetrics.getStringBounds(userLevelName, canvas);
-            int userLevelY = (int) Math.round(profileBackgroundImg.getHeight() - userLevelTag.getHeight());
-            canvas.drawString(userLevelName, 10, userLevelY);
-            Rectangle2D guildNameTag = fontMetrics.getStringBounds(guildName, canvas);
-            int guildNameX = (int) Math.round(profileBackgroundImg.getWidth() - guildNameTag.getWidth()) - 10;
-            canvas.drawString(guildName, guildNameX, userLevelY);
 
-            canvas.setColor(nameTagColour);
-            canvas.fillRoundRect(centerXNameTagBG, 10, nameTagBackgroundWidth, nameTagBackgroundHeight, 3, 3);
-
-            canvas.setColor(Color.BLACK);
-            canvas.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 19));
-            canvas.drawString(nickname, centerXBackground, dropYNameTagBackground);
-            canvas.drawImage(avatar, rightJustifiedAvatar, heightDropAvatar, null);
-
+            //send final canvas to discord
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             ImageIO.write(profileImg, "png", os);
             InputStream is = new ByteArrayInputStream(os.toByteArray());
-
             channel.sendFile(is, "profile_" + member.getUser().getId() + ".png").queue();
-            return true;
+            return true; //successful send
 
         } catch (SQLException | IOException e) {
             e.printStackTrace();
