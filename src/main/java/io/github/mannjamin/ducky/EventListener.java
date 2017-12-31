@@ -254,7 +254,7 @@ public class EventListener extends ListenerAdapter {
         //Check to make sure our commands are setup (async can be a bitch)
 
         //Check Prefix
-        if (msg.length() > 0) {
+        if (msg.length() > 0 && msg.length() > guildPrefix.length()) {
             String msgPrefix = msg.substring(0, guildPrefix.length());
             String msgFullCommand = msg.substring(guildPrefix.length()).toLowerCase();
             String msgCommand = msgFullCommand.split(" ", 2)[0];

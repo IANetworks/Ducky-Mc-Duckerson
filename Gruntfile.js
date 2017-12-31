@@ -43,7 +43,7 @@ exports = module.exports = grunt => {
     copy: {
       maven: {
         src: 'target/Ducky*.jar',
-        dest: 'src/main/javascript/bot/Ducky.jar'
+        dest: 'src/main/javascript/bot/Ducky-Mc-Duckerson.jar'
       }
     },
 

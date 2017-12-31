@@ -68,13 +68,15 @@ public class McDucky {
             return;
         }
 
+
         // now the database
         final File databaseFile = new File(config.databaseName + ".db");
-        if (!databaseFile.exists()) setupTables();
-
+        boolean newDatabase = false;
+        if (!databaseFile.exists()) newDatabase = true;
         final String url = String.format("%s:%s:%s", McDucky.DB_DRIVER, McDucky.DB_TYPE, databaseFile.getAbsolutePath());
         databaseConnection = DriverManager.getConnection(url);
-        setupTables();
+
+        if (newDatabase) setupTables();
 
         if (shutdown) {
             databaseManager = null;
@@ -141,19 +143,7 @@ public class McDucky {
         // TODO SLF4J in general (Logging)
         try {
             new McDucky();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (UndefinedTokenException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        } catch (LoginException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (RateLimitedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -163,39 +153,16 @@ public class McDucky {
      *
      * @throws SQLException If an error occurs when setting up the tables
      */
-    private void setupTables() throws SQLException {
+    private void setupTables() throws SQLException, IOException {
         Reader fileReader;
 
         // Try to open the file into a fileStream (Reader in Java).
-        try {
-            fileReader = new InputStreamReader(McDucky.class.getResourceAsStream("/" + DB_FILE));
-        } catch (Exception ex) {
-            ex.fillInStackTrace();
-            ex.printStackTrace();
-
-            throw new SQLException("Unable to open the sql file.");
-        }
+        fileReader = new InputStreamReader(McDucky.class.getResourceAsStream("/" + DB_FILE));
 
         // Try to run the script using the script runner class we created.
-        try {
-            ScriptRunner sqlScriptRunner = new ScriptRunner(databaseConnection, true);
-            sqlScriptRunner.runScript(fileReader);
-            System.out.printf("Default database tables have been created.\n");
-        } catch (SQLException ex) {
-            // Rethrow SQLExceptions for later catching.
-            throw ex;
-        } catch (Exception ex) {
-            // If any exotic exception occurred, print stack to console
-            ex.fillInStackTrace();
-            ex.printStackTrace();
-        } finally {
-            // Gotta clean up after our selves
-            try {
-                fileReader.close();
-            } catch (Exception ex) {
-                // Safe to ignore, should only throw an error if the file handle is NULL
-            }
-        }
+        ScriptRunner sqlScriptRunner = new ScriptRunner(databaseConnection, true);
+        sqlScriptRunner.runScript(fileReader);
+        System.out.println("Default database tables have been created.");
     }
 
 
