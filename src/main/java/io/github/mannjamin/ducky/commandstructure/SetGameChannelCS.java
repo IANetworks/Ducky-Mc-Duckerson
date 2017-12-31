@@ -55,6 +55,6 @@ public class SetGameChannelCS extends CommandStructure {
 
     @Override
     public String help(Long guildID, MessageChannel channel) {
-        return localize(channel, "command.set_game_channel.sucess.help");
+        return localize(channel, "command.set_game_channel.help");
     }
 }

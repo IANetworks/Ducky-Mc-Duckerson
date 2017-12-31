@@ -1,15 +1,14 @@
 package io.github.mannjamin.ducky.database.manager;
 
+import io.github.mannjamin.ducky.I18N;
+import io.github.mannjamin.ducky.database.manager.data.*;
 import io.github.mannjamin.ducky.items.Item;
 import io.github.mannjamin.ducky.items.ItemDatabase;
-import io.github.mannjamin.ducky.database.manager.data.*;
+import io.github.mannjamin.ducky.werewolf.data.Theme;
+import io.github.mannjamin.ducky.werewolf.data.ThemeDesc;
+import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.Role;
-import io.github.mannjamin.ducky.werewolf.data.Theme;
-import io.github.mannjamin.ducky.werewolf.data.ThemeDesc;
-import io.github.mannjamin.ducky.I18N;
-import net.dv8tion.jda.core.entities.*;
-import io.github.mannjamin.ducky.werewolf.data.Theme;
-import io.github.mannjamin.ducky.werewolf.data.ThemeDesc;
+import net.dv8tion.jda.core.entities.TextChannel;
 
 import java.sql.*;
 import java.util.*;
@@ -271,6 +270,39 @@ public class DatabaseManager {
 
         return null;
 
+    }
+
+    public Map<String, Map<Long, String>> getAliases() throws SQLException {
+        String sql = "SELECT * FROM aliases";
+        Statement stmt = conn.createStatement();
+        ResultSet result = stmt.executeQuery(sql);
+
+        Map<String, Map<Long, String>> aliases = new HashMap<>();
+        while (result.next()) {
+            String alias = result.getString("alias");
+            if (!aliases.containsKey(alias)) {
+                aliases.put(alias, new HashMap<>());
+            }
+            aliases.get(alias).put(result.getLong("guild_id"), result.getString("command"));
+        }
+        return aliases;
+    }
+
+    public void setAlias(Long guildID, String alias, String command) throws SQLException {
+        String sql = "INSERT INTO aliases (guild_id, alias, command) VALUES (?, ?, ?)";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setLong(1, guildID);
+        stmt.setString(2, alias);
+        stmt.setString(3, command);
+        stmt.execute();
+    }
+
+    public void removeAlias(Long guildID, String alias) throws SQLException {
+        String sql = "DELETE FROM aliases WHERE guild_id = ? AND alias = ?";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setLong(1, guildID);
+        stmt.setString(2, alias);
+        stmt.execute();
     }
 
     public Boolean isCooldownOver(Long guildID, Long userID) throws SQLException {
@@ -1980,12 +2012,88 @@ public class DatabaseManager {
     }
 
     public String getLocale(MessageChannel channel) {
-        if (!(channel instanceof TextChannel)) {
-            return "en_US";
+        String locale = I18N.DEFAULT_LOCALE;
+        long channelId = channel.getIdLong();
+
+        try {
+            String sql = "SELECT locale FROM locale_settings WHERE snowflake_id = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setLong(1, channelId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                locale = rs.getString("locale");
+            } else {
+                if (channel instanceof TextChannel) {
+                    // Try to fallback to guild settings
+                    long guildID = ((TextChannel) channel).getGuild().getIdLong();
+                    stmt = conn.prepareStatement(sql);
+                    stmt.setLong(1, guildID);
+                    rs = stmt.executeQuery();
+                    locale = rs.getString("locale");
+                }
+            }
+        } catch (SQLException e) {
+            new Exception("Failed to find locale", e).printStackTrace();
         }
-        // TODO: some way to load the locale from channel settings
-        long guildId = ((TextChannel)channel).getIdLong();
-        GuildSetting guildVals = getGuildValues(guildId);
-        return guildVals.getLocale();
+
+        return locale;
+    }
+
+    public void setLocaleForGuild(long guildID, String locale) throws SQLException {
+        String sql = "SELECT locale FROM locale_settings WHERE snowflake_id = ?";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setLong(1, guildID);
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            // setting for this guild already exists
+            String oldLocale = rs.getString("locale");
+            if (!oldLocale.equals(locale)) {
+                // Update
+                sql = "UPDATE locale_settings SET locale = ? WHERE snowflake_id = ?";
+                stmt = conn.prepareStatement(sql);
+                stmt.setString(1, locale);
+                stmt.setLong(2, guildID);
+                stmt.execute();
+            } // else: no action needed
+        } else {
+            // Create entry
+            sql = "INSERT INTO locale_settings (snowflake_id, locale) VALUES (?, ?)";
+            stmt = conn.prepareStatement(sql);
+            stmt.setLong(1, guildID);
+            stmt.setString(2, locale);
+            stmt.execute();
+        }
+    }
+
+    public void setLocaleForChannel(TextChannel channel, String locale) throws SQLException {
+        long guildID = channel.getGuild().getIdLong();
+        long channelID = channel.getIdLong();
+
+        String sql = "SELECT locale FROM locale_settings WHERE snowflake_id = ?";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setLong(1, channelID);
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            // setting for this channel already exists
+            String oldLocale = rs.getString("locale");
+            if (!oldLocale.equals(locale)) {
+                // Update
+                sql = "UPDATE locale_settings SET locale = ? WHERE snowflake_id = ?";
+                stmt = conn.prepareStatement(sql);
+                stmt.setString(1, locale);
+                stmt.setLong(2, channelID);
+                stmt.execute();
+            } // else: no action needed
+        } else {
+            // Create entry
+            sql = "INSERT INTO locale_settings (snowflake_id, locale) VALUES (?, ?)";
+            stmt = conn.prepareStatement(sql);
+            stmt.setLong(1, channelID);
+            stmt.setString(2, locale);
+            stmt.execute();
+        }
     }
 }

@@ -1,5 +1,6 @@
-# App Configuration
+# App Configuration (old + new)
 config.properties
+/config.json
 
 # Project Configuration
 *.iml

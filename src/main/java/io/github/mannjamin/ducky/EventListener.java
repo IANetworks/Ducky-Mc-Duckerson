@@ -1,9 +1,11 @@
 package io.github.mannjamin.ducky;
 
+import io.github.mannjamin.ducky.commandstructure.*;
 import io.github.mannjamin.ducky.database.manager.DatabaseManager;
 import io.github.mannjamin.ducky.eventmanager.EventManager;
 import io.github.mannjamin.ducky.items.ItemDatabase;
-import io.github.mannjamin.ducky.commandstructure.*;
+import io.github.mannjamin.ducky.werewolf.GameState;
+import io.github.mannjamin.ducky.werewolf.Werewolf;
 import io.socket.client.Socket;
 import net.dv8tion.jda.bot.entities.ApplicationInfo;
 import net.dv8tion.jda.core.JDA;
@@ -18,8 +20,6 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.requests.RestAction;
-import io.github.mannjamin.ducky.werewolf.GameState;
-import io.github.mannjamin.ducky.werewolf.Werewolf;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -138,11 +138,27 @@ public class EventListener extends ListenerAdapter {
         setupCommand(new ListUserInvCS(container, "inv", 37, 999));
         setupCommand(new UseItemCS(container, "use_item", 38, 999));
         setupCommand(new RemoveSelfRolesCS(container, "iamnot", 39, 999));
-      setupCommand(new NewProfileCS(container, "new_profile", 40, 999));
+        setupCommand(new NewProfileCS(container, "new_profile", 40, 999));
+        setupCommand(new AliasCS(container, "alias", 40, 1, 41, 999));
+        setupCommand(new SetChannelLocaleCS(container, "set_language", 42, 999));
 
 
         //********* PrivateMessage Commands *********//
         setupPrivateCommand(new WerewolfSeeCS(container, "see", 19, 999));
+
+
+        // Setup aliases
+        try {
+            dbMan.getAliases().forEach((alias, mapping) -> {
+                AliasMappingCS command = new AliasMappingCS(container, alias, 41, 999);
+                mapping.forEach((guildID, commandName) -> {
+                    command.commandMapping.put(guildID, cmdList.get(commandName));
+                });
+                setupCommand(command);
+            });
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -239,7 +255,7 @@ public class EventListener extends ListenerAdapter {
         //Check to make sure our commands are setup (async can be a bitch)
 
         //Check Prefix
-        if (msg.length() > 0) {
+        if (msg.length() > 0 && msg.length() > guildPrefix.length()) {
             String msgPrefix = msg.substring(0, guildPrefix.length());
             String msgFullCommand = msg.substring(guildPrefix.length()).toLowerCase();
             String msgCommand = msgFullCommand.split(" ", 2)[0];
@@ -252,8 +268,8 @@ public class EventListener extends ListenerAdapter {
                     if (cmdList.containsKey(msgCommand)) {
                         Integer cmdCharCount = guildPrefix.length() + msgCommand.length();
                         String parameters = msg.substring(cmdCharCount);
-                      CommandStructure callCommand = cmdList.get(msgCommand);
-                      callCommand.execute(author, channel, message, parameters, cmdList);
+                        CommandStructure callCommand = cmdList.get(msgCommand);
+                        callCommand.execute(author, channel, message, parameters, cmdList);
 
                         if (deleteCommand(guildID)) {
                           if (callCommand.commandID != 40)

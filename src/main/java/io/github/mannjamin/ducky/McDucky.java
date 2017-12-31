@@ -5,6 +5,9 @@ package io.github.mannjamin.ducky;
 import io.github.mannjamin.ducky.database.manager.DatabaseManager;
 import io.github.mannjamin.ducky.eventmanager.ConsoleMessage;
 import io.github.mannjamin.ducky.eventmanager.EventConnect;
+import io.github.mannjamin.ducky.util.ConfigUtil;
+import io.github.mannjamin.ducky.util.Configuration;
+import io.github.mannjamin.ducky.util.UndefinedTokenException;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import net.dv8tion.jda.core.AccountType;
@@ -21,150 +24,102 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Properties;
+import java.util.Scanner;
 
 /**
- * The type Mc ducky.
- * <p>
  * The Main class
  */
 public class McDucky {
-    /**
-     * The Conn.
-     */
-    Connection conn = null;
-    //Contains private keys, for bot Tokens, Database and other configs
-    private File configFile = new File("config.properties");
-    private Properties configProps;
-    private EventListener eventListener;
+    private static final String DB_DRIVER = "jdbc";
+    private static final String DB_TYPE = "sqlite";
+    private static final String DB_FILE = "duckyDB.sql";
+
+    private final EventListener eventListener;
+    private final Configuration config;
+    private final Connection databaseConnection;
+    private final DatabaseManager databaseManager;
+    private static Socket socket = null;
+    private static JDA jda = null;
+    private static boolean shutdown = false;
 
     /**
-     * Instantiates a new Mc ducky.
+     * Creates a new instance of the bot
+     *
+     * @throws IOException             The file system failed during setup
+     * @throws UndefinedTokenException The bot's token was not defined
+     * @throws SQLException            The connection to the database fails
+     * @throws URISyntaxException      Socket connection URI could not be built
+     * @throws LoginException          The bot could not log into the Discord gateway
+     * @throws InterruptedException    The bot was interrupted during login
+     * @throws RateLimitedException    The bot was rate-limited by the Discord gateway
      */
-//Our setup. My god, Abby is terrible at commenting
-    public McDucky() {
+    public McDucky() throws IOException, UndefinedTokenException, SQLException, URISyntaxException,
+        LoginException, InterruptedException, RateLimitedException {
+        // I basically rewrote this file because this method of constructor is a memory leak.
+        // the constructor should not be permitted to initialize an object nor continue if it
+        // has failed at some point. As such, the exceptions have been added to the method signature.
 
-        //Load properties from file
-        try {
-            loadProperties();
-        } catch (IOException ex) {
-            System.out.printf("there's no config file, creating file.");
-            try {
-                setupProperties();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            //Alert the user that, hey, we need values to run.
-            System.out.printf("Set values in config.propteries before running bot.");
-            return;
-
-        }
-
-        //Load Config Values into program memory
-        String botToken = configProps.getProperty("bot_token"); //Bot Token that is used to log into Discord
-        String databaseName = configProps.getProperty("database_name", "default"); //Database Name
-        String botAdmin = configProps.getProperty("bot_admin"); //In case Bot Owner is different from the creator of the bot token, this is rare but in the program creator situation this has happened.
-        DatabaseManager dbMan = null;
-
-//		int debugLevel;
-//		try {
-//			 debugLevel = Integer.parseInt(configProps.getProperty("debug_level"));
-//		} catch (NumberFormatException e)
-//		{
-//			System.out.printf("debug_level is not a valid number. switching to debug off\n");
-//			debugLevel = 0;
-//		}
-//		DebugLevel dbug = DebugLevel.getDebugLevel(debugLevel);
-
-
-        //Let make sure we don't have an empty value
-        if (botToken.isEmpty()) {
-            //We GOT to have this value
-            System.out.printf("Bot Token Cannot be empty. Set bot token in the config.properties\n");
+        // start by loading the config
+        config = ConfigUtil.getConfiguration();
+        if (shutdown) {
+            databaseManager = null;
+            databaseConnection = null;
+            eventListener = null;
             return;
         }
 
-        String fileName = databaseName + ".db";
-        //We'll check to see if our database exisit or not, if doesn't we need to make sure the tables are setup.
-        final File dbFile = new File(fileName);
-        boolean dbExists = dbFile.exists();
 
-        //connect to our Database
+        // now the database
+        final File databaseFile = new File(config.databaseName + ".db");
+        boolean newDatabase = false;
+        if (!databaseFile.exists()) newDatabase = true;
+        final String url = String.format("%s:%s:%s", McDucky.DB_DRIVER, McDucky.DB_TYPE, databaseFile.getAbsolutePath());
+        databaseConnection = DriverManager.getConnection(url);
 
-        try {
-            String url = "jdbc:sqlite:" + fileName;
-            conn = DriverManager.getConnection(url);
-            System.out.printf("Connection to SQLite database: %s has been established.\n", databaseName);
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
+        if (newDatabase) setupTables();
+
+        if (shutdown) {
+            databaseManager = null;
+            eventListener = null;
+            databaseConnection.close();
+            return;
         }
 
-        if (!dbExists) {
-            try {
-                setupTables();
-            } catch (SQLException e) {
-                // Destory the database so that it'll reset up the bot next time
-                dbFile.delete();
-                e.printStackTrace();
-                return;
-            }
+        databaseManager = new DatabaseManager(databaseConnection);
+
+        // now for the socket
+        final URI uri = new URI(String.format("http://%s:%d", config.socketHost, config.socketPort));
+        socket = IO.socket(uri);
+
+        eventListener = new EventListener(databaseManager, config.admin, socket);
+        //if(shutdown) return;
+        jda = new JDABuilder(AccountType.BOT)
+            .setToken(config.token)
+            .addEventListener(eventListener)
+            .buildBlocking();
+
+        if (shutdown) {
+            jda.shutdown();
+            return;
+        }
+        socket.on(Socket.EVENT_CONNECT, new EventConnect(socket, eventListener));
+
+        // lastly, some debug stuff
+        // I think...
+        final List<TextChannel> textChannelList = jda.getTextChannelsByName("programming-geek", false);
+        if (!textChannelList.isEmpty()) {
+            final TextChannel channel = textChannelList.get(0);
+            System.out.println("Ducky: listening to consoleMessages");
+            socket.on("consoleMessage", new ConsoleMessage(socket, eventListener, channel));
         }
 
-        //We setup a class for managing database infomation
-        try {
-            dbMan = new DatabaseManager(conn);
-        } catch (SQLException e1) {
-            e1.printStackTrace();
+        // now connect
+        socket.connect();
+
+        if (shutdown) {
+            jda.shutdown();
+            socket.disconnect();
         }
-
-        //We construct a builder for a BOT account. If we wanted to use a CLIENT account
-        // we would use AccountType.CLIENT
-        try {
-            //debugListener = new DebugListener(dbug);
-            Socket socket = IO.socket("http://localhost:8080");
-            eventListener = new EventListener(dbMan, botAdmin, socket);
-            JDA jda = new JDABuilder(AccountType.BOT)
-                .setToken(botToken)  //The token of the account that is logging in.
-                .addEventListener(eventListener)  //An instance of a class that will handle events.
-                .buildBlocking();  //There are 2 ways to login, blocking vs async. Blocking guarantees that JDA will be completely loaded.
-            List<TextChannel> listTextChannel = jda.getTextChannelsByName("programming-geek", false);
-            TextChannel channel;
-            socket.on(Socket.EVENT_CONNECT, new EventConnect(socket, eventListener));
-            if (!listTextChannel.isEmpty()) {
-                channel = listTextChannel.get(0);
-                System.out.println("Ducky: listening to consoleMessages");
-                socket.on("consoleMessage", new ConsoleMessage(socket, eventListener, channel));
-            } else {
-                System.out.println("Ducky: not listening for consoleMessage");
-            }
-
-            socket.connect();
-
-
-            //String eventShutDown = "{\"event\":\"botShutDown\"}";
-            //System.out.println(eventShutDown);
-
-        } catch (LoginException e) {
-            //If anything goes wrong in terms of authentication, this is the exception that will represent it
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            //Due to the fact that buildBlocking is a blocking method, one which waits until JDA is fully loaded,
-            // the waiting can be interrupted. This is the exception that would fire in that situation.
-            //As a note: in this extremely simplified example this will never occur. In fact, this will never occur unless
-            // you use buildBlocking in a thread that has the possibility of being interrupted (async thread usage and interrupts)
-            e.printStackTrace();
-        } catch (RateLimitedException e) {
-            //The login process is one which can be ratelimited. If you attempt to login in multiple times, in rapid succession
-            // (multiple times a second), you would hit the ratelimit, and would see this exception.
-            //As a note: It is highly unlikely that you will ever see the exception here due to how infrequent login is.
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-
 
     }
 
@@ -174,73 +129,40 @@ public class McDucky {
      * @param args the input arguments
      */
     public static void main(String[] args) {
-        new McDucky();
-    }
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            System.out.println("shutting down...");
+            // do things on shut down here
+            shutdown = true;
+            if (jda != null)
+                jda.shutdown();
+            if (socket != null)
+                socket.close();
+        }));
 
-    private void loadProperties() throws IOException {
-        configProps = new Properties();
-
-        // loads properties from file
-        InputStream inputStream = new FileInputStream(configFile);
-        configProps.load(inputStream);
-        inputStream.close();
-    }
-
-    private void setupProperties() throws IOException {
-        //List all the config we need to successful run this bot
-        configProps.setProperty("bot_token", "");
-        configProps.setProperty("debug_level", "0"); //Set to Off
-        configProps.setProperty("database_name", "default");
-
-        //Save to file
-        OutputStream outputStream = new FileOutputStream(configFile);
-        configProps.store(outputStream, "Set your configs here");
-        outputStream.close();
+        // FIXME Somebody should put some proper logging down here
+        // TODO SLF4J in general (Logging)
+        try {
+            new McDucky();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
      * Setup Tables for the first time, to make sure we always have the correct tables upon run
      *
-     * @throws SQLException
+     * @throws SQLException If an error occurs when setting up the tables
      */
-    private void setupTables() throws SQLException {
-        //Shouldn't happen but let make sure we have conn
-        if (conn == null) //ERROR ERROR WILL ROBINSON
-            throw new SQLException("SQL connection failed.");
-
+    private void setupTables() throws SQLException, IOException {
         Reader fileReader;
 
         // Try to open the file into a fileStream (Reader in Java).
-        try {
-            URI sqlFile = getClass().getClassLoader().getResource("duckyDB.sql").toURI();
-            fileReader = new FileReader(new File(sqlFile));
-        } catch (Exception ex) {
-            ex.fillInStackTrace();
-            ex.printStackTrace();
-
-            throw new SQLException("Unable to open the sql file.");
-        }
+        fileReader = new InputStreamReader(McDucky.class.getResourceAsStream("/" + DB_FILE));
 
         // Try to run the script using the script runner class we created.
-        try {
-            ScriptRunner sqlScriptRunner = new ScriptRunner(conn, true);
-            sqlScriptRunner.runScript(fileReader);
-            System.out.printf("Default database tables have been created.\n");
-        } catch (SQLException ex) {
-            // Rethrow SQLExceptions for later catching.
-            throw ex;
-        } catch (Exception ex) {
-            // If any exotic exception occurred, print stack to console
-            ex.fillInStackTrace();
-            ex.printStackTrace();
-        } finally {
-            // Gotta clean up after our selves
-            try {
-                fileReader.close();
-            } catch (Exception ex) {
-                // Safe to ignore, should only throw an error if the file handle is NULL
-            }
-        }
+        ScriptRunner sqlScriptRunner = new ScriptRunner(databaseConnection, true);
+        sqlScriptRunner.runScript(fileReader);
+        System.out.println("Default database tables have been created.");
     }
 
 
