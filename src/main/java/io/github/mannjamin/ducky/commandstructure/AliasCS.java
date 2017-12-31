@@ -1,8 +1,10 @@
 package io.github.mannjamin.ducky.commandstructure;
 
 import io.github.mannjamin.ducky.SharedContainer;
-import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.entities.impl.EmoteImpl;
+import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.MessageChannel;
+import net.dv8tion.jda.core.entities.User;
 
 import java.sql.SQLException;
 import java.util.Map;
@@ -110,8 +112,8 @@ public class AliasCS extends CommandStructure {
         }
     }
 
-  @Override
-  public String help(Long guildID, MessageChannel channel) {
-      return localize(channel, "command.alias.help", dbMan.getPrefix(guildID) + commandName);
-  }
+    @Override
+    public String help(Long guildID, MessageChannel channel) {
+        return localize(channel, "command.alias.help", dbMan.getPrefix(guildID) + commandName);
+    }
 }
