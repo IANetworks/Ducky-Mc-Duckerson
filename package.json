@@ -17,6 +17,7 @@
     "Matthew Struble <matt@vevox.io> [CynicalBusiness]"
   ],
   "license": "GPL-3.0",
+  "@std/esm": "js",
   "private": true,
   "bugs": {
     "url": "https://github.com/IANetworks/Ducky-Mc-Duckerson/issues"
@@ -30,5 +31,8 @@
     "grunt-todo": "^0.5.0",
     "load-grunt-tasks": "^3.5.2",
     "time-grunt": "^1.4.0"
+  },
+  "dependencies": {
+    "@std/esm": "^0.18.0"
   }
 }
