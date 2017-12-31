@@ -1,12 +1,12 @@
 package io.github.mannjamin.ducky;
 
 import io.github.mannjamin.ducky.database.manager.DatabaseManager;
-import net.dv8tion.jda.core.entities.ISnowflake;
 import net.dv8tion.jda.core.entities.MessageChannel;
-import net.dv8tion.jda.core.entities.TextChannel;
 
-import java.io.*;
-import java.text.DateFormat;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -16,38 +16,42 @@ public class I18N {
     /**
      * The name of the language and locale, ie. "English (US)"
      */
-    private static final String KEY_LOCALE_NAME = "meta.locale.this";
+    public static final String KEY_LOCALE_NAME = "meta.locale.this";
     /**
      * If a locale specifies a fallback locale, missing keys will be looked up in the fallback.
      */
-    private static final String KEY_FALLBACK_LOCALE = "meta.fallbackLocale";
+    public static final String KEY_FALLBACK_LOCALE = "meta.fallbackLocale";
 
     /**
      * Date format according to {@link java.time.format.DateTimeFormatter}.
      */
-    private static final String KEY_DATE_FORMAT = "meta.dateFormat";
+    public static final String KEY_DATE_FORMAT = "meta.dateFormat";
 
     /**
      * Time format according to {@link java.time.format.DateTimeFormatter}.
      */
-    private static final String KEY_TIME_FORMAT = "meta.timeFormat";
+    public static final String KEY_TIME_FORMAT = "meta.timeFormat";
 
     /**
      * Datetime format according to {@link java.time.format.DateTimeFormatter}.
      */
-    private static final String KEY_DATETIME_FORMAT = "meta.datetimeFormat";
+    public static final String KEY_DATETIME_FORMAT = "meta.datetimeFormat";
 
     /**
      * The default fallback locale, used if the locale does not define a fallback locale or the defined
      * fallback locale cannot be found
      */
-    private static final String ROOT_LOCALE = "en";
+    public static final String ROOT_LOCALE = "en";
     /**
      * The default locale
      */
-    private static final String DEFAULT_LOCALE = "en_US";
+    public static final String DEFAULT_LOCALE = "en_US";
+
+    private static final String I18N_DIR = "i18n";
 
     private Map<String, Properties> loadedLocales;
+
+    private String[] languageFiles = null;
 
     private static I18N instance = null;
 
@@ -111,16 +115,36 @@ public class I18N {
         if (i18n == null) {
             i18n = new Properties();
             try {
-                InputStream in = this.getClass().getClassLoader().getResourceAsStream(locale + ".lang");
+                InputStream in = null;
+                for (String langFile : getLanguageFiles()) {
+                    if (langFile.equalsIgnoreCase(locale + ".lang")) {
+                        in = this.getClass().getClassLoader().getResourceAsStream(I18N_DIR + File.separator + langFile);
+                    }
+                }
                 if (in == null) {
                     throw new IOException("Failed loading properties for locale " + locale);
                 }
                 i18n.load(in);
             } catch (IOException e) {
                 System.out.println("Failed loading properties for locale " + locale);
+                return i18n;
             }
             loadedLocales.put(locale, i18n);
         }
         return i18n;
+    }
+
+    private String[] getLanguageFiles() {
+        if (languageFiles == null) {
+            try {
+                File langDir = new File(this.getClass().getClassLoader().getResource(I18N_DIR).toURI());
+                languageFiles = langDir.list();
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+                languageFiles = new String[0];
+            }
+            System.out.println("Found language files: " + Arrays.toString(languageFiles));
+        }
+        return languageFiles;
     }
 }
