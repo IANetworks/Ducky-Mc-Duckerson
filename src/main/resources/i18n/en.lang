@@ -160,7 +160,7 @@ command.set_game_channel.error.channel_not_found = There's no channels by that n
 command.set_game_channel.error.ambiguous_channel = There's many channels by that name, narrow the game channel.
 command.set_game_channel.error.sql = Unhandled booboo, contact Mistress
 command.set_game_channel.success = %s has been set as %s's Game Channel.
-command.set_game_channel.sucess.help = Set a game channel for server. This need to be set before any games can run.
+command.set_game_channel.help = Set a game channel for server. This need to be set before any games can run.
 
 command.start_event.help = Fetch any events happening today
 
