@@ -2,6 +2,15 @@ const express = require('express')
 const app = express()
 var http = require('http').Server(app)
 var io = require('socket.io')(http)
+const fs = require('fs')
+
+let port = 3000
+try {
+    fs.statSync('../config.json')
+    port = require('../config.json').socket.port
+} catch (e) {
+    if (!e.message.startsWith('ENOENT')) throw e
+}
 
 app.get('/', (req, res) => {
     res.send('Hello squirrels')
@@ -31,7 +40,7 @@ io.on('connection', function(socket){
     })
 })
 
-http.listen(8080, () => console.log('App listening at port 8080! Cause I BE BUNNY!'))
+http.listen(port, () => console.log('App listening at port ' + port + '! Cause I BE BUNNY!'))
 
 //process.on('message', (thisMessage) => messageRecieved)
 
