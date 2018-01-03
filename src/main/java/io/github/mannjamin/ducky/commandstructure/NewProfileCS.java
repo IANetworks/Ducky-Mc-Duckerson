@@ -30,6 +30,7 @@ import java.util.Objects;
 public class NewProfileCS extends CommandStructure {
 
     private final String BACKGROUND_000 = "/profile/profile_background000.png";
+    private final String MONEY_BAG = "/profile/moneybag.png";
 
     /**
      * Instantiates a new Profile cs.
@@ -89,7 +90,6 @@ public class NewProfileCS extends CommandStructure {
     private boolean sendProfile(Member member, MessageChannel channel, String prefix, String userLevelName, Member requestedBy) {
         try {
             URL avatarURL = new URL(member.getUser().getAvatarUrl());
-            BufferedImage avatar = getAvatar(avatarURL);
             String nickname = member.getEffectiveName();
             UserProfile up;
             up = dbMan.getUserProfile(member.getGuild().getIdLong(), member.getUser().getIdLong());
@@ -128,12 +128,15 @@ public class NewProfileCS extends CommandStructure {
                 title = "1";
             }
 
+
+            //Get Avatar and Background
+            BufferedImage profileBackgroundImg = ImageIO.read(McDucky.class.getResourceAsStream(BACKGROUND_000));
+            BufferedImage moneyBag = ImageIO.read(McDucky.class.getResourceAsStream(MONEY_BAG));
+            BufferedImage profileImg = new BufferedImage(profileBackgroundImg.getWidth(), profileBackgroundImg.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            BufferedImage avatar = getAvatar(avatarURL);
             if (avatar == null) {
                 return false;
             }
-            //Get Avatar and Background
-            BufferedImage profileBackgroundImg = ImageIO.read(McDucky.class.getResourceAsStream(BACKGROUND_000));
-            BufferedImage profileImg = new BufferedImage(profileBackgroundImg.getWidth(), profileBackgroundImg.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
             //Start Canvas
             Graphics2D canvas = (Graphics2D) profileImg.getGraphics();
@@ -197,8 +200,9 @@ public class NewProfileCS extends CommandStructure {
 
             //TODO replace with an image of coin(s?)
             int curTagY = rankTagY + (int) Math.floor(rankTag.getHeight());
-            Rectangle2D curTag = fontMetrics.getStringBounds("Coins :", canvas);
-            testMaxStatTagWidth = (int) Math.floor(curTag.getWidth()) + padding;
+            int imgCurTagY = curTagY - 15;
+            Rectangle2D curTag = fontMetrics.getStringBounds(" :", canvas);
+            testMaxStatTagWidth = (int) curTag.getWidth() + padding;
             maxStatTagWidth = Math.max(testMaxStatTagWidth, maxStatTagWidth);
 
             int tableFlipTagY = curTagY + (int) Math.floor(rankTag.getHeight());
@@ -212,7 +216,8 @@ public class NewProfileCS extends CommandStructure {
             maxStatTagWidth = Math.max(testMaxStatTagWidth, maxStatTagWidth);
 
             int rankTagX = maxStatTagWidth - (int) Math.floor(rankTag.getWidth());
-            int curTagX = maxStatTagWidth - (int) Math.floor(curTag.getWidth());
+            int curTagX = maxStatTagWidth - (int) curTag.getWidth();
+            int imgCurTagX = maxStatTagWidth - (moneyBag.getWidth() + (int) curTag.getWidth());
             int tableFlipTagX = maxStatTagWidth - (int) Math.floor(flipTag.getWidth());
             int unFlipTableTagX = maxStatTagWidth - (int) Math.floor(unflipTag.getWidth());
 
@@ -265,6 +270,7 @@ public class NewProfileCS extends CommandStructure {
             canvas.fillRoundRect(centerXNameTagBG, gameTagYBG, nameTagBackgroundWidth, gameTagBackgroundHeight, 3, 3);
             //Images
             canvas.drawImage(avatar, rightJustifiedAvatar, heightDropAvatar, null);
+            canvas.drawImage(moneyBag, imgCurTagX, imgCurTagY, null);
 
             canvas.setColor(Color.BLACK);
             //Font Size 19
@@ -277,7 +283,7 @@ public class NewProfileCS extends CommandStructure {
             //Font Size 12
             canvas.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 12));
             canvas.drawString("Rank :", rankTagX, rankTagY);
-            canvas.drawString("Coins :", curTagX, curTagY);
+            canvas.drawString(" :", curTagX, curTagY);
             canvas.drawString(tableFlipStr + " :", tableFlipTagX, tableFlipTagY);
             canvas.drawString(unflipStr + " :", unFlipTableTagX, unFlipTableTagY);
             canvas.drawString("Werewolf :", werewolfTagX, werewolfTagY);
@@ -285,7 +291,7 @@ public class NewProfileCS extends CommandStructure {
             canvas.drawString("Points :", pointGameTagX, pointGameTagY);
             //Font plain text - 12
             canvas.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
-            canvas.drawString(rankName + " (" + rankExpTotal + ")", realStatX, rankTagY);
+            canvas.drawString(rankName + " (" + rankExpTotal + " exp)", realStatX, rankTagY);
             canvas.drawString(balance, realStatX, curTagY);
             canvas.drawString(tableFlip, realStatX, tableFlipTagY);
             canvas.drawString(tableUnflip, realStatX, unFlipTableTagY);
