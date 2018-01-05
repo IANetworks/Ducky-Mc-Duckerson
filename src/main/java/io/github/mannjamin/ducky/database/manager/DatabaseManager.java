@@ -212,11 +212,11 @@ public class DatabaseManager {
             up.setRank(rs.getInt("rank"));
             up.setFlipped(rs.getLong("flipped"));
             up.setUnflipped(rs.getLong("unflipped"));
-            up.setLevel(rs.getLong("level"));
+            up.setLevel(rs.getInt("level"));
             up.setWerewolfWins(rs.getLong("werewolf_wins"));
             up.setWerewolfGames(rs.getLong("werewolf_games"));
             up.setRankName(rs.getString("rank_name"));
-            up.setRankExp(rs.getLong("rank_exp"));
+            up.setRankExp(rs.getInt("rank_exp"));
             if (rs.wasNull()) {
                 up.setRankExp(null);
             }
@@ -439,7 +439,7 @@ public class DatabaseManager {
         ResultSet rs = pstmt.executeQuery();
         while (rs.next()) {
             newRank.rank = newTotal;
-            newRank.expRequired = rs.getLong("rank_exp");
+            newRank.expRequired = rs.getInt("rank_exp");
             if (rs.wasNull())
                 newRank.expRequired = null;
             newRank.rankName = rs.getString("rank_name");
@@ -457,10 +457,10 @@ public class DatabaseManager {
      * @param value   the value
      * @throws SQLException the sql exception
      */
-    public LinkedList<RankUp> addUserExp(Long guildID, Long userID, Long value) throws SQLException {
+    public LinkedList<RankUp> addUserExp(Long guildID, Long userID, Integer value) throws SQLException {
         UserProfile up = getUserProfile(guildID, userID);
-        Long newTotal = up.getLevel() + value;
-        Long expNeeded = up.getRankExp();
+        Integer newTotal = up.getExpGained() + value;
+        Integer expNeeded = up.getRankExp();
         LinkedList<RankUp> newRanks = new LinkedList<RankUp>();
 
         while (newTotal >= expNeeded) {
@@ -609,7 +609,7 @@ public class DatabaseManager {
      */
     public void remUserLevel(Long guildID, Long userID, Long value) throws SQLException {
         UserProfile up = getUserProfile(guildID, userID);
-        Long newTotal = up.getLevel() - value;
+        Long newTotal = up.getExpGained() - value;
 
         String sql = "UPDATE user_profile SET level = ? WHERE guild_id = ? AND user_id = ?";
         PreparedStatement pstmt = conn.prepareStatement(sql);

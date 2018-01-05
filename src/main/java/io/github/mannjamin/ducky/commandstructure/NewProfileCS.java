@@ -3,7 +3,6 @@ package io.github.mannjamin.ducky.commandstructure;
 import io.github.mannjamin.ducky.McDucky;
 import io.github.mannjamin.ducky.SharedContainer;
 import io.github.mannjamin.ducky.database.manager.data.UserProfile;
-import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
@@ -14,12 +13,9 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.sql.SQLException;
-import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -31,6 +27,7 @@ public class NewProfileCS extends CommandStructure {
 
     private final String BACKGROUND_000 = "/profile/profile_background000.png";
     private final String MONEY_BAG = "/profile/moneybag.png";
+    //private final String FONT_VOLT = "/profile/font/voltaire.ttf";
 
     /**
      * Instantiates a new Profile cs.
@@ -105,12 +102,18 @@ public class NewProfileCS extends CommandStructure {
             //TODO TotalGames/TotalGamesWon
             String totalWins = up.getGameWins().toString();
             String totalGames = up.getTotalGames().toString();
-            String rankExp = up.getRankExp().toString();
+            String rankExpReq = up.getRankExp().toString();
             String rankExpTotal;
+            boolean maxRank;
             if (up.getRankExp() != null)
-                rankExpTotal = up.getLevel().toString() + " / " + rankExp;
-            else
-                rankExpTotal = up.getLevel().toString() + " / ∞";
+            {
+                rankExpTotal = up.getExpGained().toString() + " / " + rankExpReq;
+                maxRank = false;
+            }
+            else {
+                rankExpTotal = up.getExpGained().toString() + " / ∞";
+                maxRank = true;
+            }
             String points = up.getPoints().toString();
             String tableFlipStr = "(╯°□°）╯︵ ┻━┻";
             String unflipStr = "┬─┬\uFEFF ノ( ゜-゜ノ)";
@@ -129,14 +132,25 @@ public class NewProfileCS extends CommandStructure {
             }
 
 
-            //Get Avatar and Background
+            //Get Avatar, Font and Background (
+            //TODO Maybe wrap this up in a ResourceLoader since we don't need this every call
             BufferedImage profileBackgroundImg = ImageIO.read(McDucky.class.getResourceAsStream(BACKGROUND_000));
             BufferedImage moneyBag = ImageIO.read(McDucky.class.getResourceAsStream(MONEY_BAG));
             BufferedImage profileImg = new BufferedImage(profileBackgroundImg.getWidth(), profileBackgroundImg.getHeight(), BufferedImage.TYPE_INT_ARGB);
             BufferedImage avatar = getAvatar(avatarURL);
-            if (avatar == null) {
-                return false;
-            }
+            Font selectedFont = new Font("TimesRoman", Font.BOLD, 19);
+// Custom fonts
+//            try {
+//                GraphicsEnvironment ge =GraphicsEnvironment.getLocalGraphicsEnvironment();
+//                selectedFont = Font.createFont(Font.TRUETYPE_FONT, McDucky.class.getResourceAsStream(FONT_VOLT));
+//                ge.registerFont();
+//            } catch(IOException | FontFormatException e) {
+//                e.printStackTrace();
+//                return false;
+//            }
+//            if (avatar == null) {
+//                return false;
+//            }
 
             //Start Canvas
             Graphics2D canvas = (Graphics2D) profileImg.getGraphics();
@@ -144,7 +158,7 @@ public class NewProfileCS extends CommandStructure {
 
             //Get string size for NameTag
             canvas.setColor(Color.BLACK);
-            canvas.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 19));
+            canvas.setFont(selectedFont.deriveFont(Font.BOLD, 19));
             FontMetrics fontMetrics = canvas.getFontMetrics();
             Rectangle2D nameTag = fontMetrics.getStringBounds(nickname, canvas);
 
@@ -162,7 +176,7 @@ public class NewProfileCS extends CommandStructure {
             int nameTagY = padding;
 
             //TilteTag Location
-            canvas.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 10));
+            canvas.setFont(selectedFont.deriveFont(Font.BOLD, 10));
             fontMetrics = canvas.getFontMetrics();
             Rectangle2D titleTag = fontMetrics.getStringBounds(title, canvas);
             int nameTagBackgroundHeight = (int) Math.floor(titleTag.getHeight()) + (int) Math.floor(nameTag.getHeight()) + 10;
@@ -179,7 +193,7 @@ public class NewProfileCS extends CommandStructure {
             int guildNameX = (int) Math.round(profileBackgroundImg.getWidth() - guildNameTag.getWidth()) - padding;
 
             //Statistics location
-            canvas.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
+            canvas.setFont(selectedFont.deriveFont(Font.BOLD, 14));
             fontMetrics = canvas.getFontMetrics();
             Rectangle2D statTag = fontMetrics.getStringBounds("Statistic", canvas);
             int statTagYBG = heightDropAvatar + avatar.getHeight() - 2;
@@ -192,14 +206,27 @@ public class NewProfileCS extends CommandStructure {
             int testMaxStatTagWidth;
             int testMaxGameTagWidth;
             //RankTag Locations
-            canvas.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 12));
+            canvas.setFont(selectedFont.deriveFont(Font.BOLD, 12));
             fontMetrics = canvas.getFontMetrics();
             Rectangle2D rankTag = fontMetrics.getStringBounds("Rank :", canvas);
             int rankTagY = statTagYDrop + statTagBackgroundHeight + 5;
             maxStatTagWidth = (int) Math.floor(rankTag.getWidth()) + padding;
 
+            //Exp Bar
+            int expBarLength = 200;
+            int expBarHeight = (int) rankTag.getHeight();
+            int expBarY =  rankTagY + (int) Math.floor(rankTag.getHeight());
+            int expBarYReal = expBarY - 12;
+            int expBarFilledLength;
+            Double dExp = ((double)up.getExpGained()/(double)up.getRankExp());
+            if(!maxRank)
+                expBarFilledLength = (int)(dExp * expBarLength);
+            else {
+                expBarFilledLength = 200;
+            }
+
             //TODO replace with an image of coin(s?)
-            int curTagY = rankTagY + (int) Math.floor(rankTag.getHeight());
+            int curTagY = expBarY + expBarHeight;
             int imgCurTagY = curTagY - 15;
             Rectangle2D curTag = fontMetrics.getStringBounds(" :", canvas);
             testMaxStatTagWidth = (int) curTag.getWidth() + padding;
@@ -224,7 +251,7 @@ public class NewProfileCS extends CommandStructure {
             int realStatX = maxStatTagWidth + 5;
 
             //Games location
-            canvas.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
+            canvas.setFont(selectedFont.deriveFont(Font.BOLD, 14));
             fontMetrics = canvas.getFontMetrics();
             Rectangle2D gameTag = fontMetrics.getStringBounds("Games", canvas);
             int gameTagYBG = unFlipTableTagY + (int) unflipTag.getHeight() + 2;
@@ -233,7 +260,7 @@ public class NewProfileCS extends CommandStructure {
             int gameTagX = (int) Math.round((profileBackgroundImg.getWidth() - gameTag.getWidth()) / 2);
 
             //Games Stat
-            canvas.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 12));
+            canvas.setFont(selectedFont.deriveFont(Font.BOLD, 12));
             fontMetrics = canvas.getFontMetrics();
             Rectangle2D werewolfTag = fontMetrics.getStringBounds("Werewolf :", canvas);
 
@@ -268,20 +295,29 @@ public class NewProfileCS extends CommandStructure {
             canvas.fillRoundRect(centerXNameTagBG, nameTagY, nameTagBackgroundWidth, nameTagBackgroundHeight, 3, 3);
             canvas.fillRoundRect(centerXNameTagBG, statTagYBG, nameTagBackgroundWidth, statTagBackgroundHeight, 3, 3);
             canvas.fillRoundRect(centerXNameTagBG, gameTagYBG, nameTagBackgroundWidth, gameTagBackgroundHeight, 3, 3);
+
+            Color expBarBgColor = new Color(45, 45, 45);
+            Color expBarFilledColor = new Color(24, 206, 4);
+            canvas.setColor(expBarBgColor);
+            canvas.fillRoundRect(realStatX, expBarYReal, expBarLength, expBarHeight, 5, 5);
+            canvas.setColor(expBarFilledColor);
+            canvas.fillRoundRect(realStatX, expBarYReal, expBarFilledLength, expBarHeight, 5, 5);
+            //ExpBar
+
             //Images
             canvas.drawImage(avatar, rightJustifiedAvatar, heightDropAvatar, null);
             canvas.drawImage(moneyBag, imgCurTagX, imgCurTagY, null);
 
             canvas.setColor(Color.BLACK);
             //Font Size 19
-            canvas.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 19));
+            canvas.setFont(selectedFont.deriveFont(Font.BOLD, 19));
             canvas.drawString(nickname, centerXBackground, dropYNameTagBackground);
             //Font Size 14
-            canvas.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
+            canvas.setFont(selectedFont.deriveFont(Font.BOLD, 14));
             canvas.drawString("Statistic", statTagX, statTagYDrop);
             canvas.drawString("Games", gameTagX, gameTagYDrop);
             //Font Size 12
-            canvas.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 12));
+            canvas.setFont(selectedFont.deriveFont(Font.BOLD, 12));
             canvas.drawString("Rank :", rankTagX, rankTagY);
             canvas.drawString(" :", curTagX, curTagY);
             canvas.drawString(tableFlipStr + " :", tableFlipTagX, tableFlipTagY);
@@ -290,7 +326,7 @@ public class NewProfileCS extends CommandStructure {
             canvas.drawString("Total Games :", totalGamesTagX, totalGameTagY);
             canvas.drawString("Points :", pointGameTagX, pointGameTagY);
             //Font plain text - 12
-            canvas.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
+            canvas.setFont(selectedFont.deriveFont(Font.PLAIN, 12));
             canvas.drawString(rankName + " (" + rankExpTotal + " exp)", realStatX, rankTagY);
             canvas.drawString(balance, realStatX, curTagY);
             canvas.drawString(tableFlip, realStatX, tableFlipTagY);
@@ -300,7 +336,7 @@ public class NewProfileCS extends CommandStructure {
             canvas.drawString(points, realGamesX, pointGameTagY);
 
             //Font Size 10
-            canvas.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 10));
+            canvas.setFont(selectedFont.deriveFont(Font.BOLD, 10));
             canvas.drawString(userLevelName, userLevelX, userLevelY);
             canvas.drawString(guildName, guildNameX, userLevelY);
             if (hasTitle) {

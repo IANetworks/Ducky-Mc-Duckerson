@@ -1454,7 +1454,7 @@ public class Werewolf {
                         Instant gameFinished = Instant.now();
 
                         Long diffAsMinutes = ChronoUnit.MINUTES.between(gameStarted, gameFinished);
-                        Long totalExpGained = diffAsMinutes * 5;
+                        Integer totalExpGained = (int) (long)diffAsMinutes * 5;
                         gameChannelList.get(guildID).sendMessage("Players have gained " + totalExpGained.toString()).queue();
                         LinkedList<RankUp> rankUps = dbMan.addUserExp(guildID, thisPlayer.getUserID(), totalExpGained);
 

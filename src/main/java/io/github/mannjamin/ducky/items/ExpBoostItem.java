@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 
 public class ExpBoostItem extends Item {
-    private static Long expGain = 50L;
+    private static Integer expGain = 50;
 
     public ExpBoostItem(DatabaseManager dbMan, Integer invID) {
       this(dbMan, invID, null);

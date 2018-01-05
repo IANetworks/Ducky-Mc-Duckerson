@@ -80,7 +80,7 @@ public class ProfileCS extends CommandStructure {
             embed.setColor(color);
             embed.setAuthor(localize(channel, "command.profile.profile_of", member.getEffectiveName()), null, member.getUser().getAvatarUrl());
             embed.addField(localize(channel, "command.profile.rank"), up.getRankName(), false);
-            embed.addField(localize(channel, "command.profile.exp"), up.getLevel().toString(), true);
+            embed.addField(localize(channel, "command.profile.exp"), up.getExpGained().toString(), true);
             if (up.getRankExp() != null)
                 embed.addField(localize(channel, "command.profile.exp_required"), up.getRankExp().toString(), true);
             else

@@ -30,7 +30,7 @@ public class UserProfile {
     /**
      * The Level.
      */
-    private Long level;
+    private Integer level;
     /**
      * The Rank.
      */
@@ -51,7 +51,7 @@ public class UserProfile {
     /**
      * Experience needed to rank up
      */
-    private Long rankExp;
+    private Integer rankExp;
 
     /**
      * Cooldown for when the user next gain currency
@@ -177,7 +177,7 @@ public class UserProfile {
      *
      * @return the level
      */
-    public Long getLevel() {
+    public Integer getExpGained() {
         return level;
     }
 
@@ -186,7 +186,7 @@ public class UserProfile {
      *
      * @param level the level
      */
-    public void setLevel(long level) {
+    public void setLevel(Integer level) {
         this.level = level;
     }
 
@@ -224,11 +224,11 @@ public class UserProfile {
         this.werewolfGames = werewolfGames;
     }
 
-    public Long getRankExp() {
+    public Integer getRankExp() {
         return rankExp;
     }
 
-    public void setRankExp(Long rankExp) {
+    public void setRankExp(Integer rankExp) {
         this.rankExp = rankExp;
     }
 
