@@ -4,6 +4,8 @@
   "description": "Root package for Ducky bot",
   "main": "index.js",
   "scripts": {
+    "start": "NODE_ENV=production node index.js",
+    "debug": "node index.js",
     "test": "grunt test"
   },
   "repository": {
