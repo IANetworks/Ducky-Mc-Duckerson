@@ -74,6 +74,7 @@ public class McDucky {
         boolean newDatabase = false;
         if (!databaseFile.exists()) newDatabase = true;
         final String url = String.format("%s:%s:%s", McDucky.DB_DRIVER, McDucky.DB_TYPE, databaseFile.getAbsolutePath());
+        //System.out.println(url);
         databaseConnection = DriverManager.getConnection(url);
 
         if (newDatabase) setupTables();
@@ -88,7 +89,9 @@ public class McDucky {
         databaseManager = new DatabaseManager(databaseConnection);
 
         // now for the socket
-        final URI uri = new URI(String.format("http://%s:%d", config.socketHost, config.socketPort));
+        final String uriStr = String.format("http://%s:%d", config.socketHost.getHostAddress(), config.socketPort);
+        final URI uri = new URI(uriStr);
+        System.out.println(uriStr);
         socket = IO.socket(uri);
 
         eventListener = new EventListener(databaseManager, config.admin, socket);

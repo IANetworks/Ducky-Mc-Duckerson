@@ -2,6 +2,7 @@ package io.github.mannjamin.ducky.database.manager.data;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.Objects;
 
 import io.github.mannjamin.ducky.items.Item;
 
@@ -249,5 +250,15 @@ public class UserProfile {
 
     public Integer getItemCount() {
         return userInv.size();
+    }
+
+    public Long getGameWins() {
+        //TODO total Game Wins
+        return werewolfWins;
+    }
+
+    public Long getTotalGames() {
+        //TODO Total Games
+        return werewolfGames;
     }
 }
