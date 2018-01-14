@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link type="text/css" href="style.css">
+    <title>Abby's Test Socket.io</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="/style.css" />
+
+    <script defer
+      src="http://code.jquery.com/jquery-3.2.1.min.js"
+      integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+      crossorigin="anonymous"></script>
+    <script src="/index.js" defer></script>
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">Ducky Mc Duckerson</a>
+        </div>
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="#">Raw Log</a></li>
+          <li><a href="#">Actions Log (In Development)</a></li>
+          <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Options<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="#">Clear Logs (In Development)</a></li>
+              <li><a href="#">Save Logs (In Development)</a></li>
+            </ul>
+          </li>
+        </ul>
+        <!--In Development-->
+        <!--<ul class="nav navbar-nav navbar-right">-->
+          <!--<li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>-->
+          <!--<li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>-->
+        <!--</ul>-->
+      </div>
+    </nav>
+
+    <pre id="messages"></pre>
+
+    <form action="">
+        <input id="m" autocomplete="off"/>
+        <button>Send</button>
+    </form>
+  </body>
+</html>

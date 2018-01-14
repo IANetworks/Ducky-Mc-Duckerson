@@ -17,9 +17,7 @@ app.get('/', (req, res) => {
     process.send({event:'WebHit', data:{location:'Squirrel', file:'root'}})
 })
 
-app.get('/console', (req, res) => {
-    res.sendFile(__dirname + '/console.html')
-})
+app.use('/console', express.static(__dirname + '/console'))
 
 app.get('/goi', (req, res) => {
     res.send('Hello Gearheads, ready to fly by the seat of your pants? Also, bunny!')
@@ -43,4 +41,3 @@ io.on('connection', function(socket){
 http.listen(port, () => console.log('App listening at port ' + port + '! Cause I BE BUNNY!'))
 
 //process.on('message', (thisMessage) => messageRecieved)
-
