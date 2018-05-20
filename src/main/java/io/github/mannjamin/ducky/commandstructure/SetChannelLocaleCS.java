@@ -23,9 +23,8 @@ public class SetChannelLocaleCS extends CommandStructure {
         String locale = parameters.trim();
         if (locale.isEmpty() || locale.contains(" ")) {
             long guildID = author.getGuild().getIdLong();
-            channel.sendMessage(localize(channel, "command.set_language.error.sql")).queue();
-//            channel.sendMessage(localize(channel, "command.set_language.error.syntax",
-//                dbMan.getPrefix(guildID) + commandName)).queue();
+            channel.sendMessage(localize(channel, "command.set_language.error.syntax",
+                dbMan.getPrefix(guildID) + commandName)).queue();
             return;
         }
 
