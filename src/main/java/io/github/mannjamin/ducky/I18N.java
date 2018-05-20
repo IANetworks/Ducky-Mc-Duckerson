@@ -108,6 +108,7 @@ public class I18N {
     }
 
     // TODO: pluralization, quantification?
+    // TODO: Move lang files to filesystem and access that way
 
     private Locale getJavaLocale(String locale) {
         return Locale.forLanguageTag(locale);
