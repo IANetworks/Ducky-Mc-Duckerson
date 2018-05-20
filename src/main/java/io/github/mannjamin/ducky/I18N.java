@@ -4,9 +4,12 @@ import io.github.mannjamin.ducky.database.manager.DatabaseManager;
 import net.dv8tion.jda.core.entities.MessageChannel;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -98,7 +101,7 @@ public class I18N {
     public String formatDate(String locale, LocalDate date) {
         String formatString = this.localize(locale, KEY_DATE_FORMAT);
         Locale javaLocale = getJavaLocale(locale);
-        DateTimeFormatter formatter = formatString == KEY_DATE_FORMAT
+        DateTimeFormatter formatter = formatString.equals(KEY_DATE_FORMAT)
                 ? DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).withLocale(javaLocale)
                 : DateTimeFormatter.ofPattern(formatString, javaLocale);
         return formatter.format(date);
@@ -118,7 +121,8 @@ public class I18N {
                 InputStream in = null;
                 for (String langFile : getLanguageFiles()) {
                     if (langFile.equalsIgnoreCase(locale + ".lang")) {
-                        in = this.getClass().getClassLoader().getResourceAsStream(I18N_DIR + File.separator + langFile);
+                        //in = this.getClass().getClassLoader().getResourceAsStream(I18N_DIR  + File.separator + langFile);
+                        in = new FileInputStream(I18N_DIR + File.separator + langFile);
                     }
                 }
                 if (in == null) {
@@ -137,9 +141,10 @@ public class I18N {
     private String[] getLanguageFiles() {
         if (languageFiles == null) {
             try {
-                File langDir = new File(this.getClass().getClassLoader().getResource(I18N_DIR).toURI());
+                //URI uriI18N = McDucky.class.getResource(I18N_DIR).toURI();
+                File langDir = new File(I18N_DIR);
                 languageFiles = langDir.list();
-            } catch (URISyntaxException e) {
+            } catch (IllegalArgumentException e) {
                 e.printStackTrace();
                 languageFiles = new String[0];
             }

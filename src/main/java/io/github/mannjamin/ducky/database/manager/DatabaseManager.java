@@ -2030,7 +2030,9 @@ public class DatabaseManager {
                     stmt = conn.prepareStatement(sql);
                     stmt.setLong(1, guildID);
                     rs = stmt.executeQuery();
-                    locale = rs.getString("locale");
+                    if (rs.next()) {
+                        locale = rs.getString("locale");
+                    }
                 }
             }
         } catch (SQLException e) {
