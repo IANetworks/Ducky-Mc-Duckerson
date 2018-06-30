@@ -8,19 +8,19 @@ import java.sql.SQLException;
 import java.util.Map;
 
 /**
- * The type Set self role group exculsive.
+ * The type Set self role group exclusive.
  */
-public class SetSelfRoleGroupExculsive extends CommandStructure {
+public class SetSelfRoleGroupExclusive extends CommandStructure {
 
     /**
-     * Instantiates a new Set self role group exculsive.
+     * Instantiates a new Set self role group exclusive.
      *
      * @param container           the container
      * @param commandName         the command name
      * @param commandID           the command id
      * @param commandDefaultLevel the command default level
      */
-    public SetSelfRoleGroupExculsive(SharedContainer container, String commandName,
+    public SetSelfRoleGroupExclusive(SharedContainer container, String commandName,
                                      int commandID, int commandDefaultLevel) {
         super(container, commandName, commandID, commandDefaultLevel);
     }
@@ -38,10 +38,10 @@ public class SetSelfRoleGroupExculsive extends CommandStructure {
                 if (isInteger(parameters.trim())) {
                     groupID = Integer.valueOf(parameters.trim());
                     if (dbMan.hasGroup(guildID, groupID)) {
-                        Boolean isExculsive = dbMan.isGroupExculsive(guildID, groupID);
+                        Boolean isExclusive = dbMan.isGroupExclusive(guildID, groupID);
                         try {
-                            dbMan.setGroupExculsive(guildID, groupID, !isExculsive);
-                            String newStatus = localize(channel, isExculsive ? "command.toggle_group_exclusive.exclusive" : "command.toggle_group_exclusive.not_exclusive");
+                            dbMan.setGroupExclusive(guildID, groupID, !isExclusive);
+                            String newStatus = localize(channel, isExclusive ? "command.toggle_group_exclusive.exclusive" : "command.toggle_group_exclusive.not_exclusive");
                             channel.sendMessage(localize(channel, "command.toggle_group_exclusive.success", groupID, newStatus)).queue();
                         } catch (SQLException e) {
                             channel.sendMessage(localize(channel, "command.toggle_group_exclusive.error.sql")).queue();

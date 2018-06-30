@@ -947,13 +947,13 @@ public class DatabaseManager {
     }
 
     /**
-     * Is group exculsive boolean.
+     * Is group exclusive boolean.
      *
      * @param guildID the guild id
      * @param groupID the group id
      * @return the boolean
      */
-    public Boolean isGroupExculsive(Long guildID, Integer groupID) {
+    public Boolean isGroupExclusive(Long guildID, Integer groupID) {
         return getSelfRoles(guildID).isGroupExclusive(groupID);
     }
 
@@ -1672,29 +1672,29 @@ public class DatabaseManager {
      * @param guildID     the guild id
      * @param roleID      the role id
      * @param groupID     the group id
-     * @param isExculsive the is exculsive
+     * @param isExclusive the is exclusive
      * @return the new self assignable role
      * @throws SQLException the sql exception
      */
-    public boolean setNewSelfAssignableRole(Long guildID, Long roleID, Integer groupID, Boolean isExculsive) throws SQLException {
+    public boolean setNewSelfAssignableRole(Long guildID, Long roleID, Integer groupID, Boolean isExclusive) throws SQLException {
         boolean isRoleNew = false;
 
         //Check List
         if (listOfSelfRoles.containsKey(guildID)) {
-            if (isExculsive != null) {
+            if (isExclusive != null) {
                 //We have an existing guild, so let check to make sure we don't assign an already existing role
-                isRoleNew = listOfSelfRoles.get(guildID).setNewRole(roleID, groupID, isExculsive);
+                isRoleNew = listOfSelfRoles.get(guildID).setNewRole(roleID, groupID, isExclusive);
             } else {
-                isExculsive = listOfSelfRoles.get(guildID).isGroupExclusive(groupID);
-                if (isExculsive == null) isExculsive = false; //this could happen if it's a new group default to false;
-                isRoleNew = listOfSelfRoles.get(guildID).setNewRole(roleID, groupID, isExculsive);
+                isExclusive = listOfSelfRoles.get(guildID).isGroupExclusive(groupID);
+                if (isExclusive == null) isExclusive = false; //this could happen if it's a new group default to false;
+                isRoleNew = listOfSelfRoles.get(guildID).setNewRole(roleID, groupID, isExclusive);
             }
 
         } else {
             //If it doesn't exist, create new guildSetting for guildID, set value, update
-            isExculsive = false; //Default to false
+            isExclusive = false; //Default to false
             SelfRoles newSelfRoles = new SelfRoles();
-            newSelfRoles.setNewRole(roleID, groupID, isExculsive);
+            newSelfRoles.setNewRole(roleID, groupID, isExclusive);
             listOfSelfRoles.put(guildID, newSelfRoles);
             isRoleNew = true;
         }
@@ -1705,7 +1705,7 @@ public class DatabaseManager {
             pstmt.setLong(1, guildID);
             pstmt.setLong(2, roleID);
             pstmt.setInt(3, groupID);
-            pstmt.setBoolean(4, isExculsive);
+            pstmt.setBoolean(4, isExclusive);
 
             pstmt.execute();
         }
@@ -1714,61 +1714,61 @@ public class DatabaseManager {
     }
 
     /**
-     * Sets group exculsive.
+     * Sets group exclusive.
      *
      * @param guildID     the guild id
      * @param groupID     the group id
-     * @param isExculsive the is exculsive
-     * @return the group exculsive
+     * @param isExclusive the is exclusive
+     * @return the group exclusive
      * @throws SQLException the sql exception
      */
-    public Boolean setGroupExculsive(Long guildID, Integer groupID, Boolean isExculsive) throws SQLException {
+    public Boolean setGroupExclusive(Long guildID, Integer groupID, Boolean isExclusive) throws SQLException {
         boolean exculisveChanged = false;
         //Check List
         if (listOfSelfRoles.containsKey(guildID)) {    //We have an existing guild, so let check to make sure we don't assign an already existing role
-            exculisveChanged = listOfSelfRoles.get(guildID).setGroupExculsive(groupID, isExculsive);
+            exculisveChanged = listOfSelfRoles.get(guildID).setGroupExclusive(groupID, isExclusive);
         } else {
             exculisveChanged = false; //return false because we can only update self-assignable roles, if there's none already set for guild then there's no self assignable roles
         }
 
         if (exculisveChanged) {
-            setExculsiveDatabase(guildID, groupID, isExculsive);
+            setExclusiveDatabase(guildID, groupID, isExclusive);
         }
 
         return exculisveChanged;
     }
 
-    private void setExculsiveDatabase(Long guildID, Integer groupID, Boolean isExculsive) throws SQLException {
+    private void setExclusiveDatabase(Long guildID, Integer groupID, Boolean isExclusive) throws SQLException {
         String sql = "UPDATE self_roles SET exclusive_on = ? WHERE guild_id = ? AND role_group_id = ?";
         PreparedStatement pstmt = conn.prepareStatement(sql);
-        pstmt.setBoolean(1, isExculsive);
+        pstmt.setBoolean(1, isExclusive);
         pstmt.setLong(2, guildID);
         pstmt.setInt(3, groupID);
         pstmt.execute();
     }
 
     /**
-     * Sets role exculsive.
+     * Sets role exclusive.
      *
      * @param guildID     the guild id
      * @param roleID      the role id
-     * @param isExculsive the is exculsive
-     * @return the role exculsive
+     * @param isExclusive the is exclusive
+     * @return the role exclusive
      * @throws SQLException the sql exception
      */
-    public Boolean setRoleExculsive(Long guildID, Long roleID, Boolean isExculsive) throws SQLException {
+    public Boolean setRoleExclusive(Long guildID, Long roleID, Boolean isExclusive) throws SQLException {
         boolean exculisveChanged = false;
         Integer groupID = null;
         //Check List
         if (listOfSelfRoles.containsKey(guildID)) {    //We have an existing guild, so let check to make sure we don't assign an already existing role
-            exculisveChanged = listOfSelfRoles.get(guildID).setRoleExculsive(roleID, isExculsive);
+            exculisveChanged = listOfSelfRoles.get(guildID).setRoleExclusive(roleID, isExclusive);
             groupID = listOfSelfRoles.get(guildID).getRoleGroup(roleID);
         } else {
             exculisveChanged = false; //return false because we can only update self-assignable roles, if there's none already set for guild then there's no self assignable roles
         }
 
         if (exculisveChanged) {
-            setExculsiveDatabase(guildID, groupID, isExculsive);
+            setExclusiveDatabase(guildID, groupID, isExclusive);
         }
 
         return exculisveChanged;

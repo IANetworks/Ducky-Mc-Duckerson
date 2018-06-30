@@ -111,7 +111,7 @@ public class EventListener extends ListenerAdapter {
         setupCommand(new ListSelfRolesCS(container, "list_self_roles", 10, 999));
         setupCommand(new RemoveSelfRoleCS(container, "remove_self_assign_role", 11, 1));
         setupCommand(new SetSelfRoleGroupCS(container, "set_self_assign_group", 12, 1));
-        setupCommand(new SetSelfRoleGroupExculsive(container, "toggle_group_exclusive", 13, 1));
+        setupCommand(new SetSelfRoleGroupExclusive(container, "toggle_group_exclusive", 13, 1));
         setupCommand(new RemoveSelfRoleGroup(container, "remove_self_assign_group", 14, 999));
         setupCommand(new WerewolfJoinCS(container, "join", 15, 999));
         setupCommand(new WerewolfStartCS(container, "start_ww", 16, 999));

@@ -124,7 +124,7 @@ command.toggle_group_exclusive.error.bot_permission_missing = I do not have Mana
 command.toggle_group_exclusive.exclusive = exclusive
 command.toggle_group_exclusive.not_exclusive = not exclusive
 command.toggle_group_exclusive.success = Group %s is set to %s
-command.toggle_group_exclusive.help = Toggle a group to be exculsive or not exculsive Syntax: `%s [group id]`
+command.toggle_group_exclusive.help = Toggle a group to be exclusive or not exclusive Syntax: `%s [group id]`
 
 command.remove_self_assign_group.error.sql = Ah, I borked here. I need tinkering here.
 command.remove_self_assign_group.error.unknown_group = I do not have any group by that ID

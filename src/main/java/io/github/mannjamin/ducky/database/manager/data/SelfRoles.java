@@ -14,9 +14,9 @@ public class SelfRoles {
 //List of roles with group level
     Map<Long, Integer> listOfRoles = new HashMap<Long, Integer>();
     /**
-     * The Group exculsive.
+     * The Group exclusive.
      */
-    Map<Integer, Boolean> groupExculsive = new HashMap<Integer, Boolean>();
+    Map<Integer, Boolean> groupExclusive = new HashMap<Integer, Boolean>();
     /**
      * The Roles by group.
      */
@@ -70,7 +70,7 @@ public class SelfRoles {
      * @return the boolean
      */
     public Boolean isGroupExclusive(Integer groupID) {
-        return groupExculsive.get(groupID);
+        return groupExclusive.get(groupID);
     }
 
     /**
@@ -135,24 +135,24 @@ public class SelfRoles {
      *
      * @param roleID      the role id
      * @param groupID     the group id
-     * @param isExculsive the is exculsive
+     * @param isExclusive the is exclusive
      * @return the new role
      */
-    public boolean setNewRole(Long roleID, Integer groupID, Boolean isExculsive) {
+    public boolean setNewRole(Long roleID, Integer groupID, Boolean isExclusive) {
         //Check to make sure we do not have an existing role
         if (listOfRoles.containsKey(roleID)) {
             return false; //We'll return false to say that the new role was not added.
         } else {
             listOfRoles.put(roleID, groupID);
             //See if we have an existing groupID
-            addGroupID(roleID, groupID, isExculsive);
+            addGroupID(roleID, groupID, isExclusive);
 
             return true; //let calling know we've successfully added the new role
         }
     }
 
     //This method will be called whenever we need to add a role to a group
-    private void addGroupID(Long roleID, Integer groupID, Boolean isExculsive) {
+    private void addGroupID(Long roleID, Integer groupID, Boolean isExclusive) {
         if (rolesByGroup.containsKey(groupID)) {
             //we have an existing group so add role to the existing list
             rolesByGroup.get(groupID).add(roleID);
@@ -161,42 +161,42 @@ public class SelfRoles {
             HashSet<Long> newList = new HashSet<Long>();
             newList.add(roleID);
             rolesByGroup.put(groupID, newList);
-            if (isExculsive != null) {
-                groupExculsive.put(groupID, isExculsive);
+            if (isExclusive != null) {
+                groupExclusive.put(groupID, isExclusive);
             } else {
-                groupExculsive.put(groupID, false); // default to not exculsive
+                groupExclusive.put(groupID, false); // default to not exclusive
             }
         }
     }
 
     /**
-     * Sets role exculsive.
+     * Sets role exclusive.
      *
      * @param roleID      the role id
-     * @param isExculsive the is exculsive
-     * @return the role exculsive
+     * @param isExclusive the is exclusive
+     * @return the role exclusive
      */
-    public Boolean setRoleExculsive(Long roleID, Boolean isExculsive) {
+    public Boolean setRoleExclusive(Long roleID, Boolean isExclusive) {
         if (!listOfRoles.containsKey(roleID)) {
-            return false; //Can't set exculsive if there's no self-assignable role
+            return false; //Can't set exclusive if there's no self-assignable role
         } else {
-            return setGroupExculsive(listOfRoles.get(roleID), isExculsive);
+            return setGroupExclusive(listOfRoles.get(roleID), isExclusive);
         }
     }
 
     /**
-     * Sets group exculsive.
+     * Sets group exclusive.
      *
      * @param groupID     the group id
-     * @param isExculsive the is exculsive
-     * @return the group exculsive
+     * @param isExclusive the is exclusive
+     * @return the group exclusive
      */
-    public Boolean setGroupExculsive(Integer groupID, Boolean isExculsive) {
+    public Boolean setGroupExclusive(Integer groupID, Boolean isExclusive) {
 
-        if (!groupExculsive.containsKey(groupID)) {
-            return false; //Can't set exculsive if there's no existing group
+        if (!groupExclusive.containsKey(groupID)) {
+            return false; //Can't set exclusive if there's no existing group
         } else {
-            groupExculsive.put(groupID, isExculsive);
+            groupExclusive.put(groupID, isExclusive);
             return true;
         }
     }
