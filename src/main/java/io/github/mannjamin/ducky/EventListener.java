@@ -173,6 +173,7 @@ public class EventListener extends ListenerAdapter {
     public void onGenericEvent(Event event) {
         EventManager thisEvent = new EventManager(socket);
         thisEvent.onJDAEvent(event);
+        thisEvent = null;
     }
 
 

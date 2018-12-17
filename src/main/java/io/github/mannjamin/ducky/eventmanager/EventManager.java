@@ -133,47 +133,56 @@ public class EventManager {
                         e.printStackTrace();
                     }
                     if (returnedObject != null) {
-                        Method[] secondLevel = returnedObject.getClass().getMethods();
-                        Map<String, Object> newLevel = new HashMap<>();
-                        for (Method thisMethod : secondLevel) {
-                            if (trackMethodLevel1.contains(thisMethod.getName())) {
-                                if (basicClass.contains(thisMethod.getReturnType().getSimpleName())) {
-                                    try {
-                                        newLevel.put(thisMethod.getName(), thisMethod.invoke(returnedObject));
-                                    } catch (IllegalAccessException | InvocationTargetException e) {
-                                        System.err.println("*************");
-                                        System.err.println(c.getSimpleName());
-                                        System.err.println(method.getName() + ": " + method.getReturnType().getSimpleName());
-                                        System.err.println(thisMethod.getName() + ": " + thisMethod.getReturnType().getSimpleName());
-                                        e.printStackTrace();
-                                        System.err.println("*************");
-                                    }
-                                } else {
-                                    Object returnedObject2 = null;
-                                    try {
-                                        returnedObject2 = thisMethod.invoke(event);
-                                    } catch (IllegalAccessException | InvocationTargetException e) {
-                                        e.printStackTrace();
-                                    }
-                                    if (returnedObject2 != null) {
-                                        Map<String, Object> newLevel2 = new HashMap<>();
-                                        Method[] thirdLevel = returnedObject2.getClass().getMethods();
-                                        for (Method thisLastMethod : thirdLevel) {
-                                            if (trackMethodLevel2.contains(thisLastMethod.getName()))
-                                                try {
-                                                    newLevel2.put(thisLastMethod.getName(), thisLastMethod.invoke(returnedObject2));
-                                                } catch (IllegalAccessException | InvocationTargetException e) {
-                                                    e.printStackTrace();
-                                                }
+                        try {
+                            Method[] secondLevel = returnedObject.getClass().getMethods();
+                            Map<String, Object> newLevel = new HashMap<>();
+                            for (Method thisMethod : secondLevel) {
+                                if (trackMethodLevel1.contains(thisMethod.getName())) {
+                                    if (basicClass.contains(thisMethod.getReturnType().getSimpleName())) {
+                                        try {
+                                            newLevel.put(thisMethod.getName(), thisMethod.invoke(returnedObject));
+                                        } catch (IllegalAccessException | InvocationTargetException e) {
+                                            System.err.println("*************");
+                                            System.err.println(c.getSimpleName());
+                                            System.err.println(method.getName() + ": " + method.getReturnType().getSimpleName());
+                                            System.err.println(thisMethod.getName() + ": " + thisMethod.getReturnType().getSimpleName());
+                                            e.printStackTrace();
+                                            System.err.println("*************");
                                         }
-                                        newLevel.put(thisMethod.getName(), newLevel2);
                                     } else {
-                                        newLevel.put(thisMethod.getName(), null);
+                                        Object returnedObject2 = null;
+                                        try {
+                                            returnedObject2 = thisMethod.invoke(event);
+                                        } catch (IllegalAccessException | InvocationTargetException e) {
+                                            e.printStackTrace();
+                                        }
+                                        if (returnedObject2 != null) {
+                                            Map<String, Object> newLevel2 = new HashMap<>();
+                                            Method[] thirdLevel = returnedObject2.getClass().getMethods();
+                                            for (Method thisLastMethod : thirdLevel) {
+                                                if (trackMethodLevel2.contains(thisLastMethod.getName()))
+                                                    try {
+                                                        newLevel2.put(thisLastMethod.getName(), thisLastMethod.invoke(returnedObject2));
+                                                    } catch (IllegalAccessException | InvocationTargetException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                            }
+                                            newLevel.put(thisMethod.getName(), newLevel2);
+                                        } else {
+                                            newLevel.put(thisMethod.getName(), null);
+                                        }
                                     }
                                 }
                             }
+                            dataMap.put(method.getName(), newLevel);
+                        } catch (Exception e) {
+                            System.err.println("*************");
+                            System.err.println(c.getSimpleName());
+                            System.err.println(method.getName() + ": " + method.getReturnType().getSimpleName());
+                            //System.err.println(thisMethod.getName() + ": " + thisMethod.getReturnType().getSimpleName());
+                            e.printStackTrace();
+                            System.err.println("*************");
                         }
-                        dataMap.put(method.getName(), newLevel);
                     } else {
                         dataMap.put(method.getName(), null);
                     }
